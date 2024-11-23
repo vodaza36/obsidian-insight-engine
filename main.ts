@@ -1,4 +1,4 @@
-import { App, Plugin, PluginSettingTab, Setting, TFile, getAllTags } from 'obsidian';
+import { App, Plugin, PluginSettingTab, Setting, TFile, MarkdownView } from 'obsidian';
 import { Ollama } from 'langchain/llms/ollama';
 import { PromptTemplate } from 'langchain/prompts';
 
@@ -58,23 +58,23 @@ export default class TagAgent extends Plugin {
 		const files = this.app.vault.getMarkdownFiles();
 		
 		for (const file of files) {
-			const content = await this.app.vault.read(file);
-			const tags = getAllTags(content);
-			tags.forEach(tag => this.existingTags.add(tag.slice(1))); // Remove # from tags
+			const metadata = this.app.metadataCache.getFileCache(file);
+			if (metadata && metadata.tags) {
+				metadata.tags.forEach(tag => this.existingTags.add(tag.tag.slice(1)));
+			}
 		}
 
 		console.log("Found tags:", Array.from(this.existingTags));
 	}
 
 	async analyzeCurrentNote() {
-		const activeView = this.app.workspace.getActiveViewOfType('markdown');
-		if (!activeView) {
+		const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
+		if (!activeView || !activeView.file) {
 			return;
 		}
 
-		const file = activeView.file;
-		const content = await this.app.vault.read(file);
-		await this.suggestTags(file, content);
+		const content = await this.app.vault.read(activeView.file);
+		await this.suggestTags(activeView.file, content);
 	}
 
 	async analyzeAllNotes() {
