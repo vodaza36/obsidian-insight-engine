@@ -4,7 +4,8 @@ The pupose of this project is to develop an Obsidian plugin that handles the Tag
 on an AI driven approach. Following requirements must be met: 
 
 ### Functional Requirements
-- The plugin should be able to scan the vault for tags
+- The plugin should be able to scan a single note and generate a list of tags
+- The plugin should be able to scan the vault and suggest proper tags
 - The plugin should be available at the Obsidian marketplace.
 
 ### Non-Functional Requirements
@@ -22,6 +23,7 @@ on an AI driven approach. Following requirements must be met:
     - Settings page implementation
     - Modals and notifications
     - Consistent look and feel with the Obsidian app
+    - Command palette integration for scanning vault tags (accessible via Cmd/Ctrl + P)
 - No external UI framework needed to maintain simplicity and reduce bundle size
 
 ## Technology Stack

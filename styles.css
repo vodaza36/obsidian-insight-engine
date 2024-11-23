@@ -1,1 +1,35 @@
 /* Add your custom styles here */
+
+/* Tag Suggestion Modal Styles */
+.tag-suggestion {
+    display: inline-block;
+    margin: 8px;
+    padding: 6px 12px;
+    background-color: var(--background-secondary);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tag-suggestion:hover {
+    background-color: var(--background-modifier-hover);
+}
+
+.tag-suggestion.selected {
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+}
+
+.button {
+    margin-top: 16px;
+    padding: 8px 16px;
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.button:hover {
+    opacity: 0.9;
+}

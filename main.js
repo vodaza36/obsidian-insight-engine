@@ -8917,14 +8917,13 @@ var TagAgent = class extends import_obsidian.Plugin {
     this.initializeLangChain();
     this.addSettingTab(new TagAgentSettingTab(this.app, this));
     this.addCommand({
-      id: "scan-vault-tags",
-      name: "Scan Vault for Tags",
-      callback: () => this.scanVaultTags()
-    });
-    this.addCommand({
-      id: "analyze-current-note",
-      name: "Analyze Current Note",
-      callback: () => this.analyzeCurrentNote()
+      id: "generate-note-tags",
+      name: "Generate Tags for Current Note",
+      editorCallback: async (editor, view) => {
+        if (view.file) {
+          await this.generateTagsForNote(view.file);
+        }
+      }
     });
     this.addCommand({
       id: "analyze-all-notes",
@@ -8938,55 +8937,88 @@ var TagAgent = class extends import_obsidian.Plugin {
       model: this.settings.ollamaModel
     });
   }
-  async scanVaultTags() {
-    this.existingTags.clear();
-    const files = this.app.vault.getMarkdownFiles();
-    for (const file of files) {
-      const metadata = this.app.metadataCache.getFileCache(file);
-      if (metadata && metadata.tags) {
-        metadata.tags.forEach((tag) => this.existingTags.add(tag.tag.slice(1)));
-      }
+  async generateTagsForNote(file) {
+    const content = await this.app.vault.read(file);
+    const suggestedTags = await this.suggestTags(file, content);
+    if (suggestedTags && suggestedTags.length > 0) {
+      const modal = new TagSuggestionModal(this.app, suggestedTags, async (selectedTags) => {
+        if (selectedTags.length > 0) {
+          await this.appendTagsToNote(file, selectedTags);
+        }
+      });
+      modal.open();
+    } else {
+      new import_obsidian.Notice("No tags could be generated for this note.");
     }
-    console.log("Found tags:", Array.from(this.existingTags));
   }
-  async analyzeCurrentNote() {
-    const activeView = this.app.workspace.getActiveViewOfType(import_obsidian.MarkdownView);
-    if (!activeView || !activeView.file) {
-      return;
+  async suggestTags(file, content) {
+    const promptTemplate = new PromptTemplate({
+      template: `You are a tag suggestion system. Analyze the following content and suggest relevant tags for organizing it.
+			Focus on the main topics, concepts, and categories that would help in finding this content later.
+
+Content to analyze:
+{text}
+
+Rules for tag suggestions:
+1. Provide exactly 5-7 relevant tags
+2. Use lowercase words only
+3. For multi-word tags, use dashes (e.g., 'artificial-intelligence')
+4. Focus on content-specific tags, avoid generic tags
+5. Tags should be specific enough to be useful but general enough to be reusable
+
+Provide your response as a comma-separated list of tags (without the # symbol).
+
+Suggested tags:`,
+      inputVariables: ["text"]
+    });
+    try {
+      const prompt = await promptTemplate.format({ text: content });
+      const response = await this.model.call(prompt);
+      return response.split(",").map((tag) => tag.trim().toLowerCase()).filter((tag) => tag.length > 0);
+    } catch (error) {
+      console.error("Error generating tags:", error);
+      return [];
     }
-    const content = await this.app.vault.read(activeView.file);
-    await this.suggestTags(activeView.file, content);
+  }
+  async appendTagsToNote(file, tags) {
+    try {
+      const content = await this.app.vault.read(file);
+      const formattedTags = tags.map((tag) => `#${tag}`).join(" ");
+      const hasYamlFrontmatter = content.startsWith("---\n");
+      let newContent;
+      if (hasYamlFrontmatter) {
+        const endOfFrontmatter = content.indexOf("---\n", 4);
+        if (endOfFrontmatter !== -1) {
+          const frontmatter = content.substring(0, endOfFrontmatter);
+          const restOfContent = content.substring(endOfFrontmatter);
+          if (frontmatter.includes("tags:")) {
+            newContent = frontmatter.replace(/tags:.*?\n/, (match) => match.trim() + " " + formattedTags + "\n") + restOfContent;
+          } else {
+            newContent = frontmatter + `tags: ${formattedTags}
+` + restOfContent;
+          }
+        } else {
+          newContent = content + `
+
+${formattedTags}`;
+        }
+      } else {
+        newContent = content + `
+
+${formattedTags}`;
+      }
+      await this.app.vault.modify(file, newContent);
+      new import_obsidian.Notice(`Added ${tags.length} tags to the note`);
+    } catch (error) {
+      console.error("Error appending tags:", error);
+      new import_obsidian.Notice("Failed to add tags to the note");
+    }
   }
   async analyzeAllNotes() {
     const files = this.app.vault.getMarkdownFiles();
     for (const file of files) {
       const content = await this.app.vault.read(file);
       await this.suggestTags(file, content);
-    }
-  }
-  async suggestTags(file, content) {
-    const promptTemplate = new PromptTemplate({
-      template: `You are a tag suggestion system. Based on the existing tags and the content provided, suggest relevant tags for organizing the content.
-
-Existing tags: {existingTags}
-
-Content to analyze:
-{text}
-
-Provide a comma-separated list of suggested tags (without the # symbol). Only include highly relevant tags. If an existing tag is relevant, include it in your suggestions.
-
-Suggested tags:`,
-      inputVariables: ["existingTags", "text"]
-    });
-    try {
-      const prompt = await promptTemplate.format({
-        existingTags: Array.from(this.existingTags).join(", "),
-        text: content
-      });
-      const response = await this.model.call(prompt);
-      console.log(`Suggested tags for ${file.path}:`, response);
-    } catch (error) {
-      console.error("Error analyzing note:", error);
     }
   }
   async loadSettings() {
@@ -9013,6 +9045,45 @@ var TagAgentSettingTab = class extends import_obsidian.PluginSettingTab {
       this.plugin.settings.ollamaModel = value;
       await this.plugin.saveSettings();
     }));
+  }
+};
+var TagSuggestionModal = class extends import_obsidian.Modal {
+  constructor(app, suggestedTags, callback) {
+    super(app);
+    this.suggestedTags = suggestedTags;
+    this.callback = callback;
+  }
+  onOpen() {
+    const { contentEl } = this;
+    contentEl.empty();
+    contentEl.createEl("h2", { text: "Tag Suggestions" });
+    const tagList = contentEl.createDiv();
+    const selectedTags = [];
+    this.suggestedTags.forEach((tag) => {
+      const tagEl = tagList.createDiv();
+      tagEl.setText(tag);
+      tagEl.addClass("tag-suggestion");
+      tagEl.onClickEvent(() => {
+        if (selectedTags.includes(tag)) {
+          selectedTags.splice(selectedTags.indexOf(tag), 1);
+          tagEl.removeClass("selected");
+        } else {
+          selectedTags.push(tag);
+          tagEl.addClass("selected");
+        }
+      });
+    });
+    const buttonContainer = contentEl.createDiv();
+    const applyButton = buttonContainer.createEl("button", { text: "Apply Tags" });
+    applyButton.addClass("button");
+    applyButton.onclick = () => {
+      this.callback(selectedTags);
+      this.close();
+    };
+  }
+  onClose() {
+    const { contentEl } = this;
+    contentEl.empty();
   }
 };
 /*
