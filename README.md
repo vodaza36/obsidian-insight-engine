@@ -67,6 +67,31 @@ The following list of resources were used to develop this plugin:
    npm run dev
    ```
 
+## Tests
+
+The plugin includes a comprehensive test suite built with Jest that verifies the core functionality of the tag suggestion system. The tests focus on the integration between the plugin and the local LLM (Ollama) service.
+
+### Test Coverage
+
+- **Tag Suggestion Tests**
+  - Technical content analysis (e.g., programming topics)
+  - Non-technical content analysis (e.g., gardening, general topics)
+  - Empty content handling
+  - Tag format validation (lowercase, proper separators)
+
+- **LLM Integration Tests**
+  - Ollama service initialization
+  - Model configuration validation
+  - Response handling and parsing
+
+### Running Tests
+
+```bash
+npm test
+```
+
+The test suite uses mocked responses for the LLM service to ensure consistent and reliable testing without requiring a running Ollama instance.
+
 ## Requirements
 
 - Obsidian v0.15.0 or higher
