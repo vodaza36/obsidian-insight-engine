@@ -2,6 +2,10 @@
 
 An AI-powered Obsidian plugin that helps manage and suggest tags for your notes using LangChain.js and OpenAI.
 
+## Resources
+The following list of resources were used to develop this plugin:
+- [Obsidian Plugin Development](https://docs.obsidian.md/Plugins/Getting+started/Build+a+plugin)
+
 ## Features
 
 - Automatically analyzes note content and suggests relevant tags

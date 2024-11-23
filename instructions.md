@@ -2,8 +2,15 @@
 ## Prupose
 The pupose of this project is to develop an Obsidian plugin that handles the Tag management based
 on an AI driven approach. Following requirements must be met: 
-- To keep everything private and secure an Ollama local LLM is used to classify the notes.
+
+### Functional Requirements
+- The plugin should be able to scan the vault for tags
 - The plugin should be available at the Obsidian marketplace.
+
+### Non-Functional Requirements
+- To keep everything private and secure an Ollama local LLM is used to classify the notes.
+- The plugin should be easy to use and have a consistent look and feel with the Obsidian app
+- The puglins repository should consider all best practices for plugin development suggested by https://github.com/obsidianmd/obsidian-sample-plugin
 
 ## Features
 - Scan the vault and generate a list of tags
