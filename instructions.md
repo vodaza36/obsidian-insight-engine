@@ -4,7 +4,7 @@ The pupose of this project is to develop an Obsidian plugin that handles the Tag
 on an AI driven approach. Following requirements must be met: 
 
 ### Functional Requirements
-- The plugin should be able to scan a single note and generate a list of tags
+- The plugin should be able to scan a single note and generate a list of tags. Thereby he should consider the list of existing tags. If no exiting tag fits then the plugin should suggest new tags.
 - The plugin should be able to scan the vault and suggest proper tags
 - The plugin should be available at the Obsidian marketplace.
 
