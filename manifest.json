@@ -1,0 +1,10 @@
+{
+	"id": "obsidian-tag-agent",
+	"name": "Tag Agent",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "An AI-powered tag management plugin using LangChain.js with Ollama for local processing",
+	"author": "",
+	"authorUrl": "",
+	"isDesktopOnly": true
+}
