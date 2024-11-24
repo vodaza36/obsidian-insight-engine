@@ -20,7 +20,11 @@ const baseConfig = {
   ],
   setupFilesAfterEnv: ['<rootDir>/tests/setupAfterEnv.js'],
   roots: ['<rootDir>'],
-  modulePaths: ['<rootDir>']
+  modulePaths: ['<rootDir>'],
+  // Suppress deprecation warnings
+  testEnvironmentOptions: {
+    suppressDeprecationWarnings: true
+  }
 };
 
 const integrationConfig = {

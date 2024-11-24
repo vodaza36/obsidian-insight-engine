@@ -5,6 +5,12 @@ import { TagSuggestionModal } from '../ui/TagSuggestionModal';
 import { TagAgentSettingTab } from '../ui/SettingsTab';
 import { LoadingModal } from '../ui/LoadingModal';
 
+// Add this type definition near the top of the file, after other imports
+type TagSuggestion = {
+    name: string;
+    isExisting: boolean;
+};
+
 /**
  * This class is the entrypoint for the TagAgent plugin.
  * It provides the UI integration points for the plugin such as the settings tab and the command for analyzing the current note.
@@ -80,7 +86,6 @@ export default class TagAgent extends Plugin {
 
 		try {
 			const suggestedTags = await this.tagGenerator.suggestTags(
-				file,
 				content,
 				existingTags,
 				loadingModal.getAbortSignal()
@@ -90,7 +95,7 @@ export default class TagAgent extends Plugin {
 			loadingModal.close();
 
 			if (suggestedTags && suggestedTags.length > 0) {
-				const tagSuggestions = suggestedTags.map(tag => ({
+				const tagSuggestions: TagSuggestion[] = suggestedTags.map(tag => ({
 					name: tag,
 					isExisting: existingTags.has(tag)
 				}));
@@ -98,9 +103,9 @@ export default class TagAgent extends Plugin {
 				const modal = new TagSuggestionModal(
 					this.app,
 					tagSuggestions,
-					(selectedTags) => {
+					(selectedTags: string[]) => {
 						if (selectedTags.length > 0) {
-							this.appendTagsToNote(file, selectedTags.map(tag => tag.name));
+							this.appendTagsToNote(file, selectedTags);
 						}
 					}
 				);

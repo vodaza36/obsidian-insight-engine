@@ -8926,7 +8926,7 @@ var TagGenerator = class {
       return false;
     }
   }
-  async suggestTags(file, content, existingTags, signal) {
+  async suggestTags(content, existingTags, signal) {
     const isServerRunning = await this.isOllamaServerRunning();
     if (!isServerRunning) {
       throw new Error('Ollama server is not running. Please start the Ollama server using the command: "ollama serve"');
@@ -9167,7 +9167,7 @@ var TagAgent = class extends import_obsidian4.Plugin {
     });
     loadingModal.open();
     try {
-      const suggestedTags = await this.tagGenerator.suggestTags(file, content, existingTags, loadingModal.getAbortSignal());
+      const suggestedTags = await this.tagGenerator.suggestTags(content, existingTags, loadingModal.getAbortSignal());
       loadingModal.close();
       if (suggestedTags && suggestedTags.length > 0) {
         const tagSuggestions = suggestedTags.map((tag) => ({
@@ -9176,7 +9176,7 @@ var TagAgent = class extends import_obsidian4.Plugin {
         }));
         const modal = new TagSuggestionModal(this.app, tagSuggestions, (selectedTags) => {
           if (selectedTags.length > 0) {
-            this.appendTagsToNote(file, selectedTags.map((tag) => tag.name));
+            this.appendTagsToNote(file, selectedTags);
           }
         });
         modal.open();

@@ -33,7 +33,7 @@ export class TagGenerator {
 		}
 	}
 
-	async suggestTags(file: TFile, content: string, existingTags: Set<string>, signal?: AbortSignal): Promise<string[]> {
+	async suggestTags(content: string, existingTags: Set<string>, signal?: AbortSignal): Promise<string[]> {
 		// Check if Ollama server is running
 		const isServerRunning = await this.isOllamaServerRunning();
 		if (!isServerRunning) {
