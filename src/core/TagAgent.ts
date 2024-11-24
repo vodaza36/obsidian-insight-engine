@@ -90,12 +90,17 @@ export default class TagAgent extends Plugin {
 			loadingModal.close();
 
 			if (suggestedTags && suggestedTags.length > 0) {
+				const tagSuggestions = suggestedTags.map(tag => ({
+					name: tag,
+					isExisting: existingTags.has(tag)
+				}));
+
 				const modal = new TagSuggestionModal(
 					this.app,
-					suggestedTags,
+					tagSuggestions,
 					(selectedTags) => {
 						if (selectedTags.length > 0) {
-							this.appendTagsToNote(file, selectedTags);
+							this.appendTagsToNote(file, selectedTags.map(tag => tag.name));
 						}
 					}
 				);

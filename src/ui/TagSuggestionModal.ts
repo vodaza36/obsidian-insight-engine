@@ -88,21 +88,21 @@ export class TagSuggestionModal extends Modal {
 
     private createTagToggle(container: HTMLElement, tag: TagSuggestion) {
         new Setting(container)
-            .setClass('tag-toggle')
             .setName(tag.name)
-            .addToggle((toggle) =>
-                toggle.onChange((value) => {
+            .addToggle(toggle => {
+                toggle.onChange(value => {
                     if (value) {
                         this.selectedTags.add(tag.name);
                     } else {
                         this.selectedTags.delete(tag.name);
                     }
-                })
-            );
+                });
+            });
     }
 
     onClose() {
         const { contentEl } = this;
         contentEl.empty();
+        this.callback(Array.from(this.selectedTags));
     }
 }

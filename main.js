@@ -9045,17 +9045,20 @@ var TagSuggestionModal = class extends import_obsidian.Modal {
     }));
   }
   createTagToggle(container, tag) {
-    new import_obsidian.Setting(container).setClass("tag-toggle").setName(tag.name).addToggle((toggle) => toggle.onChange((value) => {
-      if (value) {
-        this.selectedTags.add(tag.name);
-      } else {
-        this.selectedTags.delete(tag.name);
-      }
-    }));
+    new import_obsidian.Setting(container).setName(tag.name).addToggle((toggle) => {
+      toggle.onChange((value) => {
+        if (value) {
+          this.selectedTags.add(tag.name);
+        } else {
+          this.selectedTags.delete(tag.name);
+        }
+      });
+    });
   }
   onClose() {
     const { contentEl } = this;
     contentEl.empty();
+    this.callback(Array.from(this.selectedTags));
   }
 };
 
@@ -9174,9 +9177,13 @@ var TagAgent = class extends import_obsidian4.Plugin {
       const suggestedTags = await this.tagGenerator.suggestTags(file, content, existingTags, loadingModal.getAbortSignal());
       loadingModal.close();
       if (suggestedTags && suggestedTags.length > 0) {
-        const modal = new TagSuggestionModal(this.app, suggestedTags, (selectedTags) => {
+        const tagSuggestions = suggestedTags.map((tag) => ({
+          name: tag,
+          isExisting: existingTags.has(tag)
+        }));
+        const modal = new TagSuggestionModal(this.app, tagSuggestions, (selectedTags) => {
           if (selectedTags.length > 0) {
-            this.appendTagsToNote(file, selectedTags);
+            this.appendTagsToNote(file, selectedTags.map((tag) => tag.name));
           }
         });
         modal.open();
