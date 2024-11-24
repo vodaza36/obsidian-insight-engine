@@ -4,11 +4,15 @@ The pupose of this project is to develop an Obsidian plugin that handles the Tag
 on an AI driven approach. Following requirements must be met: 
 
 ### Functional Requirements
-- eval "$(ssh-agent -s)"
-ssh-add ~/.ssh/id_ed25519
+- The plugin should be able to scan a single note and generate a list of tags. Thereby he should consider the list of existing tags. If no exiting tag fits then the plugin should suggest new tags.
 - The plugin should be able to scan the vault and suggest proper tags
 - The plugin should be available at the Obsidian marketplace.
-
+- Follow this tagging best practiced:
+    - Use the "noun" form instead of "gerund" forms for verbs
+    - Prefer the naming convention of the existing tags
+    - Use known acronyms (e.g. "ai" instead of "Artificial Intelligence" or "dev" instead of "development")
+    - Do not suggest to specific tags that you will only use once
+    - Prefer single words without hyphens for tags
 ### Non-Functional Requirements
 - To keep everything private and secure an Ollama local LLM is used to classify the notes.
 - The plugin should be easy to use and have a consistent look and feel with the Obsidian app

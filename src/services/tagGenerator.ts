@@ -49,14 +49,16 @@ Existing vault tags:
 {existingTags}
 
 Rules for tag suggestions:
-1. ALWAYS use lowercase
-2. Use hyphens for multi-word tags (e.g., 'machine-learning')
-3. Use / for hierarchical relationships (max 2 levels)
-4. Prefer existing tags when they fit well. Anylase the naming convention oh the existing tags an keep this conevention for new tags
-5. For new tags, ensure they're reusable and not too specific
-6. Include at least one content type tag (#type/...)
-7. Avoid generic tags like #misc, #todo, #stuff
-8. If suggesting a new tag similar to an existing one, prefer the existing one
+1. Use noun forms instead of gerund forms for verbs (e.g., 'development' not 'developing')
+2. Prefer single words without hyphens where possible
+3. Follow the naming convention of existing tags - analyze and maintain consistency
+4. Use known acronyms (e.g., 'ai' instead of 'artificial-intelligence', 'dev' instead of 'development')
+5. Do not suggest specific tags that would only be used once
+6. Use lowercase for all tags
+7. Use / for hierarchical relationships (max 2 levels)
+8. Prefer existing tags when they fit well
+9. Include at least one content type tag (#type/...)
+10. Avoid generic tags like #misc, #todo, #stuff
 
 Provide your response as a comma-separated list of tags (without the # symbol).
 
