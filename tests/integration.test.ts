@@ -1,6 +1,6 @@
 import { App, TFile, Plugin, PluginManifest } from 'obsidian';
 import TagAgent from '../main';
-import { expect, test, describe, beforeEach, afterEach, jest } from '@jest/globals';
+import { expect, test, describe, beforeEach, afterEach, jest, it } from '@jest/globals';
 import { Ollama } from 'langchain/llms/ollama';
 
 // Mock LangChain's Ollama class
@@ -78,7 +78,7 @@ describe('TagAgent Integration Tests', () => {
         jest.clearAllMocks();
     });
 
-    test('suggests relevant tags for technical content', async () => {
+    it('should generate tags for TypeScript content', async () => {
         const content = `
             # Understanding TypeScript Generics
             
@@ -104,7 +104,7 @@ describe('TagAgent Integration Tests', () => {
         expect(tagsString).toMatch(/typescript|programming|development/);
     });
 
-    test('suggests relevant tags for non-technical content', async () => {
+    it('should generate tags for garden content', async () => {
         const content = `
             # My Garden Journal
             
@@ -126,7 +126,18 @@ describe('TagAgent Integration Tests', () => {
         expect(tagsString).toMatch(/garden|plants|nature/);
     });
 
-    test('handles empty content gracefully', async () => {
+    it('should generate default tags for other content', async () => {
+        const content = 'Test content for default tags';
+        const file = createMockFile(content);
+        // Access private method through type assertion
+        const tags = await (plugin as any).suggestTags(file, content);
+        
+        expect(tags).toBeDefined();
+        expect(tags.length).toBeGreaterThanOrEqual(5);
+        expect(tags.length).toBeLessThanOrEqual(7);
+    });
+
+    it('should handle empty content gracefully', async () => {
         const content = '';
         const file = createMockFile(content);
         // Access private method through type assertion
@@ -136,7 +147,7 @@ describe('TagAgent Integration Tests', () => {
         expect(Array.isArray(tags)).toBe(true);
     });
 
-    test('generates tags in correct format', async () => {
+    it('should generate tags in correct format', async () => {
         const content = 'Test content for tag formatting';
         const file = createMockFile(content);
         // Access private method through type assertion
@@ -153,7 +164,7 @@ describe('TagAgent Integration Tests', () => {
         });
     });
 
-    test('LangChain initialization with settings', () => {
+    it('should initialize LangChain with settings', () => {
         const pluginInstance = plugin as any;
         expect(pluginInstance.model).toBeDefined();
         expect(pluginInstance.model.baseUrl).toBe(pluginInstance.settings.ollamaHost);
