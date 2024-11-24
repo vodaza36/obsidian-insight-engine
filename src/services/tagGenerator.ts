@@ -24,7 +24,9 @@ export class TagGenerator {
 		});
 	}
 
-	async suggestTags(file: TFile, content: string, signal?: AbortSignal): Promise<string[]> {
+	async suggestTags(file: TFile, content: string, existingTags: Set<string>, signal?: AbortSignal): Promise<string[]> {
+		const existingTagsList = Array.from(existingTags).join(', ');
+		
 		const promptTemplate = new PromptTemplate({
 			template: `You are a tag suggestion system. Analyze the following content and suggest relevant tags for organizing it.
            Focus on the main topics, concepts, and categories that would help in finding this content later.
@@ -32,26 +34,34 @@ export class TagGenerator {
 Content to analyze:
 {text}
 
+Existing vault tags:
+{existingTags}
+
 Rules for tag suggestions:
-1. Provide exactly 5-7 relevant tags
+1. Provide 5-7 relevant tags
 2. Use lowercase words only
 3. For multi-word tags, use dashes (e.g., 'artificial-intelligence')
 4. Focus on content-specific tags, avoid generic tags
-5. Tags should be specific enough to be useful but general enough to be reusable
+5. If an existing tag fits well, use it; otherwise suggest new specific tags
+6. Tags should be specific enough to be useful but general enough to be reusable
+7. Do not repeat existing tags unless they are highly relevant to the content
 
 Provide your response as a comma-separated list of tags (without the # symbol).
 
 Suggested tags:`,
-			inputVariables: ['text'],
+			inputVariables: ['text', 'existingTags'],
 		});
 
 		try {
-			const prompt = await promptTemplate.format({ text: content });
-            
-            // Check if operation was cancelled
-            if (signal?.aborted) {
-                throw new Error('Operation cancelled');
-            }
+			const prompt = await promptTemplate.format({ 
+				text: content,
+				existingTags: existingTagsList || 'No existing tags'
+			});
+			
+			// Check if operation was cancelled
+			if (signal?.aborted) {
+				throw new Error('Operation cancelled');
+			}
 
 			const response = await this.model.call(prompt, { signal });
 

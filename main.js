@@ -8918,7 +8918,8 @@ var TagGenerator = class {
       model: ollamaModel
     });
   }
-  async suggestTags(file, content, signal) {
+  async suggestTags(file, content, existingTags, signal) {
+    const existingTagsList = Array.from(existingTags).join(", ");
     const promptTemplate = new PromptTemplate({
       template: `You are a tag suggestion system. Analyze the following content and suggest relevant tags for organizing it.
            Focus on the main topics, concepts, and categories that would help in finding this content later.
@@ -8926,20 +8927,28 @@ var TagGenerator = class {
 Content to analyze:
 {text}
 
+Existing vault tags:
+{existingTags}
+
 Rules for tag suggestions:
-1. Provide exactly 5-7 relevant tags
+1. Provide 5-7 relevant tags
 2. Use lowercase words only
 3. For multi-word tags, use dashes (e.g., 'artificial-intelligence')
 4. Focus on content-specific tags, avoid generic tags
-5. Tags should be specific enough to be useful but general enough to be reusable
+5. If an existing tag fits well, use it; otherwise suggest new specific tags
+6. Tags should be specific enough to be useful but general enough to be reusable
+7. Do not repeat existing tags unless they are highly relevant to the content
 
 Provide your response as a comma-separated list of tags (without the # symbol).
 
 Suggested tags:`,
-      inputVariables: ["text"]
+      inputVariables: ["text", "existingTags"]
     });
     try {
-      const prompt = await promptTemplate.format({ text: content });
+      const prompt = await promptTemplate.format({
+        text: content,
+        existingTags: existingTagsList || "No existing tags"
+      });
       if (signal == null ? void 0 : signal.aborted) {
         throw new Error("Operation cancelled");
       }
@@ -8961,8 +8970,8 @@ var import_obsidian = require("obsidian");
 var TagSuggestionModal = class extends import_obsidian.Modal {
   constructor(app, suggestedTags, callback) {
     super(app);
-    this.selectedTags = /* @__PURE__ */ new Set();
     this.suggestedTags = suggestedTags;
+    this.selectedTags = /* @__PURE__ */ new Set();
     this.callback = callback;
   }
   onOpen() {
@@ -8970,14 +8979,26 @@ var TagSuggestionModal = class extends import_obsidian.Modal {
     contentEl.empty();
     contentEl.createEl("h2", { text: "Suggested Tags" });
     contentEl.createEl("p", { text: "Select the tags you want to add to your note:" });
+    const legendEl = contentEl.createEl("div", {
+      cls: "tag-legend",
+      attr: { style: "margin-bottom: 15px; font-size: 0.8em;" }
+    });
+    legendEl.createEl("div", {
+      text: " New tags",
+      attr: { style: "margin-bottom: 5px;" }
+    });
+    legendEl.createEl("div", {
+      text: " Existing tags from vault",
+      attr: { style: "margin-bottom: 15px;" }
+    });
     this.suggestedTags.forEach((tag) => {
-      new import_obsidian.Setting(contentEl).addToggle((toggle) => toggle.onChange((value) => {
+      new import_obsidian.Setting(contentEl).setName(`${tag.isExisting ? "" : ""} ${tag.name}`).addToggle((toggle) => toggle.onChange((value) => {
         if (value) {
-          this.selectedTags.add(tag);
+          this.selectedTags.add(tag.name);
         } else {
-          this.selectedTags.delete(tag);
+          this.selectedTags.delete(tag.name);
         }
-      })).setName(tag);
+      }));
     });
     new import_obsidian.Setting(contentEl).addButton((btn) => btn.setButtonText("Add Selected Tags").setCta().onClick(() => {
       this.close();
@@ -9086,17 +9107,34 @@ var TagAgent = class extends import_obsidian4.Plugin {
     await this.saveData(this.settings);
     this.initializeTagGenerator();
   }
+  getAllVaultTags() {
+    const tags = /* @__PURE__ */ new Set();
+    const files = this.app.vault.getMarkdownFiles();
+    files.forEach((file) => {
+      const cachedMetadata = this.app.metadataCache.getFileCache(file);
+      if (cachedMetadata == null ? void 0 : cachedMetadata.tags) {
+        cachedMetadata.tags.forEach((tag) => {
+          tags.add(tag.tag.substring(1).toLowerCase());
+        });
+      }
+    });
+    return tags;
+  }
   async generateTagsForNote(file) {
     const content = await this.app.vault.read(file);
+    const existingTags = this.getAllVaultTags();
     const loadingModal = new LoadingModal(this.app, "Generating tags...", () => {
       new import_obsidian4.Notice("Tag generation cancelled");
     });
     loadingModal.open();
     try {
-      const suggestedTags = await this.tagGenerator.suggestTags(file, content, loadingModal.getAbortSignal());
+      const suggestedTags = await this.tagGenerator.suggestTags(file, content, existingTags, loadingModal.getAbortSignal());
       loadingModal.close();
       if (suggestedTags && suggestedTags.length > 0) {
-        const modal = new TagSuggestionModal(this.app, suggestedTags, async (selectedTags) => {
+        const modal = new TagSuggestionModal(this.app, suggestedTags.map((tag) => ({
+          name: tag,
+          isExisting: existingTags.has(tag)
+        })), async (selectedTags) => {
           if (selectedTags.length > 0) {
             await this.appendTagsToNote(file, selectedTags);
           }

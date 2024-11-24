@@ -1,4 +1,4 @@
-import { Plugin, TFile, Notice } from 'obsidian';
+import { Plugin, TFile, Notice, getAllTags } from 'obsidian';
 import { TagAgentSettings, DEFAULT_SETTINGS } from '../models/types';
 import { TagGenerator } from '../services/tagGenerator';
 import { TagSuggestionModal } from '../ui/TagSuggestionModal';
@@ -54,8 +54,26 @@ export default class TagAgent extends Plugin {
 		this.initializeTagGenerator();
 	}
 
+	private getAllVaultTags(): Set<string> {
+		const tags = new Set<string>();
+		const files = this.app.vault.getMarkdownFiles();
+
+		files.forEach(file => {
+			const cachedMetadata = this.app.metadataCache.getFileCache(file);
+			if (cachedMetadata?.tags) {
+				cachedMetadata.tags.forEach(tag => {
+					// Remove the '#' prefix and convert to lowercase
+					tags.add(tag.tag.substring(1).toLowerCase());
+				});
+			}
+		});
+
+		return tags;
+	}
+
 	private async generateTagsForNote(file: TFile) {
 		const content = await this.app.vault.read(file);
+		const existingTags = this.getAllVaultTags();
 		
 		// Show loading modal
 		const loadingModal = new LoadingModal(
@@ -71,6 +89,7 @@ export default class TagAgent extends Plugin {
 			const suggestedTags = await this.tagGenerator.suggestTags(
 				file,
 				content,
+				existingTags,
 				loadingModal.getAbortSignal()
 			);
 
@@ -80,7 +99,10 @@ export default class TagAgent extends Plugin {
 			if (suggestedTags && suggestedTags.length > 0) {
 				const modal = new TagSuggestionModal(
 					this.app,
-					suggestedTags,
+					suggestedTags.map(tag => ({
+						name: tag,
+						isExisting: existingTags.has(tag)
+					})),
 					async (selectedTags) => {
 						if (selectedTags.length > 0) {
 							await this.appendTagsToNote(file, selectedTags);
