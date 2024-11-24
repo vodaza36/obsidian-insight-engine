@@ -28,8 +28,19 @@ export class TagGenerator {
 		const existingTagsList = Array.from(existingTags).join(', ');
 		
 		const promptTemplate = new PromptTemplate({
-			template: `You are a tag suggestion system. Analyze the following content and suggest relevant tags for organizing it.
-           Focus on the main topics, concepts, and categories that would help in finding this content later.
+			template: `You are an intelligent tag suggestion system for personal note-taking. Analyze the following content and suggest relevant tags based on these principles:
+
+Core Principles:
+1. Consistency: Use lowercase words, hyphens for multi-word tags
+2. Hierarchy: Use / for nested tags (e.g., project/web-dev)
+3. Simplicity: Suggest 3-7 most relevant tags
+
+Tag Categories to Consider:
+1. Content Type: #type/[article|note|meeting|project|idea]
+2. Topic Tags: Main subject matter (e.g., #programming/python, #health/nutrition)
+3. Status: #status/[draft|in-progress|completed|archived]
+4. Project Tags: If applicable, use #project/[project-name]
+5. Context Tags: If clear from content, use #context/[personal|work|research]
 
 Content to analyze:
 {text}
@@ -38,13 +49,14 @@ Existing vault tags:
 {existingTags}
 
 Rules for tag suggestions:
-1. Provide 5-7 relevant tags
-2. Use lowercase words only
-3. For multi-word tags, use dashes (e.g., 'artificial-intelligence')
-4. Focus on content-specific tags, avoid generic tags
-5. If an existing tag fits well, use it; otherwise suggest new specific tags
-6. Tags should be specific enough to be useful but general enough to be reusable
-7. Do not repeat existing tags unless they are highly relevant to the content
+1. ALWAYS use lowercase
+2. Use hyphens for multi-word tags (e.g., 'machine-learning')
+3. Use / for hierarchical relationships (max 2 levels)
+4. Prefer existing tags when they fit well
+5. For new tags, ensure they're reusable and not too specific
+6. Include at least one content type tag (#type/...)
+7. Avoid generic tags like #misc, #todo, #stuff
+8. If suggesting a new tag similar to an existing one, prefer the existing one
 
 Provide your response as a comma-separated list of tags (without the # symbol).
 
@@ -68,7 +80,8 @@ Suggested tags:`,
 			return response
 				.split(',')
 				.map((tag) => tag.trim().toLowerCase())
-				.filter((tag) => tag.length > 0);
+				.filter((tag) => tag.length > 0)
+				.map((tag) => tag.replace(/\s+/g, '-')); // Ensure spaces are replaced with hyphens
 		} catch (error) {
 			if (error.name === 'AbortError' || error.message === 'Operation cancelled') {
 				console.log('Tag generation cancelled');
