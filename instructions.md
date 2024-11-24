@@ -5,7 +5,6 @@ on an AI driven approach. Following requirements must be met:
 
 ### Functional Requirements
 - The plugin should be able to scan a single note and generate a list of tags. Thereby he should consider the list of existing tags. If no exiting tag fits then the plugin should suggest new tags.
-- The plugin should be able to scan the vault and suggest proper tags
 - The plugin should be available at the Obsidian marketplace.
 - Follow this tagging best practiced:
     - Use the "noun" form instead of "gerund" forms for verbs
@@ -20,8 +19,7 @@ on an AI driven approach. Following requirements must be met:
 - Organize the code by features
 
 ## Features
-- Scan the vault and generate a list of tags
-- Scan the vault and assign tags to notes based on the existings tags
+- Scan the current note and generate a list of tags the will be suggested to the user
 
 ## UI
 - On the plugin settings page the user must confirm to scan the vault for tags

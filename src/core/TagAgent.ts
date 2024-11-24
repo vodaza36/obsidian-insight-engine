@@ -32,13 +32,6 @@ export default class TagAgent extends Plugin {
 				}
 			},
 		});
-
-		// Add command to analyze all notes
-		this.addCommand({
-			id: 'analyze-all-notes',
-			name: 'Analyze All Notes',
-			callback: () => this.analyzeAllNotes(),
-		});
 	}
 
 	private initializeTagGenerator() {
@@ -140,16 +133,5 @@ export default class TagAgent extends Plugin {
 
 		await this.app.vault.modify(file, newContent);
 		new Notice(`Added tags: ${formattedTags}`);
-	}
-
-	async analyzeAllNotes() {
-		const files = this.app.vault.getMarkdownFiles();
-		let processedCount = 0;
-
-		for (const file of files) {
-			await this.generateTagsForNote(file);
-			processedCount++;
-			new Notice(`Processed ${processedCount}/${files.length} notes`);
-		}
 	}
 }

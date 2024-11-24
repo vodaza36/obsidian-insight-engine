@@ -236,10 +236,4 @@ describe('TagAgent E2E Tests', () => {
         // Clean up
         jest.restoreAllMocks();
     });
-
-    test('should handle multiple files in vault', async () => {
-        const fileList = await app.vault.adapter.list('');
-        expect(fileList.files.length).toBeGreaterThan(0);
-        expect(fileList.files.includes('note1.md')).toBe(true);
-    });
 });

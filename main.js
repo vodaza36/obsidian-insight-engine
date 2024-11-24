@@ -9139,11 +9139,6 @@ var TagAgent = class extends import_obsidian4.Plugin {
         }
       }
     });
-    this.addCommand({
-      id: "analyze-all-notes",
-      name: "Analyze All Notes",
-      callback: () => this.analyzeAllNotes()
-    });
   }
   initializeTagGenerator() {
     this.tagGenerator = new TagGenerator(this.settings.ollamaHost, this.settings.ollamaModel);
@@ -9217,15 +9212,6 @@ ${content}`;
     }
     await this.app.vault.modify(file, newContent);
     new import_obsidian4.Notice(`Added tags: ${formattedTags}`);
-  }
-  async analyzeAllNotes() {
-    const files = this.app.vault.getMarkdownFiles();
-    let processedCount = 0;
-    for (const file of files) {
-      await this.generateTagsForNote(file);
-      processedCount++;
-      new import_obsidian4.Notice(`Processed ${processedCount}/${files.length} notes`);
-    }
   }
 };
 
