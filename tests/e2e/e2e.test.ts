@@ -106,6 +106,34 @@ describe('TagAgent E2E Tests', () => {
         const generateTagsCommand = registeredCommands.find(cmd => cmd.id === 'generate-note-tags');
         expect(generateTagsCommand).toBeDefined();
         expect(generateTagsCommand?.name).toBe('Generate Tags for Current Note');
+
+        // Actually test the tag suggestion with real LLM
+        const mockEditor = {
+            getValue: () => content,
+            setValue: jest.fn()
+        };
+        const mockView = { 
+            file: testNote,
+            editor: mockEditor
+        };
+
+        // Set up real Ollama instance
+        (plugin as any).settings = {
+            ollamaHost: 'http://localhost:11434',
+            ollamaModel: 'llama2'
+        };
+        (plugin as any).initializeLangChain();
+
+        // Call the command's callback which will use the real LLM
+        await generateTagsCommand?.editorCallback(mockEditor, mockView);
+
+        // Since this is e2e, we'll need to wait for the real LLM response
+        await new Promise(resolve => setTimeout(resolve, 5000));
+
+        // Verify that new tags were added to the note
+        const updatedContent = await app.vault.adapter.read('note1.md');
+        expect(updatedContent).not.toBe(content); // Content should have changed
+        expect(updatedContent.match(/tags:\s*\[(.*?)\]/)?.[1]).toBeDefined(); // Should have tags
     });
 
     test('should handle multiple files in vault', async () => {

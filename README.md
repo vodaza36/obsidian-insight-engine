@@ -67,30 +67,66 @@ The following list of resources were used to develop this plugin:
    npm run dev
    ```
 
-## Tests
+## Testing
 
-The plugin includes a comprehensive test suite built with Jest that verifies the core functionality of the tag suggestion system. The tests focus on the integration between the plugin and the local LLM (Ollama) service.
+The plugin uses Jest for testing and includes both integration and end-to-end (e2e) tests.
 
-### Test Coverage
+### Test Types
 
-- **Tag Suggestion Tests**
-  - Technical content analysis (e.g., programming topics)
-  - Non-technical content analysis (e.g., gardening, general topics)
-  - Empty content handling
-  - Tag format validation (lowercase, proper separators)
+1. **Integration Tests**
+   - Located in `tests/integration/`
+   - Test individual components and their interactions
+   - Do not require external services
+   - Verify core functionality with mocked LLM responses
 
-- **LLM Integration Tests**
-  - Ollama service initialization
-  - Model configuration validation
-  - Response handling and parsing
+2. **End-to-End Tests**
+   - Located in `tests/e2e/`
+   - Test complete user workflows
+   - Require Ollama to be running (`ollama serve`)
+   - Use real LLM calls for tag generation
+   - Validate the entire tag suggestion pipeline
 
 ### Running Tests
 
 ```bash
+# Run all tests
 npm test
+
+# Run only integration tests
+npm run test:integration
+
+# Run only e2e tests (requires Ollama running)
+npm run test:e2e
+
+# Watch mode
+npm run test:watch              # Watch all tests
+npm run test:integration:watch  # Watch integration tests
+npm run test:e2e:watch         # Watch e2e tests
 ```
 
-The test suite uses mocked responses for the LLM service to ensure consistent and reliable testing without requiring a running Ollama instance.
+### Prerequisites for E2E Testing
+
+1. Make sure Ollama is installed and the desired model is pulled:
+   ```bash
+   ollama pull llama2
+   ```
+
+2. Start the Ollama server:
+   ```bash
+   ollama serve
+   ```
+
+The e2e tests will automatically check if Ollama is running before execution. If Ollama is not running, the tests will fail with a clear error message.
+
+### Test Coverage
+
+The test suite aims to provide comprehensive coverage of:
+- Plugin initialization and command registration
+- Tag suggestion functionality
+- LLM integration (both mocked and real)
+- File system operations
+- User interface interactions
+- Error handling and edge cases
 
 ## Requirements
 
