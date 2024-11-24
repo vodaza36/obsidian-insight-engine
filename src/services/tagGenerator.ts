@@ -52,7 +52,7 @@ Rules for tag suggestions:
 1. ALWAYS use lowercase
 2. Use hyphens for multi-word tags (e.g., 'machine-learning')
 3. Use / for hierarchical relationships (max 2 levels)
-4. Prefer existing tags when they fit well
+4. Prefer existing tags when they fit well. Anylase the naming convention oh the existing tags an keep this conevention for new tags
 5. For new tags, ensure they're reusable and not too specific
 6. Include at least one content type tag (#type/...)
 7. Avoid generic tags like #misc, #todo, #stuff

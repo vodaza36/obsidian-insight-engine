@@ -41,6 +41,66 @@
 - Time-based organization
 - Examples: #2023Q4, #daily-notes, #weekly-review
 
+## Tag Naming Conventions
+
+### 1. Case and Format
+- Always use lowercase (e.g., #programming not #Programming)
+- Use hyphens for multi-word tags (#machine-learning not #machine_learning or #MachineLearning)
+- Avoid spaces in tags (#project-management not #project management)
+- Keep tags concise but meaningful (#dev not #development, but #artificial-intelligence not #ai)
+
+### 2. Hierarchy and Prefixes
+- Use forward slash (/) for hierarchical relationships (#area/finance/stocks)
+- Limit hierarchy to 2-3 levels maximum (#project/blog/draft is good, #area/tech/programming/web/frontend/react is too deep)
+- Use consistent prefixes for similar types of tags:
+  - type/ for content types (#type/article, #type/note)
+  - status/ for state (#status/draft, #status/complete)
+  - area/ for areas of focus (#area/health, #area/tech)
+  - project/ for project-related tags (#project/blog)
+
+### 3. Naming Do's
+- Use singular forms for concepts (#book not #books)
+- Use plural forms for collections (#meeting-notes not #meeting-note)
+- Use gerunds for ongoing activities (#writing not #write)
+- Use full words for clarity (#meeting not #mtg)
+- Include context in specialized tags (#tool/obsidian not just #obsidian)
+
+### 4. Naming Don'ts
+- No special characters except hyphen and forward slash
+- No numbers at the start of tags
+- No abbreviations unless universally recognized (#js is ok, #prog is not)
+- No temporary tags (#todo-20231124)
+- No personal references that won't make sense later (#johns-idea)
+
+### 5. Version and Time-Based Tags
+- Use YYYY format for years (#2023 not #23)
+- Use YYYY-MM for months (#2023-12 not #dec23)
+- Use YYYY-QN for quarters (#2023-q4 not #q4)
+- Version tags should follow semantic versioning (#v1-0-0 not #version1)
+
+### Examples
+
+Good Tag Examples:
+```markdown
+#area/finance/investing
+#project/blog/draft
+#type/tutorial
+#status/in-progress
+#tool/obsidian
+#language/python
+#2023-q4
+```
+
+Poor Tag Examples:
+```markdown
+#MyProject
+#quick_note
+#todo_later
+#mtg
+#stuff
+#v1
+```
+
 ## Practical Guidelines
 
 1. **Tag Formation**
