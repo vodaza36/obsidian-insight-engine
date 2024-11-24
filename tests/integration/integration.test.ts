@@ -1,22 +1,22 @@
 import { App, TFile, Plugin, PluginManifest } from 'obsidian';
 import TagAgent from '../../main';
 import { expect, test, describe, beforeEach, afterEach, jest, it } from '@jest/globals';
-import { Ollama } from 'langchain/llms/ollama';
+import { Ollama } from '@langchain/community/llms/ollama';
 
 // Mock LangChain's Ollama class
-jest.mock('langchain/llms/ollama', () => {
+jest.mock('@langchain/community/llms/ollama', () => {
     return {
         Ollama: jest.fn().mockImplementation(({ baseUrl, model }) => ({
             baseUrl,
             model,
-            call: jest.fn().mockImplementation((prompt: string) => {
+            invoke: jest.fn().mockImplementation((prompt: string) => {
                 // Return different responses based on the content in the prompt
                 if (prompt.includes('TypeScript generics')) {
-                    return Promise.resolve('typescript, programming, generics, type-safety, development, software-engineering');
+                    return Promise.resolve('#typescript, #programming, #generics, #type-safety, #development, #software-engineering');
                 } else if (prompt.includes('garden')) {
-                    return Promise.resolve('gardening, plants, vegetables, outdoor-activities, nature, home-garden');
+                    return Promise.resolve('#gardening, #plants, #vegetables, #outdoor-activities, #nature, #home-garden');
                 } else {
-                    return Promise.resolve('test-tag-1, test-tag-2, test-tag-3, test-tag-4, test-tag-5');
+                    return Promise.resolve('#test-tag-1, #test-tag-2, #test-tag-3, #test-tag-4, #test-tag-5');
                 }
             })
         }))

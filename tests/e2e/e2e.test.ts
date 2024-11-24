@@ -1,6 +1,5 @@
 import { describe, test, expect } from '@jest/globals';
 import { TagGenerator } from '../../src/services/tagGenerator';
-import { TFile } from 'obsidian';
 
 describe('TagAgent E2E Tests', () => {
     test('should suggest tags using real Ollama implementation', async () => {
@@ -13,7 +12,7 @@ It discusses various programming concepts and software development practices.
 The note also touches on topics like data science and neural networks.
         `;
         
-        const existingTags = new Set<string>();
+        const existingTags = new Set<string>(['#ai', '#programming']);
         
         const suggestedTags = await tagGenerator.suggestTags(noteContent, existingTags);
         

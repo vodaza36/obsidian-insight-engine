@@ -1,5 +1,5 @@
-import { Ollama } from 'langchain/llms/ollama';
-import { PromptTemplate } from 'langchain/prompts';
+import { Ollama } from '@langchain/community/llms/ollama';
+import { PromptTemplate } from '@langchain/core/prompts';
 import { TFile } from 'obsidian';
 import * as http from 'http';
 
@@ -17,12 +17,26 @@ import * as http from 'http';
 
 export class TagGenerator {
 	private model: Ollama;
+	private promptTemplate: PromptTemplate;
 
-	constructor(ollamaHost: string, ollamaModel: string) {
+	constructor(baseUrl: string, modelName: string) {
 		this.model = new Ollama({
-			baseUrl: ollamaHost,
-			model: ollamaModel,
+			baseUrl,
+			model: modelName,
+			temperature: 0.7,
 		});
+
+		this.promptTemplate = PromptTemplate.fromTemplate(
+			`Given the following note content, suggest 3-5 relevant tags that capture the main topics and themes. Tags should start with '#' and be concise. If any of the suggested tags already exist in the note, prioritize them. Avoid overly generic tags.
+
+Note Content:
+{content}
+
+Existing Tags:
+{existingTags}
+
+Please provide the tags as a comma-separated list.`
+		);
 	}
 
 	private async isOllamaServerRunning(): Promise<boolean> {
@@ -39,7 +53,7 @@ export class TagGenerator {
 		});
 	}
 
-	async suggestTags(content: string, existingTags: Set<string>, signal?: AbortSignal): Promise<string[]> {
+	async suggestTags(content: string, existingTags: Set<string> = new Set(), signal?: AbortSignal): Promise<string[]> {
 		// Check if Ollama server is running
 		const isServerRunning = await this.isOllamaServerRunning();
 		if (!isServerRunning) {
@@ -47,46 +61,27 @@ export class TagGenerator {
 		}
 
 		const existingTagsList = Array.from(existingTags).join(', ');
-		
-		const promptTemplate = new PromptTemplate({
-			template: `You are an intelligent tag suggestion system for personal note-taking. Your task is to analyze the content of a note and suggest relevant tags that describe its topics, themes, and key concepts.
-
-Content to analyze:
-{text}
-
-Existing vault tags that you can reuse if they fit the content:
-{existingTags}
-
-Instructions:
-1. Analyze the content and suggest 3-5 relevant tags
-2. Each tag should start with '#'
-3. If an existing tag fits, use it instead of creating a new one
-4. Keep tags concise (1-2 words)
-5. Avoid overly generic tags
-6. Return only the tags as a comma-separated list, no other text
-
-Example output: #ai, #machine-learning, #data-science`,
-			inputVariables: ['text', 'existingTags'],
-		});
 
 		try {
-			const prompt = await promptTemplate.format({
-				text: content,
-				existingTags: existingTagsList || 'No existing tags',
-			});
-
 			// Check if operation was cancelled
 			if (signal?.aborted) {
 				throw new Error('Operation cancelled');
 			}
 
-			const response = await this.model.call(prompt, { signal });
+			const prompt = await this.promptTemplate.format({
+				content,
+				existingTags: existingTagsList || 'None',
+			});
+
+			const response = await this.model.invoke(prompt, { 
+				signal,
+			});
 
 			return response
 				.split(',')
-				.map((tag) => tag.trim().toLowerCase())
-				.filter((tag) => tag.length > 0)
-				.map((tag) => tag.replace(/\s+/g, '-')); // Ensure spaces are replaced with hyphens
+				.map((tag: string) => tag.trim().toLowerCase())
+				.filter((tag: string) => tag.length > 0)
+				.map((tag: string) => tag.replace(/\s+/g, '-')); // Ensure spaces are replaced with hyphens
 
 		} catch (error) {
 			if (error.name === 'AbortError' || error.message === 'Operation cancelled') {

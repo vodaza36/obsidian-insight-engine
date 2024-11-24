@@ -1,6 +1,6 @@
 import { App, Plugin, PluginSettingTab, Setting, TFile, MarkdownView, Modal, Notice, Command } from 'obsidian';
-import { Ollama } from 'langchain/llms/ollama';
-import { PromptTemplate } from 'langchain/prompts';
+import { Ollama } from '@langchain/community/llms/ollama';
+import { PromptTemplate } from '@langchain/core/prompts';
 
 interface TagAgentSettings {
 	ollamaHost: string;
