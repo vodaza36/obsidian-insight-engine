@@ -171,7 +171,7 @@ describe('TagAgent Integration Tests', () => {
         expect(pluginInstance.model.model).toBe(pluginInstance.settings.ollamaModel);
         expect(Ollama).toHaveBeenCalledWith({
             baseUrl: 'http://localhost:11434',
-            model: 'mistral'
+            model: 'llama3.1'
         });
     });
 });

@@ -33,7 +33,7 @@ export class TagAgentSettingTab extends PluginSettingTab {
 			.setDesc('The model to use for tag generation')
 			.addText((text) =>
 				text
-					.setPlaceholder('mistral')
+					.setPlaceholder('llama3.1')
 					.setValue(this.plugin.settings.ollamaModel)
 					.onChange(async (value) => {
 						this.plugin.settings.ollamaModel = value;

@@ -2,6 +2,18 @@ import { Ollama } from 'langchain/llms/ollama';
 import { PromptTemplate } from 'langchain/prompts';
 import { TFile } from 'obsidian';
 
+/**
+ * TagGenerator class is responsible for generating tags for notes using the Ollama language model.
+ * 
+ * This class provides functionality to:
+ * - Initialize an Ollama model with specified host and model name.
+ * - Suggest tags for a given file and its content using the Ollama model.
+ * 
+ * Main methods:
+ * - constructor: Initializes the Ollama model with provided host and model name.
+ * - suggestTags: Analyzes file content and generates relevant tags using the Ollama model.
+ */
+
 export class TagGenerator {
 	private model: Ollama;
 

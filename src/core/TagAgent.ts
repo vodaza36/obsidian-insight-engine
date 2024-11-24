@@ -4,6 +4,11 @@ import { TagGenerator } from '../services/tagGenerator';
 import { TagSuggestionModal } from '../ui/TagSuggestionModal';
 import { TagAgentSettingTab } from '../ui/SettingsTab';
 
+/**
+ * This class is the entrypoint for the TagAgent plugin.
+ * It provides the UI integration points for the plugin such as the settings tab and the command for analyzing the current note.
+ * It also provides the core functionality for generating tags for a note.
+ */
 export default class TagAgent extends Plugin {
 	settings: TagAgentSettings;
 	tagGenerator: TagGenerator;

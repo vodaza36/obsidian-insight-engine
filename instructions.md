@@ -33,4 +33,4 @@ on an AI driven approach. Following requirements must be met:
 - [Obsidian API](https://github.com/obsidianmd/obsidian-api) - Native UI components and plugin APIs
 - [LangChain.js](https://js.langchain.com/) - Framework for developing LLM-powered applications
 - [Ollama](https://github.com/ollama/ollama) - Run large language models locally
-    - Using Llama2 as the base model for text generation and analysis
+    - Using "llama3.1" as the base model for text generation and analysis

@@ -9,7 +9,7 @@ interface TagAgentSettings {
 
 const DEFAULT_SETTINGS: TagAgentSettings = {
 	ollamaHost: 'http://localhost:11434',
-	ollamaModel: 'mistral'
+	ollamaModel: 'llama3.1'
 }
 
 export default class TagAgent extends Plugin {
@@ -77,7 +77,7 @@ Content to analyze:
 {text}
 
 Rules for tag suggestions:
-1. Provide exactly 5-7 relevant tags
+1. Provide at a maximum 7 relevant tags
 2. Use lowercase words only
 3. For multi-word tags, use dashes (e.g., 'artificial-intelligence')
 4. Focus on content-specific tags, avoid generic tags
@@ -189,9 +189,9 @@ class TagAgentSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Ollama Model')
-			.setDesc('Enter the Ollama model to use (default: mistral)')
+			.setDesc('Enter the Ollama model to use (default: llama3.1)')
 			.addText(text => text
-				.setPlaceholder('mistral')
+				.setPlaceholder('llama3.1')
 				.setValue(this.plugin.settings.ollamaModel)
 				.onChange(async (value) => {
 					this.plugin.settings.ollamaModel = value;

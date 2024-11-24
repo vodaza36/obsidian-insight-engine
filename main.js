@@ -7545,7 +7545,7 @@ var import_obsidian3 = require("obsidian");
 // src/models/types.ts
 var DEFAULT_SETTINGS = {
   ollamaHost: "http://localhost:11434",
-  ollamaModel: "mistral"
+  ollamaModel: "llama3.1"
 };
 
 // node_modules/@langchain/core/dist/language_models/llms.js
@@ -8998,7 +8998,7 @@ var TagAgentSettingTab = class extends import_obsidian2.PluginSettingTab {
       this.plugin.settings.ollamaHost = value;
       await this.plugin.saveSettings();
     }));
-    new import_obsidian2.Setting(containerEl).setName("Ollama Model").setDesc("The model to use for tag generation").addText((text) => text.setPlaceholder("mistral").setValue(this.plugin.settings.ollamaModel).onChange(async (value) => {
+    new import_obsidian2.Setting(containerEl).setName("Ollama Model").setDesc("The model to use for tag generation").addText((text) => text.setPlaceholder("llama3.1").setValue(this.plugin.settings.ollamaModel).onChange(async (value) => {
       this.plugin.settings.ollamaModel = value;
       await this.plugin.saveSettings();
     }));
