@@ -1,7 +1,7 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 const baseConfig = {
   preset: 'ts-jest',
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
   moduleFileExtensions: ['ts', 'js'],
   transform: {
     '^.+\\.tsx?$': ['ts-jest', {
@@ -10,32 +10,41 @@ const baseConfig = {
   },
   moduleNameMapper: {
     '^obsidian$': '<rootDir>/tests/mocks/obsidian.ts',
-    '^@/(.*)$': '<rootDir>/$1'
+    '^@/(.*)$': '<rootDir>/src/$1',
+    '^../../main$': '<rootDir>/main.ts',
+    '^../../src/(.*)$': '<rootDir>/src/$1'
   },
-  setupFiles: ['<rootDir>/tests/setup.js'],
+  setupFiles: [
+    '<rootDir>/tests/setup/polyfills.js',
+    '<rootDir>/tests/setup.js'
+  ],
   setupFilesAfterEnv: ['<rootDir>/tests/setupAfterEnv.js'],
   roots: ['<rootDir>'],
-  modulePaths: ['<rootDir>'],
+  modulePaths: ['<rootDir>']
 };
 
 const integrationConfig = {
   ...baseConfig,
   displayName: 'integration',
-  testMatch: ['**/tests/integration/**/*.test.ts'],
+  testMatch: ['<rootDir>/tests/integration/**/*.test.ts']
 };
 
 const e2eConfig = {
   ...baseConfig,
   displayName: 'e2e',
-  testMatch: ['**/tests/e2e/**/*.test.ts'],
-  globalSetup: '<rootDir>/scripts/check-ollama.js',
-  testTimeout: undefined,
+  testMatch: ['<rootDir>/tests/e2e/**/*.test.ts'],
   setupFilesAfterEnv: [
     ...baseConfig.setupFilesAfterEnv,
     '<rootDir>/tests/e2e/setup.js'
-  ],
+  ]
+};
+
+const unitConfig = {
+  ...baseConfig,
+  displayName: 'unit',
+  testMatch: ['<rootDir>/tests/unit/**/*.test.ts']
 };
 
 module.exports = {
-  projects: [integrationConfig, e2eConfig],
+  projects: [unitConfig, integrationConfig, e2eConfig]
 };

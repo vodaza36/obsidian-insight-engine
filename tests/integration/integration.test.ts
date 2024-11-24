@@ -1,5 +1,5 @@
 import { App, TFile, Plugin, PluginManifest } from 'obsidian';
-import TagAgent from '../main';
+import TagAgent from '../../main';
 import { expect, test, describe, beforeEach, afterEach, jest, it } from '@jest/globals';
 import { Ollama } from 'langchain/llms/ollama';
 

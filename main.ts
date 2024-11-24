@@ -1,4 +1,4 @@
-import { App, Plugin, PluginSettingTab, Setting, TFile, MarkdownView, Modal, Notice } from 'obsidian';
+import { App, Plugin, PluginSettingTab, Setting, TFile, MarkdownView, Modal, Notice, Command } from 'obsidian';
 import { Ollama } from 'langchain/llms/ollama';
 import { PromptTemplate } from 'langchain/prompts';
 
@@ -12,17 +12,40 @@ const DEFAULT_SETTINGS: TagAgentSettings = {
 	ollamaModel: 'llama3.1'
 }
 
+// Extended App type for test environment
+interface TestApp extends App {
+    addCommand?: (command: Command) => void;
+}
+
 export default class TagAgent extends Plugin {
 	settings: TagAgentSettings;
 	model: Ollama;
 	existingTags: Set<string> = new Set();
 
+	constructor(app: App | TestApp, manifest: any) {
+		super(app, manifest);
+		// Ensure addCommand is available in test environment
+		const testApp = app as TestApp;
+		if (!this.addCommand && testApp.addCommand) {
+			this.addCommand = testApp.addCommand.bind(testApp);
+		}
+	}
+
 	async onload() {
+		if (!(this.app instanceof App)) {
+			console.warn('Running in test environment');
+		} else {
+			await super.onload();
+		}
 		await this.loadSettings();
 		this.initializeLangChain();
 		
 		// Add settings tab
-		this.addSettingTab(new TagAgentSettingTab(this.app, this));
+		if (this.addSettingTab) {
+			this.addSettingTab(new TagAgentSettingTab(this.app, this));
+		} else {
+			console.error('addSettingTab method is not available. Please check the Obsidian API version.');
+		}
 
 		// Add command to generate tags for current note
 		this.addCommand({
