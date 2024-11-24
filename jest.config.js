@@ -12,6 +12,7 @@ const baseConfig = {
     '^obsidian$': '<rootDir>/tests/mocks/obsidian.ts',
   },
   setupFiles: ['<rootDir>/tests/setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/tests/setupAfterEnv.js'],
 };
 
 const integrationConfig = {
@@ -25,7 +26,11 @@ const e2eConfig = {
   displayName: 'e2e',
   testMatch: ['**/tests/e2e/**/*.test.ts'],
   globalSetup: '<rootDir>/scripts/check-ollama.js',
-  testTimeout: 30000, // 30 seconds timeout for e2e tests
+  testTimeout: undefined,
+  setupFilesAfterEnv: [
+    ...baseConfig.setupFilesAfterEnv,
+    '<rootDir>/tests/e2e/setup.js'
+  ]
 };
 
 module.exports = {

@@ -89,3 +89,45 @@ export class Modal {
 export class Notice {
     constructor(message: string) {}
 }
+
+export interface Editor {
+    getValue(): string;
+    setValue(value: string): void;
+    getDoc(): any;
+    refresh(): void;
+    getLine(line: number): string;
+    setLine(n: number, text: string): void;
+    lineCount(): number;
+    lastLine(): number;
+    getRange(from: any, to: any): string;
+    replaceRange(replacement: string, from: any, to?: any): void;
+    getSelection(): string;
+    somethingSelected(): boolean;
+    getSelections(): string[];
+    replaceSelection(replacement: string): void;
+    replaceSelections(replacements: string[]): void;
+    getCursor(string?: string): any;
+    listSelections(): any[];
+    setCursor(pos: number): void;
+    setSelection(anchor: any, head?: any): void;
+    setSelections(ranges: any[], main?: number): void;
+    focus(): void;
+    blur(): void;
+    hasFocus(): boolean;
+    getScrollInfo(): any;
+    scrollTo(x?: number | null, y?: number | null): void;
+    scrollIntoView(range: any, margin?: number): void;
+    undo(): void;
+    redo(): void;
+    exec(command: string): void;
+    transaction(tx: () => void): void;
+    posToOffset(pos: any): number;
+    offsetToPos(offset: number): any;
+    processLines(from: number, to: number, fn: (line: string, lineNo: number) => void): void;
+    wordAt(pos: any): any | null;
+}
+
+export interface MarkdownView {
+    file: TFile;
+    editor: Editor;
+}

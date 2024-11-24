@@ -108,7 +108,7 @@ npm run test:e2e:watch         # Watch e2e tests
 
 1. Make sure Ollama is installed and the desired model is pulled:
    ```bash
-   ollama pull llama2
+   ollama pull llama3.1
    ```
 
 2. Start the Ollama server:

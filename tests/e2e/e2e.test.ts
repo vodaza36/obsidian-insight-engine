@@ -1,5 +1,5 @@
-import { App, TFile, Vault, Plugin, Command } from 'obsidian';
-import TagAgent from '../main';
+import { App, TFile, Vault, Plugin, Command, Editor, MarkdownView } from 'obsidian';
+import TagAgent from '../../main';
 import { expect, test, describe, beforeAll, afterAll, jest } from '@jest/globals';
 import { join } from 'path';
 import * as fs from 'fs';
@@ -22,6 +22,46 @@ const createMockTFile = (filepath: string, vault: Vault): TFile => {
             size: stats.size
         }
     } as unknown as TFile;
+};
+
+// Create mock Editor factory
+const createMockEditor = (content: string): Editor => {
+    return {
+        getValue: () => content,
+        setValue: jest.fn(),
+        getDoc: jest.fn(),
+        refresh: jest.fn(),
+        getLine: jest.fn(),
+        setLine: jest.fn(),
+        lineCount: jest.fn(() => 1),
+        lastLine: jest.fn(() => 0),
+        getRange: jest.fn(),
+        replaceRange: jest.fn(),
+        getSelection: jest.fn(),
+        somethingSelected: jest.fn(),
+        getSelections: jest.fn(),
+        replaceSelection: jest.fn(),
+        replaceSelections: jest.fn(),
+        getCursor: jest.fn(),
+        listSelections: jest.fn(),
+        setCursor: jest.fn(),
+        setSelection: jest.fn(),
+        setSelections: jest.fn(),
+        focus: jest.fn(),
+        hasFocus: jest.fn(),
+        blur: jest.fn(),
+        getScrollInfo: jest.fn(),
+        scrollTo: jest.fn(),
+        scrollIntoView: jest.fn(),
+        undo: jest.fn(),
+        redo: jest.fn(),
+        exec: jest.fn(),
+        transaction: jest.fn(),
+        posToOffset: jest.fn(),
+        offsetToPos: jest.fn(),
+        processLines: jest.fn(),
+        wordAt: jest.fn(() => null)
+    } as unknown as Editor;
 };
 
 describe('TagAgent E2E Tests', () => {
@@ -93,9 +133,16 @@ describe('TagAgent E2E Tests', () => {
     });
 
     afterAll(async () => {
+        // Clean up plugin
         if (plugin.onunload) {
             await plugin.onunload();
         }
+
+        // Clean up any remaining timeouts
+        jest.useRealTimers();
+        
+        // Wait for any remaining promises to settle
+        await new Promise(resolve => setTimeout(resolve, 100));
     });
 
     test('should suggest tags for test note content', async () => {
@@ -107,25 +154,26 @@ describe('TagAgent E2E Tests', () => {
         expect(generateTagsCommand).toBeDefined();
         expect(generateTagsCommand?.name).toBe('Generate Tags for Current Note');
 
-        // Actually test the tag suggestion with real LLM
-        const mockEditor = {
-            getValue: () => content,
-            setValue: jest.fn()
-        };
-        const mockView = { 
+        if (!generateTagsCommand?.editorCallback) {
+            throw new Error('Generate tags command callback not found');
+        }
+
+        // Create mock editor and view
+        const mockEditor = createMockEditor(content);
+        const mockView = {
             file: testNote,
             editor: mockEditor
-        };
+        } as MarkdownView;
 
         // Set up real Ollama instance
         (plugin as any).settings = {
             ollamaHost: 'http://localhost:11434',
-            ollamaModel: 'llama2'
+            ollamaModel: 'llama3.1'
         };
         (plugin as any).initializeLangChain();
 
         // Call the command's callback which will use the real LLM
-        await generateTagsCommand?.editorCallback(mockEditor, mockView);
+        await generateTagsCommand.editorCallback(mockEditor, mockView);
 
         // Since this is e2e, we'll need to wait for the real LLM response
         await new Promise(resolve => setTimeout(resolve, 5000));
