@@ -12,6 +12,7 @@ on an AI driven approach. Following requirements must be met:
 - To keep everything private and secure an Ollama local LLM is used to classify the notes.
 - The plugin should be easy to use and have a consistent look and feel with the Obsidian app
 - The puglins repository should consider all best practices for plugin development suggested by https://github.com/obsidianmd/obsidian-sample-plugin
+- Organize the code by features
 
 ## Features
 - Scan the vault and generate a list of tags
