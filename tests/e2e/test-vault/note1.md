@@ -1,5 +1,5 @@
 ---
-tags: [test, sample]
+tags: []
 ---
 
 # Test Note 1

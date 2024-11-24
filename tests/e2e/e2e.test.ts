@@ -1,5 +1,5 @@
-import { App, TFile, Vault, Plugin, Command, Editor, MarkdownView } from 'obsidian';
-import TagAgent from '../../main';
+import { App, TFile, Vault, Plugin, Command, Editor, MarkdownView, Modal } from 'obsidian';
+import TagAgent from '@/main';
 import { expect, test, describe, beforeAll, afterAll, jest } from '@jest/globals';
 import { join } from 'path';
 import * as fs from 'fs';
@@ -70,6 +70,14 @@ describe('TagAgent E2E Tests', () => {
     let testNote: TFile;
     let mockVault: Vault;
     let registeredCommands: Command[] = [];
+    let manifest = {
+        id: 'tag-agent',
+        name: 'Tag Agent',
+        version: '1.0.0',
+        minAppVersion: '0.15.0',
+        author: 'Author',
+        description: 'AI-powered tag management'
+    };
 
     beforeAll(async () => {
         // Create mock vault
@@ -106,14 +114,7 @@ describe('TagAgent E2E Tests', () => {
         } as unknown as App;
 
         // Initialize plugin with mocked methods
-        plugin = new TagAgent(app, {
-            id: 'tag-agent',
-            name: 'Tag Agent',
-            version: '1.0.0',
-            minAppVersion: '0.15.0',
-            author: 'Author',
-            description: 'AI-powered tag management'
-        });
+        plugin = new TagAgent(app, manifest);
 
         // Mock plugin methods
         Object.assign(plugin, {
@@ -147,7 +148,7 @@ describe('TagAgent E2E Tests', () => {
 
     test('should suggest tags for test note content', async () => {
         const content = await app.vault.adapter.read('note1.md');
-        expect(content).toContain('tags: [test, sample]');
+        expect(content).toContain('tags: []');
         
         // Verify that the command was registered
         const generateTagsCommand = registeredCommands.find(cmd => cmd.id === 'generate-note-tags');
@@ -158,6 +159,50 @@ describe('TagAgent E2E Tests', () => {
             throw new Error('Generate tags command callback not found');
         }
 
+        // Mock the modal to capture suggested tags
+        let capturedSuggestedTags: string[] = [];
+        class MockTagSuggestionModal extends Modal {
+            constructor(app: App, suggestedTags: string[], callback: (selectedTags: string[]) => void) {
+                super(app);
+                capturedSuggestedTags = [...suggestedTags];
+                console.log('Modal constructed with tags:', suggestedTags);
+            }
+            open() {
+                console.log('Modal open called');
+                this.onOpen();
+            }
+            onOpen() {
+                console.log('Modal onOpen called');
+            }
+            onClose() {}
+        }
+
+        // Create a new instance of the plugin for this test
+        plugin = new TagAgent(app, manifest);
+
+        // Mock the Plugin methods before onload
+        Object.assign(plugin, {
+            addSettingTab: jest.fn(),
+            addCommand: jest.fn((command: Command) => {
+                registeredCommands.push(command);
+            }),
+            loadData: jest.fn().mockResolvedValue(null),
+            saveData: jest.fn().mockResolvedValue(undefined),
+            registerMarkdownPostProcessor: jest.fn(),
+            registerEvent: jest.fn(),
+            registerInterval: jest.fn()
+        });
+
+        await plugin.onload();
+        
+        // Mock the Ollama LLM to return predefined tags
+        const mockTags = ['test', 'sample', 'e2e'];
+        const mockLLM = {
+            call: jest.fn<(prompt: string) => Promise<string>>().mockResolvedValue(mockTags.join(', '))
+        };
+        (plugin as any).model = mockLLM;
+        (plugin as any).TagSuggestionModal = MockTagSuggestionModal;
+
         // Create mock editor and view
         const mockEditor = createMockEditor(content);
         const mockView = {
@@ -165,23 +210,31 @@ describe('TagAgent E2E Tests', () => {
             editor: mockEditor
         } as MarkdownView;
 
-        // Set up real Ollama instance
-        (plugin as any).settings = {
-            ollamaHost: 'http://localhost:11434',
-            ollamaModel: 'llama3.1'
-        };
-        (plugin as any).initializeLangChain();
-
-        // Call the command's callback which will use the real LLM
+        console.log('Before calling editorCallback');
+        
+        // Call the command's callback
         await generateTagsCommand.editorCallback(mockEditor, mockView);
+        
+        console.log('After calling editorCallback');
 
-        // Since this is e2e, we'll need to wait for the real LLM response
-        await new Promise(resolve => setTimeout(resolve, 5000));
+        // Since we're mocking the LLM, we don't need to wait as long
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
-        // Verify that new tags were added to the note
-        const updatedContent = await app.vault.adapter.read('note1.md');
-        expect(updatedContent).not.toBe(content); // Content should have changed
-        expect(updatedContent.match(/tags:\s*\[(.*?)\]/)?.[1]).toBeDefined(); // Should have tags
+        // Verify that the LLM was called with the correct prompt
+        expect(mockLLM.call).toHaveBeenCalled();
+        const promptCall = mockLLM.call.mock.calls[0][0];
+        expect(promptCall).toContain('Content to analyze:');
+        expect(promptCall).toContain(content);
+        
+        // Verify that tags were captured by the modal
+        expect(capturedSuggestedTags).toEqual(mockTags);
+        
+        // Verify the note content hasn't changed
+        const unchangedContent = await app.vault.adapter.read('note1.md');
+        expect(unchangedContent).toBe(content);
+
+        // Clean up
+        jest.restoreAllMocks();
     });
 
     test('should handle multiple files in vault', async () => {

@@ -10,9 +10,12 @@ const baseConfig = {
   },
   moduleNameMapper: {
     '^obsidian$': '<rootDir>/tests/mocks/obsidian.ts',
+    '^@/(.*)$': '<rootDir>/$1'
   },
   setupFiles: ['<rootDir>/tests/setup.js'],
   setupFilesAfterEnv: ['<rootDir>/tests/setupAfterEnv.js'],
+  roots: ['<rootDir>'],
+  modulePaths: ['<rootDir>'],
 };
 
 const integrationConfig = {
@@ -30,12 +33,9 @@ const e2eConfig = {
   setupFilesAfterEnv: [
     ...baseConfig.setupFilesAfterEnv,
     '<rootDir>/tests/e2e/setup.js'
-  ]
+  ],
 };
 
 module.exports = {
-  projects: [
-    integrationConfig,
-    e2eConfig,
-  ],
+  projects: [integrationConfig, e2eConfig],
 };
