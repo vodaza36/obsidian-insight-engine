@@ -26,6 +26,7 @@ on an AI driven approach. Following requirements must be met:
     - Consistent look and feel with the Obsidian app
     - Command palette integration for scanning vault tags (accessible via Cmd/Ctrl + P)
 - No external UI framework needed to maintain simplicity and reduce bundle size
+- If the plugin is processing a user request, show a loading indicator and provide a cancel button to abort the operation
 
 ## Technology Stack
 - [Obsidian](https://obsidian.md/) - Knowledge management application

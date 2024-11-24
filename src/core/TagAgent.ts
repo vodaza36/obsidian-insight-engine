@@ -3,6 +3,7 @@ import { TagAgentSettings, DEFAULT_SETTINGS } from '../models/types';
 import { TagGenerator } from '../services/tagGenerator';
 import { TagSuggestionModal } from '../ui/TagSuggestionModal';
 import { TagAgentSettingTab } from '../ui/SettingsTab';
+import { LoadingModal } from '../ui/LoadingModal';
 
 /**
  * This class is the entrypoint for the TagAgent plugin.
@@ -55,17 +56,47 @@ export default class TagAgent extends Plugin {
 
 	private async generateTagsForNote(file: TFile) {
 		const content = await this.app.vault.read(file);
-		const suggestedTags = await this.tagGenerator.suggestTags(file, content);
+		
+		// Show loading modal
+		const loadingModal = new LoadingModal(
+			this.app,
+			'Generating tags...',
+			() => {
+				new Notice('Tag generation cancelled');
+			}
+		);
+		loadingModal.open();
 
-		if (suggestedTags && suggestedTags.length > 0) {
-			const modal = new TagSuggestionModal(this.app, suggestedTags, async (selectedTags) => {
-				if (selectedTags.length > 0) {
-					await this.appendTagsToNote(file, selectedTags);
-				}
-			});
-			modal.open();
-		} else {
-			new Notice('No tags could be generated for this note.');
+		try {
+			const suggestedTags = await this.tagGenerator.suggestTags(
+				file,
+				content,
+				loadingModal.getAbortSignal()
+			);
+
+			// Close loading modal
+			loadingModal.close();
+
+			if (suggestedTags && suggestedTags.length > 0) {
+				const modal = new TagSuggestionModal(
+					this.app,
+					suggestedTags,
+					async (selectedTags) => {
+						if (selectedTags.length > 0) {
+							await this.appendTagsToNote(file, selectedTags);
+						}
+					}
+				);
+				modal.open();
+			} else {
+				new Notice('No tags could be generated for this note.');
+			}
+		} catch (error) {
+			loadingModal.close();
+			if (error.name !== 'AbortError') {
+				new Notice('Error generating tags. Please try again.');
+				console.error('Error generating tags:', error);
+			}
 		}
 	}
 

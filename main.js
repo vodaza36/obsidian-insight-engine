@@ -7540,7 +7540,7 @@ __export(main_exports, {
 module.exports = __toCommonJS(main_exports);
 
 // src/core/TagAgent.ts
-var import_obsidian3 = require("obsidian");
+var import_obsidian4 = require("obsidian");
 
 // src/models/types.ts
 var DEFAULT_SETTINGS = {
@@ -8918,10 +8918,10 @@ var TagGenerator = class {
       model: ollamaModel
     });
   }
-  async suggestTags(file, content) {
+  async suggestTags(file, content, signal) {
     const promptTemplate = new PromptTemplate({
       template: `You are a tag suggestion system. Analyze the following content and suggest relevant tags for organizing it.
-            Focus on the main topics, concepts, and categories that would help in finding this content later.
+           Focus on the main topics, concepts, and categories that would help in finding this content later.
 
 Content to analyze:
 {text}
@@ -8940,9 +8940,16 @@ Suggested tags:`,
     });
     try {
       const prompt = await promptTemplate.format({ text: content });
-      const response = await this.model.call(prompt);
+      if (signal == null ? void 0 : signal.aborted) {
+        throw new Error("Operation cancelled");
+      }
+      const response = await this.model.call(prompt, { signal });
       return response.split(",").map((tag) => tag.trim().toLowerCase()).filter((tag) => tag.length > 0);
     } catch (error) {
+      if (error.name === "AbortError" || error.message === "Operation cancelled") {
+        console.log("Tag generation cancelled");
+        return [];
+      }
       console.error("Error generating tags:", error);
       return [];
     }
@@ -9005,8 +9012,47 @@ var TagAgentSettingTab = class extends import_obsidian2.PluginSettingTab {
   }
 };
 
+// src/ui/LoadingModal.ts
+var import_obsidian3 = require("obsidian");
+var LoadingModal = class extends import_obsidian3.Modal {
+  constructor(app, message, onCancel) {
+    super(app);
+    this.message = message;
+    this.onCancel = onCancel;
+    this.abortController = new AbortController();
+  }
+  onOpen() {
+    const { contentEl } = this;
+    contentEl.empty();
+    contentEl.createEl("div", {
+      cls: "loading-modal-content",
+      attr: { style: "text-align: center; padding: 20px;" }
+    });
+    const spinner = contentEl.createEl("div", {
+      cls: "loading-spinner",
+      attr: { style: "margin-bottom: 15px;" }
+    });
+    contentEl.createEl("p", {
+      text: this.message,
+      attr: { style: "margin-bottom: 15px;" }
+    });
+    new import_obsidian3.Setting(contentEl).addButton((btn) => btn.setButtonText("Cancel").onClick(() => {
+      this.abortController.abort();
+      this.close();
+      this.onCancel();
+    }));
+  }
+  onClose() {
+    const { contentEl } = this;
+    contentEl.empty();
+  }
+  getAbortSignal() {
+    return this.abortController.signal;
+  }
+};
+
 // src/core/TagAgent.ts
-var TagAgent = class extends import_obsidian3.Plugin {
+var TagAgent = class extends import_obsidian4.Plugin {
   constructor() {
     super(...arguments);
     this.existingTags = /* @__PURE__ */ new Set();
@@ -9042,16 +9088,29 @@ var TagAgent = class extends import_obsidian3.Plugin {
   }
   async generateTagsForNote(file) {
     const content = await this.app.vault.read(file);
-    const suggestedTags = await this.tagGenerator.suggestTags(file, content);
-    if (suggestedTags && suggestedTags.length > 0) {
-      const modal = new TagSuggestionModal(this.app, suggestedTags, async (selectedTags) => {
-        if (selectedTags.length > 0) {
-          await this.appendTagsToNote(file, selectedTags);
-        }
-      });
-      modal.open();
-    } else {
-      new import_obsidian3.Notice("No tags could be generated for this note.");
+    const loadingModal = new LoadingModal(this.app, "Generating tags...", () => {
+      new import_obsidian4.Notice("Tag generation cancelled");
+    });
+    loadingModal.open();
+    try {
+      const suggestedTags = await this.tagGenerator.suggestTags(file, content, loadingModal.getAbortSignal());
+      loadingModal.close();
+      if (suggestedTags && suggestedTags.length > 0) {
+        const modal = new TagSuggestionModal(this.app, suggestedTags, async (selectedTags) => {
+          if (selectedTags.length > 0) {
+            await this.appendTagsToNote(file, selectedTags);
+          }
+        });
+        modal.open();
+      } else {
+        new import_obsidian4.Notice("No tags could be generated for this note.");
+      }
+    } catch (error) {
+      loadingModal.close();
+      if (error.name !== "AbortError") {
+        new import_obsidian4.Notice("Error generating tags. Please try again.");
+        console.error("Error generating tags:", error);
+      }
     }
   }
   async appendTagsToNote(file, tags) {
@@ -9072,7 +9131,7 @@ tags: ${formattedTags}
 ${content}`;
     }
     await this.app.vault.modify(file, newContent);
-    new import_obsidian3.Notice(`Added tags: ${formattedTags}`);
+    new import_obsidian4.Notice(`Added tags: ${formattedTags}`);
   }
   async analyzeAllNotes() {
     const files = this.app.vault.getMarkdownFiles();
@@ -9080,7 +9139,7 @@ ${content}`;
     for (const file of files) {
       await this.generateTagsForNote(file);
       processedCount++;
-      new import_obsidian3.Notice(`Processed ${processedCount}/${files.length} notes`);
+      new import_obsidian4.Notice(`Processed ${processedCount}/${files.length} notes`);
     }
   }
 };

@@ -24,10 +24,10 @@ export class TagGenerator {
 		});
 	}
 
-	async suggestTags(file: TFile, content: string): Promise<string[]> {
+	async suggestTags(file: TFile, content: string, signal?: AbortSignal): Promise<string[]> {
 		const promptTemplate = new PromptTemplate({
 			template: `You are a tag suggestion system. Analyze the following content and suggest relevant tags for organizing it.
-            Focus on the main topics, concepts, and categories that would help in finding this content later.
+           Focus on the main topics, concepts, and categories that would help in finding this content later.
 
 Content to analyze:
 {text}
@@ -47,13 +47,23 @@ Suggested tags:`,
 
 		try {
 			const prompt = await promptTemplate.format({ text: content });
-			const response = await this.model.call(prompt);
+            
+            // Check if operation was cancelled
+            if (signal?.aborted) {
+                throw new Error('Operation cancelled');
+            }
+
+			const response = await this.model.call(prompt, { signal });
 
 			return response
 				.split(',')
 				.map((tag) => tag.trim().toLowerCase())
 				.filter((tag) => tag.length > 0);
 		} catch (error) {
+			if (error.name === 'AbortError' || error.message === 'Operation cancelled') {
+				console.log('Tag generation cancelled');
+				return [];
+			}
 			console.error('Error generating tags:', error);
 			return [];
 		}
