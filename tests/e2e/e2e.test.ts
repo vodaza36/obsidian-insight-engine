@@ -4,7 +4,7 @@ import { TFile } from 'obsidian';
 
 describe('TagAgent E2E Tests', () => {
     test('should suggest tags using real Ollama implementation', async () => {
-        const tagGenerator = new TagGenerator('http://localhost:11434', 'llama2');
+        const tagGenerator = new TagGenerator('http://localhost:11434', 'llama3.1');
         
         const noteContent = `
 # Sample Note

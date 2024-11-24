@@ -1,6 +1,7 @@
 import { Ollama } from 'langchain/llms/ollama';
 import { PromptTemplate } from 'langchain/prompts';
 import { TFile } from 'obsidian';
+import * as http from 'http';
 
 /**
  * TagGenerator class is responsible for generating tags for notes using the Ollama language model.
@@ -25,12 +26,17 @@ export class TagGenerator {
 	}
 
 	private async isOllamaServerRunning(): Promise<boolean> {
-		try {
-			const response = await fetch(this.model.baseUrl + '/api/tags');
-			return response.status === 200;
-		} catch (error) {
-			return false;
-		}
+		return new Promise((resolve) => {
+			const req = http.get(this.model.baseUrl + '/api/version', (res) => {
+				resolve(res.statusCode === 200);
+			});
+
+			req.on('error', () => {
+				resolve(false);
+			});
+
+			req.end();
+		});
 	}
 
 	async suggestTags(content: string, existingTags: Set<string>, signal?: AbortSignal): Promise<string[]> {
@@ -52,34 +58,23 @@ Existing vault tags that you can reuse if they fit the content:
 {existingTags}
 
 Instructions:
-1. First, identify the main topics, themes, and concepts from the content
-2. Then, suggest 3-7 relevant tags based on these identified elements
-3. Format the tags according to these rules:
-   - Use noun forms instead of gerund forms (e.g., 'development' not 'developing')
-   - Use known acronyms (e.g., 'ai', 'dev', 'ui')
-   - Use lowercase words
-   - Use / for hierarchical relationships (max 2 levels)
-   - Prefer single words without hyphens
-   - Reuse existing tags when they fit well
+1. Analyze the content and suggest 3-5 relevant tags
+2. Each tag should start with '#'
+3. If an existing tag fits, use it instead of creating a new one
+4. Keep tags concise (1-2 words)
+5. Avoid overly generic tags
+6. Return only the tags as a comma-separated list, no other text
 
-Important:
-- Focus on the actual content for tag suggestions
-- Do not suggest tags that aren't directly related to the content
-- Do not suggest one-off tags that wouldn't be reusable
-- Avoid generic tags like 'misc', 'todo', 'stuff'
-
-Provide your response as a comma-separated list of tags (without the # symbol).
-
-Suggested tags:`,
+Example output: #ai, #machine-learning, #data-science`,
 			inputVariables: ['text', 'existingTags'],
 		});
 
 		try {
-			const prompt = await promptTemplate.format({ 
+			const prompt = await promptTemplate.format({
 				text: content,
-				existingTags: existingTagsList || 'No existing tags'
+				existingTags: existingTagsList || 'No existing tags',
 			});
-			
+
 			// Check if operation was cancelled
 			if (signal?.aborted) {
 				throw new Error('Operation cancelled');
@@ -92,13 +87,13 @@ Suggested tags:`,
 				.map((tag) => tag.trim().toLowerCase())
 				.filter((tag) => tag.length > 0)
 				.map((tag) => tag.replace(/\s+/g, '-')); // Ensure spaces are replaced with hyphens
+
 		} catch (error) {
 			if (error.name === 'AbortError' || error.message === 'Operation cancelled') {
 				console.log('Tag generation cancelled');
 				return [];
 			}
-			console.error('Error generating tags:', error);
-			return [];
+			throw error;
 		}
 	}
 }
