@@ -8918,7 +8918,19 @@ var TagGenerator = class {
       model: ollamaModel
     });
   }
+  async isOllamaServerRunning() {
+    try {
+      const response = await fetch(this.model.baseUrl + "/api/tags");
+      return response.status === 200;
+    } catch (error) {
+      return false;
+    }
+  }
   async suggestTags(file, content, existingTags, signal) {
+    const isServerRunning = await this.isOllamaServerRunning();
+    if (!isServerRunning) {
+      throw new Error('Ollama server is not running. Please start the Ollama server using the command: "ollama serve"');
+    }
     const existingTagsList = Array.from(existingTags).join(", ");
     const promptTemplate = new PromptTemplate({
       template: `You are an intelligent tag suggestion system for personal note-taking. Analyze the following content and suggest relevant tags based on these principles:
@@ -9167,23 +9179,22 @@ var TagAgent = class extends import_obsidian4.Plugin {
       const suggestedTags = await this.tagGenerator.suggestTags(file, content, existingTags, loadingModal.getAbortSignal());
       loadingModal.close();
       if (suggestedTags && suggestedTags.length > 0) {
-        const modal = new TagSuggestionModal(this.app, suggestedTags.map((tag) => ({
-          name: tag,
-          isExisting: existingTags.has(tag)
-        })), async (selectedTags) => {
+        const modal = new TagSuggestionModal(this.app, suggestedTags, (selectedTags) => {
           if (selectedTags.length > 0) {
-            await this.appendTagsToNote(file, selectedTags);
+            this.appendTagsToNote(file, selectedTags);
           }
         });
         modal.open();
       } else {
-        new import_obsidian4.Notice("No tags could be generated for this note.");
+        new import_obsidian4.Notice("No tags were suggested for this note.");
       }
     } catch (error) {
       loadingModal.close();
-      if (error.name !== "AbortError") {
-        new import_obsidian4.Notice("Error generating tags. Please try again.");
-        console.error("Error generating tags:", error);
+      if (error.message.includes("Ollama server is not running")) {
+        new import_obsidian4.Notice('Error: Ollama server is not running. Please start it using the command: "ollama serve"', 1e4);
+      } else if (error.name === "AbortError") {
+      } else {
+        new import_obsidian4.Notice(`Error generating tags: ${error.message}`);
       }
     }
   }

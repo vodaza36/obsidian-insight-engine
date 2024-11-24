@@ -24,7 +24,22 @@ export class TagGenerator {
 		});
 	}
 
+	private async isOllamaServerRunning(): Promise<boolean> {
+		try {
+			const response = await fetch(this.model.baseUrl + '/api/tags');
+			return response.status === 200;
+		} catch (error) {
+			return false;
+		}
+	}
+
 	async suggestTags(file: TFile, content: string, existingTags: Set<string>, signal?: AbortSignal): Promise<string[]> {
+		// Check if Ollama server is running
+		const isServerRunning = await this.isOllamaServerRunning();
+		if (!isServerRunning) {
+			throw new Error('Ollama server is not running. Please start the Ollama server using the command: "ollama serve"');
+		}
+
 		const existingTagsList = Array.from(existingTags).join(', ');
 		
 		const promptTemplate = new PromptTemplate({

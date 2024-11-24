@@ -99,25 +99,26 @@ export default class TagAgent extends Plugin {
 			if (suggestedTags && suggestedTags.length > 0) {
 				const modal = new TagSuggestionModal(
 					this.app,
-					suggestedTags.map(tag => ({
-						name: tag,
-						isExisting: existingTags.has(tag)
-					})),
-					async (selectedTags) => {
+					suggestedTags,
+					(selectedTags) => {
 						if (selectedTags.length > 0) {
-							await this.appendTagsToNote(file, selectedTags);
+							this.appendTagsToNote(file, selectedTags);
 						}
 					}
 				);
 				modal.open();
 			} else {
-				new Notice('No tags could be generated for this note.');
+				new Notice('No tags were suggested for this note.');
 			}
 		} catch (error) {
 			loadingModal.close();
-			if (error.name !== 'AbortError') {
-				new Notice('Error generating tags. Please try again.');
-				console.error('Error generating tags:', error);
+			
+			if (error.message.includes('Ollama server is not running')) {
+				new Notice('Error: Ollama server is not running. Please start it using the command: "ollama serve"', 10000);
+			} else if (error.name === 'AbortError') {
+				// Already handled by the loading modal callback
+			} else {
+				new Notice(`Error generating tags: ${error.message}`);
 			}
 		}
 	}
