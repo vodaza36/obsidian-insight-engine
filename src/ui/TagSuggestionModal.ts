@@ -24,44 +24,81 @@ export class TagSuggestionModal extends Modal {
         contentEl.createEl('h2', { text: 'Suggested Tags' });
         contentEl.createEl('p', { text: 'Select the tags you want to add to your note:' });
 
-        // Add legend for tag types
-        const legendEl = contentEl.createEl('div', { 
-            cls: 'tag-legend',
-            attr: { style: 'margin-bottom: 15px; font-size: 0.8em;' }
-        });
-        
-        legendEl.createEl('div', { 
-            text: ' New tags',
-            attr: { style: 'margin-bottom: 5px;' }
-        });
-        legendEl.createEl('div', { 
-            text: ' Existing tags from vault',
-            attr: { style: 'margin-bottom: 15px;' }
+        // Group tags
+        const existingTags = this.suggestedTags.filter(tag => tag.isExisting);
+        const newTags = this.suggestedTags.filter(tag => !tag.isExisting);
+
+        // Create container for better styling
+        const tagsContainer = contentEl.createDiv({
+            cls: 'tag-suggestions-container'
         });
 
-        this.suggestedTags.forEach((tag) => {
-            new Setting(contentEl)
-                .setName(`${tag.isExisting ? '' : ''} ${tag.name}`)
-                .addToggle((toggle) =>
-                    toggle.onChange((value) => {
-                        if (value) {
-                            this.selectedTags.add(tag.name);
-                        } else {
-                            this.selectedTags.delete(tag.name);
-                        }
+        // Existing Tags Section
+        if (existingTags.length > 0) {
+            const existingSection = tagsContainer.createDiv({
+                cls: 'tags-section existing-tags-section'
+            });
+
+            existingSection.createEl('h3', {
+                text: 'Existing Tags',
+                cls: 'section-header'
+            });
+
+            const existingTagsContainer = existingSection.createDiv({
+                cls: 'tags-group'
+            });
+
+            existingTags.forEach(tag => this.createTagToggle(existingTagsContainer, tag));
+        }
+
+        // New Tags Section
+        if (newTags.length > 0) {
+            const newSection = tagsContainer.createDiv({
+                cls: 'tags-section new-tags-section'
+            });
+
+            newSection.createEl('h3', {
+                text: 'New Tags',
+                cls: 'section-header'
+            });
+
+            const newTagsContainer = newSection.createDiv({
+                cls: 'tags-group'
+            });
+
+            newTags.forEach(tag => this.createTagToggle(newTagsContainer, tag));
+        }
+
+        // Add button at the bottom
+        const buttonContainer = contentEl.createDiv({
+            cls: 'button-container'
+        });
+
+        new Setting(buttonContainer)
+            .addButton((btn) =>
+                btn
+                    .setButtonText('Add Selected Tags')
+                    .setCta()
+                    .onClick(() => {
+                        this.close();
+                        this.callback(Array.from(this.selectedTags));
                     })
-                );
-        });
+            );
+    }
 
-        new Setting(contentEl).addButton((btn) =>
-            btn
-                .setButtonText('Add Selected Tags')
-                .setCta()
-                .onClick(() => {
-                    this.close();
-                    this.callback(Array.from(this.selectedTags));
+    private createTagToggle(container: HTMLElement, tag: TagSuggestion) {
+        new Setting(container)
+            .setClass('tag-toggle')
+            .setName(tag.name)
+            .addToggle((toggle) =>
+                toggle.onChange((value) => {
+                    if (value) {
+                        this.selectedTags.add(tag.name);
+                    } else {
+                        this.selectedTags.delete(tag.name);
+                    }
                 })
-        );
+            );
     }
 
     onClose() {

@@ -8979,30 +8979,52 @@ var TagSuggestionModal = class extends import_obsidian.Modal {
     contentEl.empty();
     contentEl.createEl("h2", { text: "Suggested Tags" });
     contentEl.createEl("p", { text: "Select the tags you want to add to your note:" });
-    const legendEl = contentEl.createEl("div", {
-      cls: "tag-legend",
-      attr: { style: "margin-bottom: 15px; font-size: 0.8em;" }
+    const existingTags = this.suggestedTags.filter((tag) => tag.isExisting);
+    const newTags = this.suggestedTags.filter((tag) => !tag.isExisting);
+    const tagsContainer = contentEl.createDiv({
+      cls: "tag-suggestions-container"
     });
-    legendEl.createEl("div", {
-      text: " New tags",
-      attr: { style: "margin-bottom: 5px;" }
+    if (existingTags.length > 0) {
+      const existingSection = tagsContainer.createDiv({
+        cls: "tags-section existing-tags-section"
+      });
+      existingSection.createEl("h3", {
+        text: "Existing Tags",
+        cls: "section-header"
+      });
+      const existingTagsContainer = existingSection.createDiv({
+        cls: "tags-group"
+      });
+      existingTags.forEach((tag) => this.createTagToggle(existingTagsContainer, tag));
+    }
+    if (newTags.length > 0) {
+      const newSection = tagsContainer.createDiv({
+        cls: "tags-section new-tags-section"
+      });
+      newSection.createEl("h3", {
+        text: "New Tags",
+        cls: "section-header"
+      });
+      const newTagsContainer = newSection.createDiv({
+        cls: "tags-group"
+      });
+      newTags.forEach((tag) => this.createTagToggle(newTagsContainer, tag));
+    }
+    const buttonContainer = contentEl.createDiv({
+      cls: "button-container"
     });
-    legendEl.createEl("div", {
-      text: " Existing tags from vault",
-      attr: { style: "margin-bottom: 15px;" }
-    });
-    this.suggestedTags.forEach((tag) => {
-      new import_obsidian.Setting(contentEl).setName(`${tag.isExisting ? "" : ""} ${tag.name}`).addToggle((toggle) => toggle.onChange((value) => {
-        if (value) {
-          this.selectedTags.add(tag.name);
-        } else {
-          this.selectedTags.delete(tag.name);
-        }
-      }));
-    });
-    new import_obsidian.Setting(contentEl).addButton((btn) => btn.setButtonText("Add Selected Tags").setCta().onClick(() => {
+    new import_obsidian.Setting(buttonContainer).addButton((btn) => btn.setButtonText("Add Selected Tags").setCta().onClick(() => {
       this.close();
       this.callback(Array.from(this.selectedTags));
+    }));
+  }
+  createTagToggle(container, tag) {
+    new import_obsidian.Setting(container).setClass("tag-toggle").setName(tag.name).addToggle((toggle) => toggle.onChange((value) => {
+      if (value) {
+        this.selectedTags.add(tag.name);
+      } else {
+        this.selectedTags.delete(tag.name);
+      }
     }));
   }
   onClose() {
