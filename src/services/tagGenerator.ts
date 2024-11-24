@@ -43,37 +43,30 @@ export class TagGenerator {
 		const existingTagsList = Array.from(existingTags).join(', ');
 		
 		const promptTemplate = new PromptTemplate({
-			template: `You are an intelligent tag suggestion system for personal note-taking. Analyze the following content and suggest relevant tags based on these principles:
-
-Core Principles:
-1. Consistency: Use lowercase words, hyphens for multi-word tags
-2. Hierarchy: Use / for nested tags (e.g., project/web-dev)
-3. Simplicity: Suggest 3-7 most relevant tags
-
-Tag Categories to Consider:
-1. Content Type: #type/[article|note|meeting|project|idea]
-2. Topic Tags: Main subject matter (e.g., #programming/python, #health/nutrition)
-3. Status: #status/[draft|in-progress|completed|archived]
-4. Project Tags: If applicable, use #project/[project-name]
-5. Context Tags: If clear from content, use #context/[personal|work|research]
+			template: `You are an intelligent tag suggestion system for personal note-taking. Your task is to analyze the content of a note and suggest relevant tags that describe its topics, themes, and key concepts.
 
 Content to analyze:
 {text}
 
-Existing vault tags:
+Existing vault tags that you can reuse if they fit the content:
 {existingTags}
 
-Rules for tag suggestions:
-1. Use noun forms instead of gerund forms for verbs (e.g., 'development' not 'developing')
-2. Prefer single words without hyphens where possible
-3. Follow the naming convention of existing tags - analyze and maintain consistency
-4. Use known acronyms (e.g., 'ai' instead of 'artificial-intelligence', 'dev' instead of 'development')
-5. Do not suggest specific tags that would only be used once
-6. Use lowercase for all tags
-7. Use / for hierarchical relationships (max 2 levels)
-8. Prefer existing tags when they fit well
-9. Include at least one content type tag (#type/...)
-10. Avoid generic tags like #misc, #todo, #stuff
+Instructions:
+1. First, identify the main topics, themes, and concepts from the content
+2. Then, suggest 3-7 relevant tags based on these identified elements
+3. Format the tags according to these rules:
+   - Use noun forms instead of gerund forms (e.g., 'development' not 'developing')
+   - Use known acronyms (e.g., 'ai', 'dev', 'ui')
+   - Use lowercase words
+   - Use / for hierarchical relationships (max 2 levels)
+   - Prefer single words without hyphens
+   - Reuse existing tags when they fit well
+
+Important:
+- Focus on the actual content for tag suggestions
+- Do not suggest tags that aren't directly related to the content
+- Do not suggest one-off tags that wouldn't be reusable
+- Avoid generic tags like 'misc', 'todo', 'stuff'
 
 Provide your response as a comma-separated list of tags (without the # symbol).
 
