@@ -1,22 +1,27 @@
 import { PromptTemplate } from '@langchain/core/prompts';
-import * as http from 'http';
+import { Ollama } from '@langchain/community/llms/ollama';
+import { RunnableSequence } from '@langchain/core/runnables';
+import { StringOutputParser } from '@langchain/core/output_parsers';
 import fetch from 'node-fetch';
 
 /**
  * TagGenerator class is responsible for generating tags for notes using the Ollama language model.
  */
-interface OllamaResponse {
-    response: string;
-}
-
 export class TagGenerator {
     private baseUrl: string;
     private modelName: string;
     private promptTemplate: PromptTemplate;
+    private chain: RunnableSequence;
+    private model: Ollama;
 
     constructor(baseUrl: string, modelName: string) {
         this.baseUrl = baseUrl;
         this.modelName = modelName;
+        this.model = new Ollama({
+            baseUrl: this.baseUrl,
+            model: this.modelName,
+        });
+        
         this.promptTemplate = PromptTemplate.fromTemplate(
             `Given the following note content, suggest 3-5 relevant tags that capture the main topics and themes. Tags should start with '#' and be concise. If any of the suggested tags already exist in the note, prioritize them. Avoid overly generic tags.
 
@@ -28,12 +33,20 @@ Existing Tags:
 
 Please provide the tags as a comma-separated list.`
         );
+
+        // Create the chain
+        this.chain = RunnableSequence.from([
+            this.promptTemplate,
+            this.model,
+            new StringOutputParser(),
+        ]);
     }
 
     public async isOllamaServerRunning(): Promise<boolean> {
         try {
-            const response = await fetch(`${this.baseUrl}/api/version`);
-            return response.ok;
+            // Make a simple call to test if the server is responsive
+            await fetch(`${this.baseUrl}/api/version`);
+            return true;
         } catch (error) {
             console.error('Error checking Ollama server:', error);
             return false;
@@ -50,36 +63,14 @@ Please provide the tags as a comma-separated list.`
         const existingTagsList = Array.from(existingTags).join(', ');
 
         try {
-            const prompt = await this.promptTemplate.format({
+            const result = await this.chain.invoke({
                 content,
                 existingTags: existingTagsList || 'None',
             });
 
-            const response = await fetch(`${this.baseUrl}/api/generate`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    model: this.modelName,
-                    prompt: prompt,
-                    stream: false
-                })
-            });
+            console.log('Raw Ollama response:', result);
 
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Ollama API error: ${response.status} ${errorText}`);
-            }
-
-            const data = await response.json() as OllamaResponse | null;
-            if (!data) {
-                throw new Error('Invalid Ollama API response');
-            }
-            console.log('Raw Ollama response:', data);
-
-            const generatedText = data.response;
-            return generatedText
+            return result
                 .split(',')
                 .map((tag: string) => tag.trim().toLowerCase())
                 .filter((tag: string) => tag.length > 0)
