@@ -9,7 +9,7 @@ jest.mock('@langchain/community/llms/ollama', () => {
         Ollama: jest.fn().mockImplementation(({ baseUrl, model }) => ({
             baseUrl,
             model,
-            invoke: jest.fn().mockImplementation((prompt: string) => {
+            call: jest.fn().mockImplementation((prompt: string) => {
                 // Return different responses based on the content in the prompt
                 if (prompt.includes('TypeScript generics')) {
                     return Promise.resolve('#typescript, #programming, #generics, #type-safety, #development, #software-engineering');
@@ -159,8 +159,8 @@ describe('TagAgent Integration Tests', () => {
             expect(tag).toBe(tag.toLowerCase());
             // Should use dashes for multi-word tags
             expect(tag).not.toContain(' ');
-            // Should not contain # symbol
-            expect(tag).not.toContain('#');
+            // Should contain # symbol at the start
+            expect(tag).toMatch(/^#[a-z0-9-]+$/);
         });
     });
 
