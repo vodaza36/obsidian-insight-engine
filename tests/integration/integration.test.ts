@@ -175,3 +175,10 @@ describe('TagAgent Integration Tests', () => {
         });
     });
 });
+
+describe('Environment Tests', () => {
+    it('should be running on correct Node version', () => {
+        const nodeVersion = process.version;
+        expect(nodeVersion).toMatch(/^v21/);
+    });
+});

@@ -39,7 +39,7 @@ Please provide the tags as a comma-separated list.`
 		);
 	}
 
-	private async isOllamaServerRunning(): Promise<boolean> {
+	public async isOllamaServerRunning(): Promise<boolean> {
 		return new Promise((resolve) => {
 			const req = http.get(this.model.baseUrl + '/api/version', (res) => {
 				resolve(res.statusCode === 200);
