@@ -6,8 +6,10 @@ const baseConfig = {
   transform: {
     '^.+\\.tsx?$': ['ts-jest', {
       tsconfig: 'tsconfig.json',
+      useESM: true,
     }],
   },
+  extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
     '^obsidian$': '<rootDir>/tests/mocks/obsidian.ts',
     '^@/(.*)$': '<rootDir>/src/$1',

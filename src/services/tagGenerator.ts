@@ -1,33 +1,24 @@
-import { Ollama } from '@langchain/community/llms/ollama';
 import { PromptTemplate } from '@langchain/core/prompts';
-import { TFile } from 'obsidian';
 import * as http from 'http';
+import fetch from 'node-fetch';
 
 /**
  * TagGenerator class is responsible for generating tags for notes using the Ollama language model.
- * 
- * This class provides functionality to:
- * - Initialize an Ollama model with specified host and model name.
- * - Suggest tags for a given file and its content using the Ollama model.
- * 
- * Main methods:
- * - constructor: Initializes the Ollama model with provided host and model name.
- * - suggestTags: Analyzes file content and generates relevant tags using the Ollama model.
  */
+interface OllamaResponse {
+    response: string;
+}
 
 export class TagGenerator {
-	private model: Ollama;
-	private promptTemplate: PromptTemplate;
+    private baseUrl: string;
+    private modelName: string;
+    private promptTemplate: PromptTemplate;
 
-	constructor(baseUrl: string, modelName: string) {
-		this.model = new Ollama({
-			baseUrl,
-			model: modelName,
-			temperature: 0.7,
-		});
-
-		this.promptTemplate = PromptTemplate.fromTemplate(
-			`Given the following note content, suggest 3-5 relevant tags that capture the main topics and themes. Tags should start with '#' and be concise. If any of the suggested tags already exist in the note, prioritize them. Avoid overly generic tags.
+    constructor(baseUrl: string, modelName: string) {
+        this.baseUrl = baseUrl;
+        this.modelName = modelName;
+        this.promptTemplate = PromptTemplate.fromTemplate(
+            `Given the following note content, suggest 3-5 relevant tags that capture the main topics and themes. Tags should start with '#' and be concise. If any of the suggested tags already exist in the note, prioritize them. Avoid overly generic tags.
 
 Note Content:
 {content}
@@ -36,59 +27,67 @@ Existing Tags:
 {existingTags}
 
 Please provide the tags as a comma-separated list.`
-		);
-	}
+        );
+    }
 
-	public async isOllamaServerRunning(): Promise<boolean> {
-		return new Promise((resolve) => {
-			const req = http.get(this.model.baseUrl + '/api/version', (res) => {
-				resolve(res.statusCode === 200);
-			});
+    public async isOllamaServerRunning(): Promise<boolean> {
+        try {
+            const response = await fetch(`${this.baseUrl}/api/version`);
+            return response.ok;
+        } catch (error) {
+            console.error('Error checking Ollama server:', error);
+            return false;
+        }
+    }
 
-			req.on('error', () => {
-				resolve(false);
-			});
+    async suggestTags(content: string, existingTags: Set<string> = new Set()): Promise<string[]> {
+        // Check if Ollama server is running
+        const isServerRunning = await this.isOllamaServerRunning();
+        if (!isServerRunning) {
+            throw new Error('Ollama server is not running. Please start the Ollama server using the command: "ollama serve"');
+        }
 
-			req.end();
-		});
-	}
+        const existingTagsList = Array.from(existingTags).join(', ');
 
-	async suggestTags(content: string, existingTags: Set<string> = new Set(), signal?: AbortSignal): Promise<string[]> {
-		// Check if Ollama server is running
-		const isServerRunning = await this.isOllamaServerRunning();
-		if (!isServerRunning) {
-			throw new Error('Ollama server is not running. Please start the Ollama server using the command: "ollama serve"');
-		}
+        try {
+            const prompt = await this.promptTemplate.format({
+                content,
+                existingTags: existingTagsList || 'None',
+            });
 
-		const existingTagsList = Array.from(existingTags).join(', ');
+            const response = await fetch(`${this.baseUrl}/api/generate`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    model: this.modelName,
+                    prompt: prompt,
+                    stream: false
+                })
+            });
 
-		try {
-			// Check if operation was cancelled
-			if (signal?.aborted) {
-				throw new Error('Operation cancelled');
-			}
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Ollama API error: ${response.status} ${errorText}`);
+            }
 
-			const prompt = await this.promptTemplate.format({
-				content,
-				existingTags: existingTagsList || 'None',
-			});
+            const data = await response.json() as OllamaResponse | null;
+            if (!data) {
+                throw new Error('Invalid Ollama API response');
+            }
+            console.log('Raw Ollama response:', data);
 
-			const response = await this.model.invoke(prompt, { 
-				signal,
-			});
+            const generatedText = data.response;
+            return generatedText
+                .split(',')
+                .map((tag: string) => tag.trim().toLowerCase())
+                .filter((tag: string) => tag.length > 0)
+                .map((tag: string) => tag.replace(/\s+/g, '-'));
 
-			return response
-				.split(',')
-				.map((tag: string) => tag.trim().toLowerCase())
-				.filter((tag: string) => tag.length > 0)
-				.map((tag: string) => tag.replace(/\s+/g, '-')); // Ensure spaces are replaced with hyphens
-
-		} catch (error) {
-			if (error.name === 'AbortError' || error.message === 'Operation cancelled') {
-				console.log('Tag generation cancelled');
-				return [];
-			}
-			throw error;
-		}
-	}
+        } catch (error) {
+            console.error('Error in tag generation:', error);
+            throw error;
+        }
+    }
 }
