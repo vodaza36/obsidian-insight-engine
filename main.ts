@@ -114,8 +114,8 @@ export default class TagAgent extends Plugin {
 
             return await this.tagGenerator.suggestTags(content, existingTags);
         } catch (error) {
-            console.error('Error suggesting tags:', error);
-            return [];
+            console.error('Error in suggestTags:', error);
+            throw error; // Re-throw the error to be handled by generateTagsForNote
         }
     }
 
