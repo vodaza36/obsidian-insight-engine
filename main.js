@@ -23809,7 +23809,10 @@ Suggested tags:`,
       return response.split(",").map((tag) => "#" + tag.trim().toLowerCase()).filter((tag) => tag.length > 0);
     } catch (error) {
       console.error("Error suggesting tags:", error);
-      return [];
+      if (error instanceof Error && (error.message.includes("ECONNREFUSED") || error.message.includes("Failed to fetch"))) {
+        throw new Error("Unable to connect to Ollama server. Please make sure it is running and accessible.");
+      }
+      throw error;
     }
   }
 };

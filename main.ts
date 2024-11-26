@@ -73,19 +73,28 @@ export default class TagAgent extends Plugin {
     }
 
     private async generateTagsForNote(file: TFile) {
-        const content = await this.app.vault.read(file);
-        const suggestedTags = await this.suggestTags(file, content);
-        
-        if (suggestedTags && suggestedTags.length > 0) {
-            const modal = new TagSuggestionModal(this.app, suggestedTags, async (selectedTags) => {
-                if (selectedTags.length > 0) {
-                    await this.appendTagsToNote(file, selectedTags);
-                }
-            });
-            modal.open();
-        } else {
-            // Show error if no tags were generated
-            new Notice('No tags could be generated for this note.');
+        try {
+            const content = await this.app.vault.read(file);
+            const suggestedTags = await this.suggestTags(file, content);
+            
+            if (suggestedTags && suggestedTags.length > 0) {
+                const modal = new TagSuggestionModal(this.app, suggestedTags, async (selectedTags) => {
+                    if (selectedTags.length > 0) {
+                        await this.appendTagsToNote(file, selectedTags);
+                    }
+                });
+                modal.open();
+            } else {
+                // Show message if no tags were generated
+                new Notice('No new tags could be suggested for this note.');
+            }
+        } catch (error) {
+            if (error instanceof Error) {
+                new Notice(error.message);
+            } else {
+                new Notice('An unexpected error occurred while generating tags.');
+            }
+            console.error('Error in generateTagsForNote:', error);
         }
     }
 
