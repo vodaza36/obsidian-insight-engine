@@ -99,6 +99,7 @@ export default class TagAgent extends Plugin {
 					isExisting: existingTags.has(tag.replace('#', ''))
 				}));
 
+				console.log('Existing tags:', existingTags);
 				console.log('Tag suggestions:', tagSuggestions);
 
 				// Show the tag suggestion modal first
