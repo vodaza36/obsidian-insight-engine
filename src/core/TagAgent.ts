@@ -1,4 +1,4 @@
-import { Plugin, TFile, Notice, getAllTags } from 'obsidian';
+import { Plugin, TFile, Notice, Modal, Setting } from 'obsidian';
 import { TagAgentSettings, DEFAULT_SETTINGS } from '../models/types';
 import { TagGenerator } from '../services/tagGenerator';
 import { TagSuggestionModal } from '../ui/TagSuggestionModal';
@@ -99,12 +99,42 @@ export default class TagAgent extends Plugin {
 					isExisting: existingTags.has(tag)
 				}));
 
+				// Show the tag suggestion modal first
 				const modal = new TagSuggestionModal(
 					this.app,
 					tagSuggestions,
 					(selectedTags: string[]) => {
 						if (selectedTags.length > 0) {
-							this.appendTagsToNote(file, selectedTags);
+							// Create a confirmation modal
+							const confirmModal = new Modal(this.app);
+							confirmModal.contentEl.createEl('h2', { text: 'Confirm Tags' });
+							confirmModal.contentEl.createEl('p', { text: 'Do you want to add these tags to your note?' });
+							
+							const tagList = confirmModal.contentEl.createEl('div', { cls: 'tag-list' });
+							selectedTags.forEach(tag => {
+								tagList.createEl('div', { 
+									text: tag,
+									cls: 'tag-item'
+								});
+							});
+
+							new Setting(confirmModal.contentEl)
+								.addButton(btn => 
+									btn
+										.setButtonText('Cancel')
+										.onClick(() => {
+											confirmModal.close();
+										}))
+								.addButton(btn =>
+									btn
+										.setButtonText('Add Tags')
+										.setCta()
+										.onClick(async () => {
+											await this.appendTagsToNote(file, selectedTags);
+											confirmModal.close();
+										}));
+							
+							confirmModal.open();
 						}
 					}
 				);
