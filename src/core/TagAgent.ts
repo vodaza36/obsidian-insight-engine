@@ -87,8 +87,7 @@ export default class TagAgent extends Plugin {
 		try {
 			const suggestedTags = await this.tagGenerator.suggestTags(
 				content,
-				existingTags,
-				loadingModal.getAbortSignal()
+				existingTags
 			);
 
 			// Close loading modal

@@ -1,7 +1,6 @@
 import { App, Modal, Setting } from 'obsidian';
 
 export class LoadingModal extends Modal {
-    private abortController: AbortController;
     private message: string;
     private onCancel: () => void;
 
@@ -9,7 +8,6 @@ export class LoadingModal extends Modal {
         super(app);
         this.message = message;
         this.onCancel = onCancel;
-        this.abortController = new AbortController();
     }
 
     onOpen() {
@@ -39,7 +37,6 @@ export class LoadingModal extends Modal {
                 btn
                     .setButtonText('Cancel')
                     .onClick(() => {
-                        this.abortController.abort();
                         this.close();
                         this.onCancel();
                     })
@@ -49,9 +46,5 @@ export class LoadingModal extends Modal {
     onClose() {
         const { contentEl } = this;
         contentEl.empty();
-    }
-
-    getAbortSignal(): AbortSignal {
-        return this.abortController.signal;
     }
 }

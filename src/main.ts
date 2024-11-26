@@ -53,8 +53,7 @@ export default class TagAgent extends Plugin {
 
 			const suggestedTags = await this.tagGenerator.suggestTags(
 				fileContent,
-				existingTags,
-				this.abortController.signal
+				existingTags
 			);
 
 			if (suggestedTags.length > 0) {
