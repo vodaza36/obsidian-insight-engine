@@ -1,5 +1,10 @@
 import { App, Modal, Setting } from 'obsidian';
 
+/**
+ * A modal that displays a loading message and provides a way to cancel the underlying operation.
+ * It is used to prevent the user from interacting with the app while a long-running operation is in progress.
+ */
+
 export class LoadingModal extends Modal {
     private message: string;
     private onCancel: () => void;

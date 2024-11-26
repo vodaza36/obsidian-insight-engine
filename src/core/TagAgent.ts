@@ -90,6 +90,9 @@ export default class TagAgent extends Plugin {
 				existingTags
 			);
 
+			console.log('Suggested tags:', suggestedTags);
+			console.log('Existing tags:', existingTags);
+			
 			// Close loading modal
 			loadingModal.close();
 

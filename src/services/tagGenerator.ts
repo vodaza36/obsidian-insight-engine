@@ -20,7 +20,7 @@ export class TagGenerator {
 
         this.promptTemplate = new PromptTemplate({
             template: `You are a tag suggestion system. Analyze the following content and suggest relevant tags for organizing it.
-            Focus on the main topics, concepts, and categories that would help in finding this content later.
+            Focus on the main topics, concepts, and categories that would help in finding this content later. Try to follow the rules listed below in the prioritized order.
 
 Content to analyze:
 {text}
@@ -29,16 +29,17 @@ Existing tags:
 {existingTags}
 
 Rules for tag suggestions:
-1. Provide at a maximum 5 relevant tags
-2. Use acronym format (e.g., 'ai' instead of 'Artificial Intelligence')
+1. Provide at least 2 tags and at most 5 relevant tags
+2. Use acronym format (e.g., 'ai' instead of 'Artificial Intelligence', or 'rag' instead of 'retrieval-augmented generation')
 3. Use lowercase words only
-4. For multi-word tags, use dashes (e.g., 'artificial-intelligence')
-5. Focus on content-specific tags, avoid generic tags
-6. Tags should be specific enough to be useful but general enough to be reusable
-7. Prioritize using existing tags if they fit the content well
-8. Only suggest new tags if no existing tags adequately describe the content
+4. Prefer single-word tags
+5. For multi-word tags, use dashes (e.g., 'artificial-intelligence')
+6. Focus on content-specific tags, avoid generic tags
+7. Tags should be specific enough to be useful but general enough to be reusable
+8. Prioritize using existing tags if they fit the content well then respond with the existing tags
+9. Only suggest new tags if no existing tags adequately describe the content
 
-Provide your response as a comma-separated list of tags (without the # symbol).
+Provide your response as a comma-separated list of tags (without the # symbol). Response only the tags with no additonal information.
 
 Suggested tags:`,
             inputVariables: ['text', 'existingTags']
