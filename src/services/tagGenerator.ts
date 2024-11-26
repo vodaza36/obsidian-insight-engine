@@ -31,13 +31,16 @@ Existing tags:
 Rules for tag suggestions:
 1. Provide at least 2 tags and at most 5 relevant tags
 2. Use acronym format (e.g., 'ai' instead of 'Artificial Intelligence', or 'rag' instead of 'retrieval-augmented generation')
-3. Use lowercase words only
-4. Prefer single-word tags
-5. For multi-word tags, use dashes (e.g., 'artificial-intelligence')
-6. Focus on content-specific tags, avoid generic tags
-7. Tags should be specific enough to be useful but general enough to be reusable
-8. Prioritize using existing tags if they fit the content well then respond with the existing tags
-9. Only suggest new tags if no existing tags adequately describe the content
+3. Use lowercase words only (e.g. 'garden' instead of 'Garden')
+4. Use singular form instead of plural tags (e.g., 'hobby' instead of 'hobbies')
+4. Prefer single-word tags (e.g., 'ai' instead of 'artificial-intelligence')
+5. Prefer the noun form instead of gerund verbs (e.g., 'develop' instead of 'developing')
+6. For multi-word tags, use dashes (e.g., 'artificial-intelligence')
+7. In case of a multi-word tag, think about if you can replace it with a popular acronym (e.g., 'artificial-intelligence' -> 'ai')
+8. Focus on content-specific tags, avoid generic tags (e.g., 'hobby' instead of 'interest')
+9. Tags should be specific enough to be useful but general enough to be reusable
+10. Prioritize using existing tags if they fit the content well then respond with the existing tags
+11. Only suggest new tags if no existing tags adequately describe the content
 
 Provide your response as a comma-separated list of tags (without the # symbol). Response only the tags with no additonal information.
 

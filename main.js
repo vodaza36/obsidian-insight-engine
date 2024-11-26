@@ -23793,12 +23793,15 @@ Rules for tag suggestions:
 1. Provide at least 2 tags and at most 5 relevant tags
 2. Use acronym format (e.g., 'ai' instead of 'Artificial Intelligence', or 'rag' instead of 'retrieval-augmented generation')
 3. Use lowercase words only
+4. Use singular form instead of plural tags
 4. Prefer single-word tags
-5. For multi-word tags, use dashes (e.g., 'artificial-intelligence')
-6. Focus on content-specific tags, avoid generic tags
-7. Tags should be specific enough to be useful but general enough to be reusable
-8. Prioritize using existing tags if they fit the content well then respond with the existing tags
-9. Only suggest new tags if no existing tags adequately describe the content
+5. Prefer the noun form instead of gerund verbs
+6. For multi-word tags, use dashes (e.g., 'artificial-intelligence')
+7. In case of a multi-word tag, think about if you can replace it with a popular acronym (e.g., 'artificial-intelligence' -> 'ai')
+8. Focus on content-specific tags, avoid generic tags
+9. Tags should be specific enough to be useful but general enough to be reusable
+10. Prioritize using existing tags if they fit the content well then respond with the existing tags
+11. Only suggest new tags if no existing tags adequately describe the content
 
 Provide your response as a comma-separated list of tags (without the # symbol). Response only the tags with no additonal information.
 
@@ -24021,14 +24024,13 @@ var TagAgent = class extends import_obsidian4.Plugin {
         content,
         existingTags
       );
-      console.log("Suggested tags:", suggestedTags);
-      console.log("Existing tags:", existingTags);
       loadingModal.close();
       if (suggestedTags && suggestedTags.length > 0) {
         const tagSuggestions = suggestedTags.map((tag) => ({
           name: tag,
-          isExisting: existingTags.has(tag)
+          isExisting: existingTags.has(tag.replace("#", ""))
         }));
+        console.log("Tag suggestions:", tagSuggestions);
         const modal = new TagSuggestionModal(
           this.app,
           tagSuggestions,

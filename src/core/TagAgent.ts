@@ -90,17 +90,16 @@ export default class TagAgent extends Plugin {
 				existingTags
 			);
 
-			console.log('Suggested tags:', suggestedTags);
-			console.log('Existing tags:', existingTags);
-			
 			// Close loading modal
 			loadingModal.close();
 
 			if (suggestedTags && suggestedTags.length > 0) {
 				const tagSuggestions: TagSuggestion[] = suggestedTags.map(tag => ({
 					name: tag,
-					isExisting: existingTags.has(tag)
+					isExisting: existingTags.has(tag.replace('#', ''))
 				}));
+
+				console.log('Tag suggestions:', tagSuggestions);
 
 				// Show the tag suggestion modal first
 				const modal = new TagSuggestionModal(
