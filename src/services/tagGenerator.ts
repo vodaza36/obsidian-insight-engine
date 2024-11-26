@@ -1,8 +1,13 @@
-import { PromptTemplate } from '@langchain/core/prompts';
-import { Ollama } from '@langchain/community/llms/ollama';
-import { RunnableSequence } from '@langchain/core/runnables';
+import { ChatPromptTemplate } from '@langchain/core/prompts';
+import { Ollama } from '@langchain/ollama';
 import { StringOutputParser } from '@langchain/core/output_parsers';
+import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import fetch from 'node-fetch';
+
+// Configure global fetch for Node.js environment
+if (!globalThis.fetch) {
+    (globalThis as any).fetch = fetch;
+}
 
 /**
  * TagGenerator class is responsible for generating tags for notes using the Ollama language model.
@@ -10,8 +15,6 @@ import fetch from 'node-fetch';
 export class TagGenerator {
     private baseUrl: string;
     private modelName: string;
-    private promptTemplate: PromptTemplate;
-    private chain: RunnableSequence;
     private model: Ollama;
 
     constructor(baseUrl: string, modelName: string) {
@@ -20,41 +23,25 @@ export class TagGenerator {
         this.model = new Ollama({
             baseUrl: this.baseUrl,
             model: this.modelName,
+            temperature: 0,
         });
-        
-        this.promptTemplate = PromptTemplate.fromTemplate(
-            `Given the following note content, suggest 3-5 relevant tags that capture the main topics and themes. Tags should start with '#' and be concise. If any of the suggested tags already exist in the note, prioritize them. Avoid overly generic tags.
-
-Note Content:
-{content}
-
-Existing Tags:
-{existingTags}
-
-Please provide the tags as a comma-separated list.`
-        );
-
-        // Create the chain
-        this.chain = RunnableSequence.from([
-            this.promptTemplate,
-            this.model,
-            new StringOutputParser(),
-        ]);
     }
 
     public async isOllamaServerRunning(): Promise<boolean> {
         try {
-            // Make a simple call to test if the server is responsive
-            await fetch(`${this.baseUrl}/api/version`);
-            return true;
+            const response = await fetch(`${this.baseUrl}/api/version`);
+            return response.ok;
         } catch (error) {
             console.error('Error checking Ollama server:', error);
             return false;
         }
     }
 
-    async suggestTags(content: string, existingTags: Set<string> = new Set()): Promise<string[]> {
-        // Check if Ollama server is running
+    async suggestTags(
+        content: string, 
+        existingTags: Set<string> = new Set(),
+        signal?: AbortSignal
+    ): Promise<string[]> {
         const isServerRunning = await this.isOllamaServerRunning();
         if (!isServerRunning) {
             throw new Error('Ollama server is not running. Please start the Ollama server using the command: "ollama serve"');
@@ -63,20 +50,54 @@ Please provide the tags as a comma-separated list.`
         const existingTagsList = Array.from(existingTags).join(', ');
 
         try {
-            const result = await this.chain.invoke({
-                content,
-                existingTags: existingTagsList || 'None',
+            const messages = [
+                new SystemMessage(
+                    `You are a tag generation assistant. Your task is to analyze content and generate 3-5 relevant tags.
+Rules for tag generation:
+1. Tags must start with '#'
+2. Tags should be concise and descriptive
+3. If suggested tags already exist in the input, prioritize them
+4. Avoid overly generic tags
+5. Use noun forms instead of gerunds
+6. Prefer single words without hyphens
+7. Use common acronyms (e.g., 'ai' instead of 'Artificial Intelligence')
+
+Output format: Return only a comma-separated list of tags, nothing else.`
+                ),
+                new HumanMessage(
+                    `Content: ${content}
+Existing Tags: ${existingTagsList || 'None'}
+
+Generate tags:`
+                ),
+            ];
+
+            const response = await this.model.invoke(messages, {
+                signal,
+                callbacks: [
+                    {
+                        handleLLMError(err) {
+                            console.error('LLM Error:', err);
+                        },
+                    },
+                ],
             });
 
-            console.log('Raw Ollama response:', result);
+            // The response is already a string, no need to access .content
+            if (typeof response !== 'string') {
+                throw new Error('Unexpected response format from LLM');
+            }
 
-            return result
+            return response
                 .split(',')
                 .map((tag: string) => tag.trim().toLowerCase())
                 .filter((tag: string) => tag.length > 0)
-                .map((tag: string) => tag.replace(/\s+/g, '-'));
+                .map((tag: string) => tag.startsWith('#') ? tag : `#${tag}`);
 
         } catch (error) {
+            if (error instanceof Error && error.name === 'AbortError') {
+                throw new Error('Tag generation was cancelled');
+            }
             console.error('Error in tag generation:', error);
             throw error;
         }

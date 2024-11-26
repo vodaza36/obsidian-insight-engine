@@ -38,3 +38,53 @@ on an AI driven approach. Following requirements must be met:
 - [LangChain.js](https://js.langchain.com/) - Framework for developing LLM-powered applications
 - [Ollama](https://github.com/ollama/ollama) - Run large language models locally
     - Using "llama3.1" as the base model for text generation and analysis
+
+# Documentation and Examples
+## How to use LangChain.js with Ollama
+```ts
+// Install the LangChain v3.0 core node package 
+npm install @langchain/core 
+// Install the Ollama chat model v.0.1.2
+npm install @langchain/ollama 
+// instantiate our model object and generate chat completions
+import { Ollama } from "@langchain/ollama";
+
+const llm = new Ollama({
+  model: "llama3", // Default value
+  temperature: 0,
+  maxRetries: 2,
+  // other params...
+});
+// invoke the LLM
+import { HumanMessage, SystemMessage } from "@langchain/core/messages";
+
+const messages = [
+  new SystemMessage("Translate the following from English into Italian"),
+  new HumanMessage("hi!"),
+];
+
+await model.invoke(messages);
+// use an Output parser
+import { StringOutputParser } from "@langchain/core/output_parsers";
+
+const parser = new StringOutputParser();
+// LCEL syntax
+const chain = model.pipe(parser);
+await chain.invoke(messages);
+// use a PromptTemplate
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+const systemTemplate = "Translate the following into {language}:";
+const promptTemplate = ChatPromptTemplate.fromMessages([
+  ["system", systemTemplate],
+  ["user", "{text}"],
+]);
+const promptValue = await promptTemplate.invoke({
+  language: "italian",
+  text: "hi",
+});
+
+promptValue;
+promptValue.toChatMessages();
+const llmChain = promptTemplate.pipe(model).pipe(parser);
+await llmChain.invoke({ language: "italian", text: "hi" });
+```    
