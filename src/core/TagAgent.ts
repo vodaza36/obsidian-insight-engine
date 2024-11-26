@@ -1,4 +1,4 @@
-import { Plugin, TFile, Notice, Modal, Setting } from 'obsidian';
+import { Plugin, TFile, Notice, getAllTags, Modal as ObsidianModal, Setting } from 'obsidian';
 import { TagAgentSettings, DEFAULT_SETTINGS } from '../models/types';
 import { TagGenerator } from '../services/tagGenerator';
 import { TagSuggestionModal } from '../ui/TagSuggestionModal';
@@ -106,7 +106,7 @@ export default class TagAgent extends Plugin {
 					(selectedTags: string[]) => {
 						if (selectedTags.length > 0) {
 							// Create a confirmation modal
-							const confirmModal = new Modal(this.app);
+							const confirmModal = new ObsidianModal(this.app);
 							confirmModal.contentEl.createEl('h2', { text: 'Confirm Tags' });
 							confirmModal.contentEl.createEl('p', { text: 'Do you want to add these tags to your note?' });
 							

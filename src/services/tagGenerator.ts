@@ -30,12 +30,13 @@ Existing tags:
 
 Rules for tag suggestions:
 1. Provide at a maximum 5 relevant tags
-2. Use lowercase words only
-3. For multi-word tags, use dashes (e.g., 'artificial-intelligence')
-4. Focus on content-specific tags, avoid generic tags
-5. Tags should be specific enough to be useful but general enough to be reusable
-6. Prioritize using existing tags if they fit the content well
-7. Only suggest new tags if no existing tags adequately describe the content
+2. Use acronym format (e.g., 'ai' instead of 'Artificial Intelligence')
+3. Use lowercase words only
+4. For multi-word tags, use dashes (e.g., 'artificial-intelligence')
+5. Focus on content-specific tags, avoid generic tags
+6. Tags should be specific enough to be useful but general enough to be reusable
+7. Prioritize using existing tags if they fit the content well
+8. Only suggest new tags if no existing tags adequately describe the content
 
 Provide your response as a comma-separated list of tags (without the # symbol).
 
