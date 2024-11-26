@@ -1,6 +1,6 @@
 import { Plugin, TFile } from 'obsidian';
 import { TagGenerator } from './services/tagGenerator';
-import type { TagSuggestion } from './types/TagSuggestion';
+import type { TagSuggestion } from "./models/types";
 
 export default class TagAgent extends Plugin {
 	private tagGenerator: TagGenerator;
