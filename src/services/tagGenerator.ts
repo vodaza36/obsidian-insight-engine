@@ -22,7 +22,13 @@ export class TagGenerator {
             template: `You are a tag suggestion system. Analyze the following content and suggest relevant tags for organizing it.
             Focus on the main topics, concepts, and categories that would help in finding this content later. Try to follow the rules listed below in the prioritized order.
 
-            Rules for tag suggestions:
+Content to analyze:
+{text}
+
+Existing tags:
+{existingTags}
+
+Rules for tag suggestions:
 1. Prefer the noun form instead of gerund verbs (e.g., 'develop' instead of 'developing')
 2. Provide at least 2 tags and at most 5 relevant tags
 3. Use acronym format (e.g., 'ai' instead of 'Artificial Intelligence', or 'rag' instead of 'retrieval-augmented generation')
@@ -35,13 +41,6 @@ export class TagGenerator {
 10. Tags should be specific enough to be useful but general enough to be reusable
 11. Prioritize using existing tags if they fit the content well then respond with the existing tags
 12. Only suggest new tags if no existing tags adequately describe the content
-
-
-Content to analyze:
-{text}
-
-Existing tags:
-{existingTags}
 
 
 Provide your response as a comma-separated list of tags (without the # symbol). Response only the tags with no additonal information.
