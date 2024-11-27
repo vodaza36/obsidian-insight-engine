@@ -104,6 +104,8 @@ export default class TagAgent extends Plugin {
 	private async generateTagsForNote(file: TFile) {
 		const content = await this.app.vault.read(file);
 		const existingTags = this.getAllVaultTags();
+		const fileCache = this.app.metadataCache.getFileCache(file);
+		const existingNoteTags = new Set(fileCache ? getAllTags(fileCache) : []);
 		
 		// Show loading modal
 		const loadingModal = new LoadingModal(
@@ -137,6 +139,7 @@ export default class TagAgent extends Plugin {
 				const modal = new TagSuggestionModal(
 					this.app,
 					tagSuggestions,
+					existingNoteTags,
 					async (selectedTags: string[]) => {
 						if (selectedTags.length > 0) {
 							await this.appendTagsToNote(file, selectedTags);
@@ -173,10 +176,16 @@ export default class TagAgent extends Plugin {
 		} else {
 			const lines = content.split('\n');
 			const h1Index = lines.findIndex(line => line.startsWith('# '));
-			if (h1Index !== -1 && h1Index + 1 < lines.length) {
-				const tagLine = lines[h1Index + 1];
-				if (tagLine.includes('#')) {
-					return tagLine.trim().split(/\s+/).filter(Boolean);
+			
+			if (h1Index !== -1) {
+				// Check if there's already a tag line after H1
+				if (h1Index + 1 < lines.length && lines[h1Index + 1].includes('#')) {
+					return lines[h1Index + 1].trim().split(/\s+/).filter(Boolean);
+				}
+			} else {
+				// If no H1 found, check if there's already a tag line at the start
+				if (lines[0] && lines[0].includes('#')) {
+					return lines[0].trim().split(/\s+/).filter(Boolean);
 				}
 			}
 		}

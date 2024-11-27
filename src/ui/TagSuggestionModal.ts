@@ -8,13 +8,27 @@ interface TagSuggestion {
 export class TagSuggestionModal extends Modal {
     private suggestedTags: TagSuggestion[];
     private selectedTags: Set<string>;
+    private existingNoteTags: Set<string>;
     private callback: (selectedTags: string[]) => void;
 
-    constructor(app: App, suggestedTags: TagSuggestion[], callback: (selectedTags: string[]) => void) {
+    constructor(
+        app: App, 
+        suggestedTags: TagSuggestion[], 
+        existingNoteTags: Set<string>,
+        callback: (selectedTags: string[]) => void
+    ) {
         super(app);
         this.suggestedTags = suggestedTags;
         this.selectedTags = new Set<string>();
+        this.existingNoteTags = existingNoteTags;
         this.callback = callback;
+
+        // Pre-select tags that already exist on the note
+        suggestedTags.forEach(tag => {
+            if (this.existingNoteTags.has(tag.name.replace('#', ''))) {
+                this.selectedTags.add(tag.name);
+            }
+        });
     }
 
     onOpen() {
@@ -87,9 +101,14 @@ export class TagSuggestionModal extends Modal {
     }
 
     private createTagToggle(container: HTMLElement, tag: TagSuggestion) {
+        const isOnNote = this.existingNoteTags.has(tag.name.replace('#', ''));
         new Setting(container)
             .setName(tag.name)
+            .setDesc(isOnNote ? 'Already on note' : '')
             .addToggle(toggle => {
+                if (isOnNote) {
+                    toggle.setValue(true);
+                }
                 toggle.onChange(value => {
                     if (value) {
                         this.selectedTags.add(tag.name);

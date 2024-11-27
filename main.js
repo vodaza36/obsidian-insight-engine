@@ -33373,11 +33373,17 @@ Suggested tags:`,
 // src/ui/TagSuggestionModal.ts
 var import_obsidian = require("obsidian");
 var TagSuggestionModal = class extends import_obsidian.Modal {
-  constructor(app, suggestedTags, callback) {
+  constructor(app, suggestedTags, existingNoteTags, callback) {
     super(app);
     this.suggestedTags = suggestedTags;
     this.selectedTags = /* @__PURE__ */ new Set();
+    this.existingNoteTags = existingNoteTags;
     this.callback = callback;
+    suggestedTags.forEach((tag) => {
+      if (this.existingNoteTags.has(tag.name.replace("#", ""))) {
+        this.selectedTags.add(tag.name);
+      }
+    });
   }
   onOpen() {
     const { contentEl } = this;
@@ -33426,7 +33432,11 @@ var TagSuggestionModal = class extends import_obsidian.Modal {
     );
   }
   createTagToggle(container, tag) {
-    new import_obsidian.Setting(container).setName(tag.name).addToggle((toggle) => {
+    const isOnNote = this.existingNoteTags.has(tag.name.replace("#", ""));
+    new import_obsidian.Setting(container).setName(tag.name).setDesc(isOnNote ? "Already on note" : "").addToggle((toggle) => {
+      if (isOnNote) {
+        toggle.setValue(true);
+      }
       toggle.onChange((value) => {
         if (value) {
           this.selectedTags.add(tag.name);
@@ -33614,6 +33624,8 @@ var TagAgent = class extends import_obsidian4.Plugin {
   async generateTagsForNote(file) {
     const content = await this.app.vault.read(file);
     const existingTags = this.getAllVaultTags();
+    const fileCache = this.app.metadataCache.getFileCache(file);
+    const existingNoteTags = new Set(fileCache ? (0, import_obsidian4.getAllTags)(fileCache) : []);
     const loadingModal = new LoadingModal(
       this.app,
       "Generating tags...",
@@ -33638,6 +33650,7 @@ var TagAgent = class extends import_obsidian4.Plugin {
         const modal = new TagSuggestionModal(
           this.app,
           tagSuggestions,
+          existingNoteTags,
           async (selectedTags) => {
             if (selectedTags.length > 0) {
               await this.appendTagsToNote(file, selectedTags);
@@ -33671,10 +33684,13 @@ var TagAgent = class extends import_obsidian4.Plugin {
     } else {
       const lines = content.split("\n");
       const h1Index = lines.findIndex((line) => line.startsWith("# "));
-      if (h1Index !== -1 && h1Index + 1 < lines.length) {
-        const tagLine = lines[h1Index + 1];
-        if (tagLine.includes("#")) {
-          return tagLine.trim().split(/\s+/).filter(Boolean);
+      if (h1Index !== -1) {
+        if (h1Index + 1 < lines.length && lines[h1Index + 1].includes("#")) {
+          return lines[h1Index + 1].trim().split(/\s+/).filter(Boolean);
+        }
+      } else {
+        if (lines[0] && lines[0].includes("#")) {
+          return lines[0].trim().split(/\s+/).filter(Boolean);
         }
       }
     }
