@@ -9,23 +9,26 @@ export class TagSuggestionModal extends Modal {
     private suggestedTags: TagSuggestion[];
     private selectedTags: Set<string>;
     private existingNoteTags: Set<string>;
-    private callback: (selectedTags: string[]) => void;
+    private tagsToRemove: Set<string>;
+    private callback: (selectedTags: string[], tagsToRemove: string[]) => void;
 
     constructor(
         app: App, 
         suggestedTags: TagSuggestion[], 
         existingNoteTags: Set<string>,
-        callback: (selectedTags: string[]) => void
+        callback: (selectedTags: string[], tagsToRemove: string[]) => void
     ) {
         super(app);
         this.suggestedTags = suggestedTags;
         this.selectedTags = new Set<string>();
         this.existingNoteTags = existingNoteTags;
+        this.tagsToRemove = new Set<string>();
         this.callback = callback;
 
         // Pre-select tags that already exist on the note
         suggestedTags.forEach(tag => {
-            if (this.existingNoteTags.has(tag.name.replace('#', '').toLowerCase())) {
+            const tagWithoutHash = tag.name.replace('#', '').toLowerCase();
+            if (this.existingNoteTags.has(tagWithoutHash)) {
                 this.selectedTags.add(tag.name);
             }
         });
@@ -95,7 +98,7 @@ export class TagSuggestionModal extends Modal {
                     .setCta()
                     .onClick(() => {
                         this.close();
-                        this.callback(Array.from(this.selectedTags));
+                        this.callback(Array.from(this.selectedTags), Array.from(this.tagsToRemove));
                     })
             );
     }
@@ -111,8 +114,12 @@ export class TagSuggestionModal extends Modal {
                 toggle.onChange(value => {
                     if (value) {
                         this.selectedTags.add(tag.name);
+                        this.tagsToRemove.delete(tag.name);
                     } else {
                         this.selectedTags.delete(tag.name);
+                        if (isOnNote) {
+                            this.tagsToRemove.add(tag.name);
+                        }
                     }
                 });
             });
@@ -121,6 +128,6 @@ export class TagSuggestionModal extends Modal {
     onClose() {
         const { contentEl } = this;
         contentEl.empty();
-        this.callback(Array.from(this.selectedTags));
+        this.callback(Array.from(this.selectedTags), Array.from(this.tagsToRemove));
     }
 }

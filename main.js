@@ -33378,9 +33378,11 @@ var TagSuggestionModal = class extends import_obsidian.Modal {
     this.suggestedTags = suggestedTags;
     this.selectedTags = /* @__PURE__ */ new Set();
     this.existingNoteTags = existingNoteTags;
+    this.tagsToRemove = /* @__PURE__ */ new Set();
     this.callback = callback;
     suggestedTags.forEach((tag) => {
-      if (this.existingNoteTags.has(tag.name.replace("#", "").toLowerCase())) {
+      const tagWithoutHash = tag.name.replace("#", "").toLowerCase();
+      if (this.existingNoteTags.has(tagWithoutHash)) {
         this.selectedTags.add(tag.name);
       }
     });
@@ -33427,7 +33429,7 @@ var TagSuggestionModal = class extends import_obsidian.Modal {
     new import_obsidian.Setting(buttonContainer).addButton(
       (btn) => btn.setButtonText("Add Selected Tags").setCta().onClick(() => {
         this.close();
-        this.callback(Array.from(this.selectedTags));
+        this.callback(Array.from(this.selectedTags), Array.from(this.tagsToRemove));
       })
     );
   }
@@ -33439,8 +33441,12 @@ var TagSuggestionModal = class extends import_obsidian.Modal {
       toggle.onChange((value) => {
         if (value) {
           this.selectedTags.add(tag.name);
+          this.tagsToRemove.delete(tag.name);
         } else {
           this.selectedTags.delete(tag.name);
+          if (isOnNote) {
+            this.tagsToRemove.add(tag.name);
+          }
         }
       });
     });
@@ -33448,7 +33454,7 @@ var TagSuggestionModal = class extends import_obsidian.Modal {
   onClose() {
     const { contentEl } = this;
     contentEl.empty();
-    this.callback(Array.from(this.selectedTags));
+    this.callback(Array.from(this.selectedTags), Array.from(this.tagsToRemove));
   }
 };
 
@@ -33652,9 +33658,9 @@ var TagAgent = class extends import_obsidian4.Plugin {
           this.app,
           tagSuggestions,
           existingNoteTags,
-          async (selectedTags) => {
-            if (selectedTags.length > 0) {
-              await this.appendTagsToNote(file, selectedTags);
+          async (selectedTags, tagsToRemove) => {
+            if (selectedTags.length > 0 || tagsToRemove.length > 0) {
+              await this.appendTagsToNote(file, selectedTags, tagsToRemove);
             }
           }
         );
@@ -33700,11 +33706,16 @@ var TagAgent = class extends import_obsidian4.Plugin {
   formatTagsForProperty(tags) {
     return tags.map((tag) => tag.replace(/^#/, "")).join(", ");
   }
-  async appendTagsToNote(file, tags) {
+  async appendTagsToNote(file, tags, tagsToRemove = []) {
     const content = await this.app.vault.read(file);
     const existingTags = this.getExistingTags(content, this.settings.tagFormat);
     const formattedNewTags = tags.map((tag) => tag.startsWith("#") ? tag : `#${tag}`);
-    const uniqueTags = [.../* @__PURE__ */ new Set([...existingTags, ...formattedNewTags])];
+    const tagsToKeep = existingTags.filter(
+      (tag) => !tagsToRemove.some(
+        (removeTag) => tag.toLowerCase() === (removeTag.startsWith("#") ? removeTag : `#${removeTag}`).toLowerCase()
+      )
+    );
+    const uniqueTags = [.../* @__PURE__ */ new Set([...tagsToKeep, ...formattedNewTags])];
     const formattedTags = uniqueTags.join(" ");
     let newContent;
     if (this.settings.tagFormat === "property") {
@@ -33761,10 +33772,23 @@ ${content}`;
     if (newContent !== content) {
       await this.app.vault.modify(file, newContent);
       const addedTags = formattedNewTags.filter((tag) => !existingTags.includes(tag));
+      const removedTags = tagsToRemove.filter(
+        (tag) => existingTags.some(
+          (existingTag) => existingTag.toLowerCase() === (tag.startsWith("#") ? tag : `#${tag}`).toLowerCase()
+        )
+      );
+      let message = "";
       if (addedTags.length > 0) {
-        new import_obsidian4.Notice(`Added tags: ${addedTags.join(" ")}`);
+        message += `Added tags: ${addedTags.join(" ")}`;
+      }
+      if (removedTags.length > 0) {
+        if (message) message += "\n";
+        message += `Removed tags: ${removedTags.join(" ")}`;
+      }
+      if (message) {
+        new import_obsidian4.Notice(message);
       } else {
-        new import_obsidian4.Notice("No new tags were added (all tags already existed)");
+        new import_obsidian4.Notice("No changes were made to tags");
       }
     }
   }

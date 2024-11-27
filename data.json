@@ -1,7 +1,7 @@
 {
   "llmProvider": "ollama",
   "modelName": "llama3",
-  "tagFormat": "property",
+  "tagFormat": "line",
   "llmHost": "http://localhost:11434",
   "ollamaHost": "http://localhost:11434",
   "ollamaModel": "llama3.1",

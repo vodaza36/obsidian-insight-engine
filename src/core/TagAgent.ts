@@ -143,9 +143,9 @@ export default class TagAgent extends Plugin {
 					this.app,
 					tagSuggestions,
 					existingNoteTags,
-					async (selectedTags: string[]) => {
-						if (selectedTags.length > 0) {
-							await this.appendTagsToNote(file, selectedTags);
+					async (selectedTags: string[], tagsToRemove: string[]) => {
+						if (selectedTags.length > 0 || tagsToRemove.length > 0) {
+							await this.appendTagsToNote(file, selectedTags, tagsToRemove);
 						}
 					}
 				);
@@ -200,15 +200,20 @@ export default class TagAgent extends Plugin {
 		return tags.map(tag => tag.replace(/^#/, '')).join(', ');
 	}
 
-	private async appendTagsToNote(file: TFile, tags: string[]) {
+	private async appendTagsToNote(file: TFile, tags: string[], tagsToRemove: string[] = []) {
 		const content = await this.app.vault.read(file);
 		
 		// Get existing tags and format new tags
 		const existingTags = this.getExistingTags(content, this.settings.tagFormat);
 		const formattedNewTags = tags.map(tag => tag.startsWith('#') ? tag : `#${tag}`);
 		
-		// Combine existing and new tags, removing duplicates
-		const uniqueTags = [...new Set([...existingTags, ...formattedNewTags])];
+		// Remove specified tags and combine with new tags, removing duplicates
+		const tagsToKeep = existingTags.filter(tag => 
+			!tagsToRemove.some(removeTag => 
+				tag.toLowerCase() === (removeTag.startsWith('#') ? removeTag : `#${removeTag}`).toLowerCase()
+			)
+		);
+		const uniqueTags = [...new Set([...tagsToKeep, ...formattedNewTags])];
 		const formattedTags = uniqueTags.join(' ');
 
 		let newContent: string;
@@ -273,10 +278,24 @@ export default class TagAgent extends Plugin {
 		if (newContent !== content) {
 			await this.app.vault.modify(file, newContent);
 			const addedTags = formattedNewTags.filter(tag => !existingTags.includes(tag));
+			const removedTags = tagsToRemove.filter(tag => 
+				existingTags.some(existingTag => 
+					existingTag.toLowerCase() === (tag.startsWith('#') ? tag : `#${tag}`).toLowerCase()
+				)
+			);
+			
+			let message = '';
 			if (addedTags.length > 0) {
-				new Notice(`Added tags: ${addedTags.join(' ')}`);
+				message += `Added tags: ${addedTags.join(' ')}`;
+			}
+			if (removedTags.length > 0) {
+				if (message) message += '\n';
+				message += `Removed tags: ${removedTags.join(' ')}`;
+			}
+			if (message) {
+				new Notice(message);
 			} else {
-				new Notice('No new tags were added (all tags already existed)');
+				new Notice('No changes were made to tags');
 			}
 		}
 	}
