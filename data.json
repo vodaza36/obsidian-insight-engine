@@ -1,9 +1,0 @@
-{
-  "llmProvider": "openai",
-  "modelName": "gpt-4",
-  "tagFormat": "property",
-  "llmHost": "http://localhost:11434",
-  "ollamaHost": "http://localhost:11434",
-  "ollamaModel": "llama3.1",
-  "apiKey": "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"
-}
