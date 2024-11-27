@@ -160,11 +160,39 @@ export default class TagAgent extends Plugin {
 		}
 	}
 
+	private getExistingTags(content: string, format: 'property' | 'line'): string[] {
+		if (format === 'property') {
+			const match = content.match(/---\n([\s\S]*?)\n---/);
+			if (match) {
+				const frontmatter = match[1];
+				const tagMatch = frontmatter.match(/tags:\s*(.*?)(\r?\n|$)/);
+				if (tagMatch) {
+					return tagMatch[1].trim().split(/\s+/).filter(Boolean);
+				}
+			}
+		} else {
+			const lines = content.split('\n');
+			const h1Index = lines.findIndex(line => line.startsWith('# '));
+			if (h1Index !== -1 && h1Index + 1 < lines.length) {
+				const tagLine = lines[h1Index + 1];
+				if (tagLine.includes('#')) {
+					return tagLine.trim().split(/\s+/).filter(Boolean);
+				}
+			}
+		}
+		return [];
+	}
+
 	private async appendTagsToNote(file: TFile, tags: string[]) {
 		const content = await this.app.vault.read(file);
-		const formattedTags = tags.map((tag) => 
-			tag.startsWith('#') ? tag : `#${tag}`
-		).join(' ');
+		
+		// Get existing tags and format new tags
+		const existingTags = this.getExistingTags(content, this.settings.tagFormat);
+		const formattedNewTags = tags.map(tag => tag.startsWith('#') ? tag : `#${tag}`);
+		
+		// Combine existing and new tags, removing duplicates
+		const uniqueTags = [...new Set([...existingTags, ...formattedNewTags])];
+		const formattedTags = uniqueTags.join(' ');
 
 		let newContent: string;
 		
@@ -172,15 +200,11 @@ export default class TagAgent extends Plugin {
 			const hasProperties = content.includes('---\n');
 			if (hasProperties) {
 				const [frontmatter, ...rest] = content.split('---\n');
-				// Check if tags property already exists
 				if (frontmatter.includes('tags:')) {
-					// Append new tags to existing ones
+					// Replace existing tags with combined unique tags
 					const updatedFrontmatter = frontmatter.replace(
-						/tags:(.*)(\r?\n|$)/,
-						(match, existingTags) => {
-							const trimmedExisting = existingTags.trim();
-							return `tags: ${trimmedExisting ? trimmedExisting + ' ' : ''}${formattedTags}\n`;
-						}
+						/tags:.*(\r?\n|$)/,
+						`tags: ${formattedTags}\n`
 					);
 					newContent = `${updatedFrontmatter}---\n${rest.join('---\n')}`;
 				} else {
@@ -192,21 +216,37 @@ export default class TagAgent extends Plugin {
 				newContent = `---\ntags: ${formattedTags}\n---\n\n${content}`;
 			}
 		} else { // 'line' format
-			// Find the first H1 headline
 			const lines = content.split('\n');
 			const h1Index = lines.findIndex(line => line.startsWith('# '));
 			
 			if (h1Index !== -1) {
-				// Insert tags after the H1
-				lines.splice(h1Index + 1, 0, formattedTags);
+				// Check if there's already a tag line after H1
+				if (h1Index + 1 < lines.length && lines[h1Index + 1].includes('#')) {
+					lines[h1Index + 1] = formattedTags;
+				} else {
+					lines.splice(h1Index + 1, 0, formattedTags);
+				}
 				newContent = lines.join('\n');
 			} else {
-				// If no H1 found, add tags at the beginning
-				newContent = `${formattedTags}\n\n${content}`;
+				// If no H1 found, check if there's already a tag line at the start
+				if (lines[0] && lines[0].includes('#')) {
+					lines[0] = formattedTags;
+					newContent = lines.join('\n');
+				} else {
+					newContent = `${formattedTags}\n\n${content}`;
+				}
 			}
 		}
 
-		await this.app.vault.modify(file, newContent);
-		new Notice(`Added tags: ${formattedTags}`);
+		// Only modify the file if changes were made
+		if (newContent !== content) {
+			await this.app.vault.modify(file, newContent);
+			const addedTags = formattedNewTags.filter(tag => !existingTags.includes(tag));
+			if (addedTags.length > 0) {
+				new Notice(`Added tags: ${addedTags.join(' ')}`);
+			} else {
+				new Notice('No new tags were added (all tags already existed)');
+			}
+		}
 	}
 }

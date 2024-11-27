@@ -33658,11 +33658,34 @@ var TagAgent = class extends import_obsidian4.Plugin {
       }
     }
   }
+  getExistingTags(content, format) {
+    if (format === "property") {
+      const match = content.match(/---\n([\s\S]*?)\n---/);
+      if (match) {
+        const frontmatter = match[1];
+        const tagMatch = frontmatter.match(/tags:\s*(.*?)(\r?\n|$)/);
+        if (tagMatch) {
+          return tagMatch[1].trim().split(/\s+/).filter(Boolean);
+        }
+      }
+    } else {
+      const lines = content.split("\n");
+      const h1Index = lines.findIndex((line) => line.startsWith("# "));
+      if (h1Index !== -1 && h1Index + 1 < lines.length) {
+        const tagLine = lines[h1Index + 1];
+        if (tagLine.includes("#")) {
+          return tagLine.trim().split(/\s+/).filter(Boolean);
+        }
+      }
+    }
+    return [];
+  }
   async appendTagsToNote(file, tags) {
     const content = await this.app.vault.read(file);
-    const formattedTags = tags.map(
-      (tag) => tag.startsWith("#") ? tag : `#${tag}`
-    ).join(" ");
+    const existingTags = this.getExistingTags(content, this.settings.tagFormat);
+    const formattedNewTags = tags.map((tag) => tag.startsWith("#") ? tag : `#${tag}`);
+    const uniqueTags = [.../* @__PURE__ */ new Set([...existingTags, ...formattedNewTags])];
+    const formattedTags = uniqueTags.join(" ");
     let newContent;
     if (this.settings.tagFormat === "property") {
       const hasProperties = content.includes("---\n");
@@ -33670,12 +33693,9 @@ var TagAgent = class extends import_obsidian4.Plugin {
         const [frontmatter, ...rest] = content.split("---\n");
         if (frontmatter.includes("tags:")) {
           const updatedFrontmatter = frontmatter.replace(
-            /tags:(.*)(\r?\n|$)/,
-            (match, existingTags) => {
-              const trimmedExisting = existingTags.trim();
-              return `tags: ${trimmedExisting ? trimmedExisting + " " : ""}${formattedTags}
-`;
-            }
+            /tags:.*(\r?\n|$)/,
+            `tags: ${formattedTags}
+`
           );
           newContent = `${updatedFrontmatter}---
 ${rest.join("---\n")}`;
@@ -33695,16 +33715,32 @@ ${content}`;
       const lines = content.split("\n");
       const h1Index = lines.findIndex((line) => line.startsWith("# "));
       if (h1Index !== -1) {
-        lines.splice(h1Index + 1, 0, formattedTags);
+        if (h1Index + 1 < lines.length && lines[h1Index + 1].includes("#")) {
+          lines[h1Index + 1] = formattedTags;
+        } else {
+          lines.splice(h1Index + 1, 0, formattedTags);
+        }
         newContent = lines.join("\n");
       } else {
-        newContent = `${formattedTags}
+        if (lines[0] && lines[0].includes("#")) {
+          lines[0] = formattedTags;
+          newContent = lines.join("\n");
+        } else {
+          newContent = `${formattedTags}
 
 ${content}`;
+        }
       }
     }
-    await this.app.vault.modify(file, newContent);
-    new import_obsidian4.Notice(`Added tags: ${formattedTags}`);
+    if (newContent !== content) {
+      await this.app.vault.modify(file, newContent);
+      const addedTags = formattedNewTags.filter((tag) => !existingTags.includes(tag));
+      if (addedTags.length > 0) {
+        new import_obsidian4.Notice(`Added tags: ${addedTags.join(" ")}`);
+      } else {
+        new import_obsidian4.Notice("No new tags were added (all tags already existed)");
+      }
+    }
   }
 };
 
