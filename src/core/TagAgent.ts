@@ -202,81 +202,86 @@ export default class TagAgent extends Plugin {
 
 	private async appendTagsToNote(file: TFile, tags: string[], tagsToRemove: string[] = []) {
 		const content = await this.app.vault.read(file);
-		
-		// Get existing tags and format new tags
+		let newContent = content;
 		const existingTags = this.getExistingTags(content, this.settings.tagFormat);
-		const formattedNewTags = tags.map(tag => tag.startsWith('#') ? tag : `#${tag}`);
 		
-		// Remove specified tags and combine with new tags, removing duplicates
-		const tagsToKeep = existingTags.filter(tag => 
-			!tagsToRemove.some(removeTag => 
-				tag.toLowerCase() === (removeTag.startsWith('#') ? removeTag : `#${removeTag}`).toLowerCase()
-			)
-		);
-		const uniqueTags = [...new Set([...tagsToKeep, ...formattedNewTags])];
-		const formattedTags = uniqueTags.join(' ');
+		// Remove tags that should be removed and format new tags
+		const formattedNewTags = tags
+			.filter(tag => !tagsToRemove.includes(tag))
+			.map(tag => (tag.startsWith('#') ? tag : `#${tag}`));
 
-		let newContent: string;
-		
 		if (this.settings.tagFormat === 'property') {
-			const propertyFormattedTags = this.formatTagsForProperty(uniqueTags);
-			const hasProperties = content.includes('---\n');
-			
-			if (hasProperties) {
-				// Find the property section boundaries
-				const propertyMatch = content.match(/(---\n)([\s\S]*?)\n---/);
-				if (propertyMatch) {
-					const [fullMatch, delimiter, properties] = propertyMatch;
-					const beforeProperties = content.slice(0, content.indexOf(fullMatch));
-					const afterProperties = content.slice(content.indexOf(fullMatch) + fullMatch.length);
-					
-					let updatedProperties = properties;
-					if (properties.includes('tags:')) {
-						// Update existing tags property
-						updatedProperties = properties.replace(
-							/tags:\s*\[.*?\]/,
-							`tags: [${propertyFormattedTags}]`
-						);
-					} else {
-						// Add new tags property to existing properties
-						updatedProperties = properties + `tags: [${propertyFormattedTags}]\n`;
-					}
-					
-					newContent = beforeProperties + delimiter + updatedProperties + '\n---' + afterProperties;
-				} else {
-					// This shouldn't happen as we already checked hasProperties
-					newContent = content;
+			// Handle frontmatter property format
+			const yamlSeparator = '---\n';
+			const hasYamlHeader = content.startsWith(yamlSeparator);
+			const endOfYamlIndex = hasYamlHeader ? content.indexOf(yamlSeparator, yamlSeparator.length) : -1;
+
+			if (hasYamlHeader && endOfYamlIndex !== -1) {
+				const yamlContent = content.slice(yamlSeparator.length, endOfYamlIndex);
+				const restContent = content.slice(endOfYamlIndex + yamlSeparator.length);
+				const yamlLines = yamlContent.split('\n');
+
+				// Remove existing tags property
+				const tagLineIndex = yamlLines.findIndex(line => line.startsWith('tags:'));
+				if (tagLineIndex !== -1) {
+					yamlLines.splice(tagLineIndex, 1);
 				}
-			} else {
-				// Create new properties section if none exists
-				newContent = `---\ntags: [${propertyFormattedTags}]\n---\n\n${content}`;
+
+				// Add new tags
+				if (formattedNewTags.length > 0) {
+					yamlLines.push(`tags: [${formattedNewTags.map(tag => tag.replace('#', '')).join(', ')}]`);
+				}
+
+				newContent = `${yamlSeparator}${yamlLines.join('\n')}\n${yamlSeparator}${restContent}`;
+			} else if (formattedNewTags.length > 0) {
+				// Create new YAML header if none exists
+				newContent = `${yamlSeparator}tags: [${formattedNewTags.map(tag => tag.replace('#', '')).join(', ')}]\n${yamlSeparator}\n${content}`;
 			}
-		} else { // 'line' format
+		} else {
+			// Handle inline tags format
 			const lines = content.split('\n');
-			const h1Index = lines.findIndex(line => line.startsWith('# '));
-			
-			if (h1Index !== -1) {
-				// Check if there's already a tag line after H1
-				if (h1Index + 1 < lines.length && lines[h1Index + 1].includes('#')) {
-					lines[h1Index + 1] = formattedTags;
-				} else {
-					lines.splice(h1Index + 1, 0, formattedTags);
-				}
-				newContent = lines.join('\n');
+			const formattedTags = formattedNewTags.join(' ');
+
+			// Remove existing inline tags
+			const tagLinePattern = /^#[^\n]+$/;
+			const cleanedLines = lines.filter(line => !tagLinePattern.test(line.trim()));
+
+			// If no tags to add, just return the cleaned content
+			if (formattedNewTags.length === 0) {
+				newContent = cleanedLines.join('\n');
 			} else {
-				// If no H1 found, check if there's already a tag line at the start
-				if (lines[0] && lines[0].includes('#')) {
-					lines[0] = formattedTags;
-					newContent = lines.join('\n');
-				} else {
-					newContent = `${formattedTags}\n\n${content}`;
+				// Add tags based on location setting
+				switch (this.settings.tagLocation || 'top') {
+					case 'top':
+						cleanedLines.unshift(formattedTags);
+						break;
+
+					case 'below-title':
+						const h1Index = cleanedLines.findIndex(line => line.startsWith('# '));
+						if (h1Index !== -1) {
+							cleanedLines.splice(h1Index + 1, 0, '', formattedTags);
+						} else {
+							// If no title found, add to top
+							cleanedLines.unshift(formattedTags);
+						}
+						break;
+
+					case 'bottom':
+						if (cleanedLines[cleanedLines.length - 1] !== '') {
+							cleanedLines.push('');
+						}
+						cleanedLines.push(formattedTags);
+						break;
 				}
+				newContent = cleanedLines.join('\n');
 			}
 		}
 
 		// Only modify the file if changes were made
 		if (newContent !== content) {
 			await this.app.vault.modify(file, newContent);
+			
+			// Prepare notification message
 			const addedTags = formattedNewTags.filter(tag => !existingTags.includes(tag));
 			const removedTags = tagsToRemove.filter(tag => 
 				existingTags.some(existingTag => 
@@ -294,8 +299,6 @@ export default class TagAgent extends Plugin {
 			}
 			if (message) {
 				new Notice(message);
-			} else {
-				new Notice('No changes were made to tags');
 			}
 		}
 	}

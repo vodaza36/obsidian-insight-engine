@@ -33293,7 +33293,8 @@ var DEFAULT_SETTINGS = {
   llmProvider: "ollama" /* OLLAMA */,
   modelName: "llama2",
   tagFormat: "property",
-  llmHost: "http://localhost:11434"
+  llmHost: "http://localhost:11434",
+  tagLocation: "top"
 };
 
 // node_modules/@langchain/core/dist/prompts/index.js
@@ -33512,11 +33513,20 @@ var TagAgentSettingTab = class extends import_obsidian2.PluginSettingTab {
       );
     }
     new import_obsidian2.Setting(containerEl).setName("Tag Format").setDesc("Choose how tags should be formatted in your notes").addDropdown((dropdown) => {
-      dropdown.addOption("property", "YAML Formatter").addOption("line", "Inline Tags").setValue(this.plugin.settings.tagFormat).onChange(async (value) => {
+      dropdown.addOption("property", "Frontmatter").addOption("line", "Inline Tags").setValue(this.plugin.settings.tagFormat).onChange(async (value) => {
         this.plugin.settings.tagFormat = value;
         await this.plugin.saveSettings();
+        this.display();
       });
     });
+    if (this.plugin.settings.tagFormat === "line") {
+      new import_obsidian2.Setting(containerEl).setName("Tag Location").setDesc("Choose where to place the generated tags").addDropdown((dropdown) => {
+        dropdown.addOption("top", "Top").addOption("below-title", "Below Page Title").addOption("bottom", "Bottom").setValue(this.plugin.settings.tagLocation || "top").onChange(async (value) => {
+          this.plugin.settings.tagLocation = value;
+          await this.plugin.saveSettings();
+        });
+      });
+    }
   }
 };
 
@@ -33707,65 +33717,59 @@ var TagAgent = class extends import_obsidian4.Plugin {
   }
   async appendTagsToNote(file, tags, tagsToRemove = []) {
     const content = await this.app.vault.read(file);
+    let newContent = content;
     const existingTags = this.getExistingTags(content, this.settings.tagFormat);
-    const formattedNewTags = tags.map((tag) => tag.startsWith("#") ? tag : `#${tag}`);
-    const tagsToKeep = existingTags.filter(
-      (tag) => !tagsToRemove.some(
-        (removeTag) => tag.toLowerCase() === (removeTag.startsWith("#") ? removeTag : `#${removeTag}`).toLowerCase()
-      )
-    );
-    const uniqueTags = [.../* @__PURE__ */ new Set([...tagsToKeep, ...formattedNewTags])];
-    const formattedTags = uniqueTags.join(" ");
-    let newContent;
+    const formattedNewTags = tags.filter((tag) => !tagsToRemove.includes(tag)).map((tag) => tag.startsWith("#") ? tag : `#${tag}`);
     if (this.settings.tagFormat === "property") {
-      const propertyFormattedTags = this.formatTagsForProperty(uniqueTags);
-      const hasProperties = content.includes("---\n");
-      if (hasProperties) {
-        const propertyMatch = content.match(/(---\n)([\s\S]*?)\n---/);
-        if (propertyMatch) {
-          const [fullMatch, delimiter, properties] = propertyMatch;
-          const beforeProperties = content.slice(0, content.indexOf(fullMatch));
-          const afterProperties = content.slice(content.indexOf(fullMatch) + fullMatch.length);
-          let updatedProperties = properties;
-          if (properties.includes("tags:")) {
-            updatedProperties = properties.replace(
-              /tags:\s*\[.*?\]/,
-              `tags: [${propertyFormattedTags}]`
-            );
-          } else {
-            updatedProperties = properties + `tags: [${propertyFormattedTags}]
-`;
-          }
-          newContent = beforeProperties + delimiter + updatedProperties + "\n---" + afterProperties;
-        } else {
-          newContent = content;
+      const yamlSeparator = "---\n";
+      const hasYamlHeader = content.startsWith(yamlSeparator);
+      const endOfYamlIndex = hasYamlHeader ? content.indexOf(yamlSeparator, yamlSeparator.length) : -1;
+      if (hasYamlHeader && endOfYamlIndex !== -1) {
+        const yamlContent = content.slice(yamlSeparator.length, endOfYamlIndex);
+        const restContent = content.slice(endOfYamlIndex + yamlSeparator.length);
+        const yamlLines = yamlContent.split("\n");
+        const tagLineIndex = yamlLines.findIndex((line) => line.startsWith("tags:"));
+        if (tagLineIndex !== -1) {
+          yamlLines.splice(tagLineIndex, 1);
         }
-      } else {
-        newContent = `---
-tags: [${propertyFormattedTags}]
----
-
+        if (formattedNewTags.length > 0) {
+          yamlLines.push(`tags: [${formattedNewTags.map((tag) => tag.replace("#", "")).join(", ")}]`);
+        }
+        newContent = `${yamlSeparator}${yamlLines.join("\n")}
+${yamlSeparator}${restContent}`;
+      } else if (formattedNewTags.length > 0) {
+        newContent = `${yamlSeparator}tags: [${formattedNewTags.map((tag) => tag.replace("#", "")).join(", ")}]
+${yamlSeparator}
 ${content}`;
       }
     } else {
       const lines = content.split("\n");
-      const h1Index = lines.findIndex((line) => line.startsWith("# "));
-      if (h1Index !== -1) {
-        if (h1Index + 1 < lines.length && lines[h1Index + 1].includes("#")) {
-          lines[h1Index + 1] = formattedTags;
-        } else {
-          lines.splice(h1Index + 1, 0, formattedTags);
-        }
-        newContent = lines.join("\n");
+      const formattedTags = formattedNewTags.join(" ");
+      const tagLinePattern = /^#[^\n]+$/;
+      const cleanedLines = lines.filter((line) => !tagLinePattern.test(line.trim()));
+      if (formattedNewTags.length === 0) {
+        newContent = cleanedLines.join("\n");
       } else {
-        if (lines[0] && lines[0].includes("#")) {
-          lines[0] = formattedTags;
-          newContent = lines.join("\n");
-        } else {
-          newContent = `${formattedTags}
-
-${content}`;
+        switch (this.settings.tagLocation || "top") {
+          case "top":
+            cleanedLines.unshift(formattedTags);
+            break;
+          case "below-title":
+            const h1Index = cleanedLines.findIndex((line) => line.startsWith("# "));
+            if (h1Index !== -1) {
+              cleanedLines.splice(h1Index + 1, 0, "", formattedTags);
+            } else {
+              cleanedLines.unshift(formattedTags);
+            }
+            break;
+          case "bottom":
+            if (cleanedLines[cleanedLines.length - 1] !== "") {
+              cleanedLines.push("");
+            }
+            cleanedLines.push(formattedTags);
+            break;
         }
+        newContent = cleanedLines.join("\n");
       }
     }
     if (newContent !== content) {
@@ -33786,8 +33790,6 @@ ${content}`;
       }
       if (message) {
         new import_obsidian4.Notice(message);
-      } else {
-        new import_obsidian4.Notice("No changes were made to tags");
       }
     }
   }

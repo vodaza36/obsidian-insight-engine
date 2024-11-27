@@ -6,6 +6,7 @@ export interface TagAgentSettings {
 	llmHost?: string;
 	apiKey?: string;
 	tagFormat: 'property' | 'line';
+	tagLocation: 'top' | 'below-title' | 'bottom';
 }
 
 export const DEFAULT_SETTINGS: TagAgentSettings = {
@@ -13,6 +14,7 @@ export const DEFAULT_SETTINGS: TagAgentSettings = {
 	modelName: 'llama2',
 	tagFormat: 'property',
 	llmHost: 'http://localhost:11434',
+	tagLocation: 'top',
 };
 
 export interface TagSuggestion {

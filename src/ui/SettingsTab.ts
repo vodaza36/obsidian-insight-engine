@@ -98,7 +98,26 @@ export class TagAgentSettingTab extends PluginSettingTab {
 					.onChange(async (value) => {
 						this.plugin.settings.tagFormat = value as 'property' | 'line';
 						await this.plugin.saveSettings();
+						this.display(); // Refresh the settings UI to show/hide tag location
 					});
 			});
+
+		// Only show tag location setting if tag format is 'line'
+		if (this.plugin.settings.tagFormat === 'line') {
+			new Setting(containerEl)
+				.setName('Tag Location')
+				.setDesc('Choose where to place the generated tags')
+				.addDropdown((dropdown: DropdownComponent) => {
+					dropdown
+						.addOption('top', 'Top')
+						.addOption('below-title', 'Below Page Title')
+						.addOption('bottom', 'Bottom')
+						.setValue(this.plugin.settings.tagLocation || 'top')
+						.onChange(async (value) => {
+							this.plugin.settings.tagLocation = value as 'top' | 'below-title' | 'bottom';
+							await this.plugin.saveSettings();
+						});
+				});
+		}
 	}
 }
