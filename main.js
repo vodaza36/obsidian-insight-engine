@@ -33376,6 +33376,7 @@ var import_obsidian = require("obsidian");
 var TagSuggestionModal = class extends import_obsidian.Modal {
   constructor(app, suggestedTags, existingNoteTags, callback) {
     super(app);
+    this.shouldCallCallback = true;
     this.suggestedTags = suggestedTags;
     this.selectedTags = /* @__PURE__ */ new Set();
     this.existingNoteTags = existingNoteTags;
@@ -33428,6 +33429,21 @@ var TagSuggestionModal = class extends import_obsidian.Modal {
       cls: "button-container"
     });
     new import_obsidian.Setting(buttonContainer).addButton(
+      (btn) => btn.setButtonText("Copy to Clipboard").onClick(() => {
+        const selectedTagsArray = Array.from(this.selectedTags);
+        if (selectedTagsArray.length > 0) {
+          navigator.clipboard.writeText(selectedTagsArray.join(" ")).then(() => {
+            new import_obsidian.Notice("Tags copied to clipboard!");
+            this.shouldCallCallback = false;
+            this.close();
+          }).catch(() => {
+            new import_obsidian.Notice("Failed to copy tags to clipboard");
+          });
+        } else {
+          new import_obsidian.Notice("No tags selected to copy");
+        }
+      })
+    ).addButton(
       (btn) => btn.setButtonText("Add Selected Tags").setCta().onClick(() => {
         this.close();
       })
@@ -33451,10 +33467,17 @@ var TagSuggestionModal = class extends import_obsidian.Modal {
       });
     });
   }
+  closeWithoutCallback() {
+    const { contentEl } = this;
+    contentEl.empty();
+    super.close();
+  }
   onClose() {
     const { contentEl } = this;
     contentEl.empty();
-    this.callback(Array.from(this.selectedTags), Array.from(this.tagsToRemove));
+    if (this.shouldCallCallback) {
+      this.callback(Array.from(this.selectedTags), Array.from(this.tagsToRemove));
+    }
   }
 };
 

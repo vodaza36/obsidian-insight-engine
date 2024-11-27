@@ -1,4 +1,4 @@
-import { App, Modal, Setting } from 'obsidian';
+import { App, Modal, Setting, Notice } from 'obsidian';
 
 interface TagSuggestion {
     name: string;
@@ -11,6 +11,7 @@ export class TagSuggestionModal extends Modal {
     private existingNoteTags: Set<string>;
     private tagsToRemove: Set<string>;
     private callback: (selectedTags: string[], tagsToRemove: string[]) => void;
+    private shouldCallCallback: boolean = true;
 
     constructor(
         app: App, 
@@ -94,6 +95,26 @@ export class TagSuggestionModal extends Modal {
         new Setting(buttonContainer)
             .addButton((btn) =>
                 btn
+                    .setButtonText('Copy to Clipboard')
+                    .onClick(() => {
+                        const selectedTagsArray = Array.from(this.selectedTags);
+                        if (selectedTagsArray.length > 0) {
+                            navigator.clipboard.writeText(selectedTagsArray.join(' '))
+                                .then(() => {
+                                    new Notice('Tags copied to clipboard!');
+                                    this.shouldCallCallback = false;
+                                    this.close();
+                                })
+                                .catch(() => {
+                                    new Notice('Failed to copy tags to clipboard');
+                                });
+                        } else {
+                            new Notice('No tags selected to copy');
+                        }
+                    })
+            )
+            .addButton((btn) =>
+                btn
                     .setButtonText('Add Selected Tags')
                     .setCta()
                     .onClick(() => {
@@ -124,9 +145,17 @@ export class TagSuggestionModal extends Modal {
             });
     }
 
+    private closeWithoutCallback() {
+        const { contentEl } = this;
+        contentEl.empty();
+        super.close();
+    }
+
     onClose() {
         const { contentEl } = this;
         contentEl.empty();
-        this.callback(Array.from(this.selectedTags), Array.from(this.tagsToRemove));
+        if (this.shouldCallCallback) {
+            this.callback(Array.from(this.selectedTags), Array.from(this.tagsToRemove));
+        }
     }
 }
