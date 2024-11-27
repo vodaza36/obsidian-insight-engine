@@ -1,9 +1,0 @@
-{
-  "llmProvider": "ollama",
-  "modelName": "llama3",
-  "tagFormat": "line",
-  "llmHost": "http://localhost:11434",
-  "ollamaHost": "http://localhost:11434",
-  "ollamaModel": "llama3.1",
-  "apiKey": "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"
-}
