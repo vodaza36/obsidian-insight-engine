@@ -165,9 +165,9 @@ export default class TagAgent extends Plugin {
 			const match = content.match(/---\n([\s\S]*?)\n---/);
 			if (match) {
 				const frontmatter = match[1];
-				const tagMatch = frontmatter.match(/tags:\s*(.*?)(\r?\n|$)/);
+				const tagMatch = frontmatter.match(/tags:\s*\[(.*?)\]/);
 				if (tagMatch) {
-					return tagMatch[1].trim().split(/\s+/).filter(Boolean);
+					return tagMatch[1].split(',').map(tag => '#' + tag.trim()).filter(Boolean);
 				}
 			}
 		} else {
@@ -204,21 +204,34 @@ export default class TagAgent extends Plugin {
 		if (this.settings.tagFormat === 'property') {
 			const propertyFormattedTags = this.formatTagsForProperty(uniqueTags);
 			const hasProperties = content.includes('---\n');
+			
 			if (hasProperties) {
-				const [frontmatter, ...rest] = content.split('---\n');
-				if (frontmatter.includes('tags:')) {
-					// Replace existing tags with combined unique tags
-					const updatedFrontmatter = frontmatter.replace(
-						/tags:.*(\r?\n|$)/,
-						`tags: [${propertyFormattedTags}]\n`
-					);
-					newContent = `${updatedFrontmatter}---\n${rest.join('---\n')}`;
+				// Find the property section boundaries
+				const propertyMatch = content.match(/(---\n)([\s\S]*?)\n---/);
+				if (propertyMatch) {
+					const [fullMatch, delimiter, properties] = propertyMatch;
+					const beforeProperties = content.slice(0, content.indexOf(fullMatch));
+					const afterProperties = content.slice(content.indexOf(fullMatch) + fullMatch.length);
+					
+					let updatedProperties = properties;
+					if (properties.includes('tags:')) {
+						// Update existing tags property
+						updatedProperties = properties.replace(
+							/tags:\s*\[.*?\]/,
+							`tags: [${propertyFormattedTags}]`
+						);
+					} else {
+						// Add new tags property to existing properties
+						updatedProperties = properties + `tags: [${propertyFormattedTags}]\n`;
+					}
+					
+					newContent = beforeProperties + delimiter + updatedProperties + '\n---' + afterProperties;
 				} else {
-					// Add new tags property
-					newContent = `${frontmatter}tags: [${propertyFormattedTags}]\n---\n${rest.join('---\n')}`;
+					// This shouldn't happen as we already checked hasProperties
+					newContent = content;
 				}
 			} else {
-				// Create new properties section
+				// Create new properties section if none exists
 				newContent = `---\ntags: [${propertyFormattedTags}]\n---\n\n${content}`;
 			}
 		} else { // 'line' format

@@ -33663,9 +33663,9 @@ var TagAgent = class extends import_obsidian4.Plugin {
       const match = content.match(/---\n([\s\S]*?)\n---/);
       if (match) {
         const frontmatter = match[1];
-        const tagMatch = frontmatter.match(/tags:\s*(.*?)(\r?\n|$)/);
+        const tagMatch = frontmatter.match(/tags:\s*\[(.*?)\]/);
         if (tagMatch) {
-          return tagMatch[1].trim().split(/\s+/).filter(Boolean);
+          return tagMatch[1].split(",").map((tag) => "#" + tag.trim()).filter(Boolean);
         }
       }
     } else {
@@ -33694,19 +33694,24 @@ var TagAgent = class extends import_obsidian4.Plugin {
       const propertyFormattedTags = this.formatTagsForProperty(uniqueTags);
       const hasProperties = content.includes("---\n");
       if (hasProperties) {
-        const [frontmatter, ...rest] = content.split("---\n");
-        if (frontmatter.includes("tags:")) {
-          const updatedFrontmatter = frontmatter.replace(
-            /tags:.*(\r?\n|$)/,
-            `tags: [${propertyFormattedTags}]
-`
-          );
-          newContent = `${updatedFrontmatter}---
-${rest.join("---\n")}`;
+        const propertyMatch = content.match(/(---\n)([\s\S]*?)\n---/);
+        if (propertyMatch) {
+          const [fullMatch, delimiter, properties] = propertyMatch;
+          const beforeProperties = content.slice(0, content.indexOf(fullMatch));
+          const afterProperties = content.slice(content.indexOf(fullMatch) + fullMatch.length);
+          let updatedProperties = properties;
+          if (properties.includes("tags:")) {
+            updatedProperties = properties.replace(
+              /tags:\s*\[.*?\]/,
+              `tags: [${propertyFormattedTags}]`
+            );
+          } else {
+            updatedProperties = properties + `tags: [${propertyFormattedTags}]
+`;
+          }
+          newContent = beforeProperties + delimiter + updatedProperties + "\n---" + afterProperties;
         } else {
-          newContent = `${frontmatter}tags: [${propertyFormattedTags}]
----
-${rest.join("---\n")}`;
+          newContent = content;
         }
       } else {
         newContent = `---
