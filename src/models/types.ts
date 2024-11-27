@@ -12,6 +12,7 @@ export const DEFAULT_SETTINGS: TagAgentSettings = {
 	llmProvider: LLMProvider.OLLAMA,
 	modelName: 'llama2',
 	tagFormat: 'property',
+	llmHost: 'http://localhost:11434',
 };
 
 export interface TagSuggestion {

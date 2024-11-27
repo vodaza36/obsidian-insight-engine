@@ -48,12 +48,18 @@ export default class TagAgent extends Plugin {
 	}
 
 	private initializeTagGenerator() {
+		// check if the required settings are configured
+		const configError = LLMFactory.validateConfig(this.settings.llmProvider, this.settings);
+		if (configError) {
+			new Notice(configError);
+			return;
+		}
 		try {
 			const model = LLMFactory.createModel(
 				this.settings.llmProvider,
 				this.settings.modelName,
 				{
-					baseUrl: this.settings.llmHost,
+					llmHost: this.settings.llmHost,
 					temperature: 0,
 					maxRetries: 2,
 					apiKey: this.settings.apiKey
@@ -131,38 +137,9 @@ export default class TagAgent extends Plugin {
 				const modal = new TagSuggestionModal(
 					this.app,
 					tagSuggestions,
-					(selectedTags: string[]) => {
+					async (selectedTags: string[]) => {
 						if (selectedTags.length > 0) {
-							// Create a confirmation modal
-							const confirmModal = new ObsidianModal(this.app);
-							confirmModal.contentEl.createEl('h2', { text: 'Confirm Tags' });
-							confirmModal.contentEl.createEl('p', { text: 'Do you want to add these tags to your note?' });
-							
-							const tagList = confirmModal.contentEl.createEl('div', { cls: 'tag-list' });
-							selectedTags.forEach(tag => {
-								tagList.createEl('div', { 
-									text: tag,
-									cls: 'tag-item'
-								});
-							});
-
-							new Setting(confirmModal.contentEl)
-								.addButton(btn => 
-									btn
-										.setButtonText('Cancel')
-										.onClick(() => {
-											confirmModal.close();
-										}))
-								.addButton(btn =>
-									btn
-										.setButtonText('Add Tags')
-										.setCta()
-										.onClick(async () => {
-											await this.appendTagsToNote(file, selectedTags);
-											confirmModal.close();
-										}));
-							
-							confirmModal.open();
+							await this.appendTagsToNote(file, selectedTags);
 						}
 					}
 				);
@@ -185,17 +162,48 @@ export default class TagAgent extends Plugin {
 
 	private async appendTagsToNote(file: TFile, tags: string[]) {
 		const content = await this.app.vault.read(file);
-		const formattedTags = tags.map((tag) => `#${tag}`).join(' ');
-
-		// Check if the file already has a YAML frontmatter
-		const hasYamlFrontmatter = content.startsWith('---\n');
+		const formattedTags = tags.map((tag) => 
+			tag.startsWith('#') ? tag : `#${tag}`
+		).join(' ');
 
 		let newContent: string;
-		if (hasYamlFrontmatter) {
-			const [frontmatter, ...rest] = content.split('---\n');
-			newContent = `${frontmatter}tags: ${formattedTags}\n---\n${rest.join('---\n')}`;
-		} else {
-			newContent = `---\ntags: ${formattedTags}\n---\n\n${content}`;
+		
+		if (this.settings.tagFormat === 'property') {
+			const hasProperties = content.includes('---\n');
+			if (hasProperties) {
+				const [frontmatter, ...rest] = content.split('---\n');
+				// Check if tags property already exists
+				if (frontmatter.includes('tags:')) {
+					// Append new tags to existing ones
+					const updatedFrontmatter = frontmatter.replace(
+						/tags:(.*)(\r?\n|$)/,
+						(match, existingTags) => {
+							const trimmedExisting = existingTags.trim();
+							return `tags: ${trimmedExisting ? trimmedExisting + ' ' : ''}${formattedTags}\n`;
+						}
+					);
+					newContent = `${updatedFrontmatter}---\n${rest.join('---\n')}`;
+				} else {
+					// Add new tags property
+					newContent = `${frontmatter}tags: ${formattedTags}\n---\n${rest.join('---\n')}`;
+				}
+			} else {
+				// Create new properties section
+				newContent = `---\ntags: ${formattedTags}\n---\n\n${content}`;
+			}
+		} else { // 'line' format
+			// Find the first H1 headline
+			const lines = content.split('\n');
+			const h1Index = lines.findIndex(line => line.startsWith('# '));
+			
+			if (h1Index !== -1) {
+				// Insert tags after the H1
+				lines.splice(h1Index + 1, 0, formattedTags);
+				newContent = lines.join('\n');
+			} else {
+				// If no H1 found, add tags at the beginning
+				newContent = `${formattedTags}\n\n${content}`;
+			}
 		}
 
 		await this.app.vault.modify(file, newContent);

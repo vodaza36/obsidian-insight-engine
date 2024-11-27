@@ -33292,7 +33292,8 @@ var LLMFactory = class {
 var DEFAULT_SETTINGS = {
   llmProvider: "ollama" /* OLLAMA */,
   modelName: "llama2",
-  tagFormat: "property"
+  tagFormat: "property",
+  llmHost: "http://localhost:11434"
 };
 
 // node_modules/@langchain/core/dist/prompts/index.js
@@ -33566,12 +33567,17 @@ var TagAgent = class extends import_obsidian4.Plugin {
     });
   }
   initializeTagGenerator() {
+    const configError = LLMFactory.validateConfig(this.settings.llmProvider, this.settings);
+    if (configError) {
+      new import_obsidian4.Notice(configError);
+      return;
+    }
     try {
       const model = LLMFactory.createModel(
         this.settings.llmProvider,
         this.settings.modelName,
         {
-          baseUrl: this.settings.llmHost,
+          llmHost: this.settings.llmHost,
           temperature: 0,
           maxRetries: 2,
           apiKey: this.settings.apiKey
@@ -33632,25 +33638,9 @@ var TagAgent = class extends import_obsidian4.Plugin {
         const modal = new TagSuggestionModal(
           this.app,
           tagSuggestions,
-          (selectedTags) => {
+          async (selectedTags) => {
             if (selectedTags.length > 0) {
-              const confirmModal = new import_obsidian4.Modal(this.app);
-              confirmModal.contentEl.createEl("h2", { text: "Confirm Tags" });
-              confirmModal.contentEl.createEl("p", { text: "Do you want to add these tags to your note?" });
-              const tagList = confirmModal.contentEl.createEl("div", { cls: "tag-list" });
-              selectedTags.forEach((tag) => {
-                tagList.createEl("div", {
-                  text: tag,
-                  cls: "tag-item"
-                });
-              });
-              new import_obsidian4.Setting(confirmModal.contentEl).addButton((btn) => btn.setButtonText("Cancel").onClick(() => {
-                confirmModal.close();
-              })).addButton((btn) => btn.setButtonText("Add Tags").setCta().onClick(async () => {
-                await this.appendTagsToNote(file, selectedTags);
-                confirmModal.close();
-              }));
-              confirmModal.open();
+              await this.appendTagsToNote(file, selectedTags);
             }
           }
         );
@@ -33670,20 +33660,48 @@ var TagAgent = class extends import_obsidian4.Plugin {
   }
   async appendTagsToNote(file, tags) {
     const content = await this.app.vault.read(file);
-    const formattedTags = tags.map((tag) => `#${tag}`).join(" ");
-    const hasYamlFrontmatter = content.startsWith("---\n");
+    const formattedTags = tags.map(
+      (tag) => tag.startsWith("#") ? tag : `#${tag}`
+    ).join(" ");
     let newContent;
-    if (hasYamlFrontmatter) {
-      const [frontmatter, ...rest] = content.split("---\n");
-      newContent = `${frontmatter}tags: ${formattedTags}
+    if (this.settings.tagFormat === "property") {
+      const hasProperties = content.includes("---\n");
+      if (hasProperties) {
+        const [frontmatter, ...rest] = content.split("---\n");
+        if (frontmatter.includes("tags:")) {
+          const updatedFrontmatter = frontmatter.replace(
+            /tags:(.*)(\r?\n|$)/,
+            (match, existingTags) => {
+              const trimmedExisting = existingTags.trim();
+              return `tags: ${trimmedExisting ? trimmedExisting + " " : ""}${formattedTags}
+`;
+            }
+          );
+          newContent = `${updatedFrontmatter}---
+${rest.join("---\n")}`;
+        } else {
+          newContent = `${frontmatter}tags: ${formattedTags}
 ---
 ${rest.join("---\n")}`;
-    } else {
-      newContent = `---
+        }
+      } else {
+        newContent = `---
 tags: ${formattedTags}
 ---
 
 ${content}`;
+      }
+    } else {
+      const lines = content.split("\n");
+      const h1Index = lines.findIndex((line) => line.startsWith("# "));
+      if (h1Index !== -1) {
+        lines.splice(h1Index + 1, 0, formattedTags);
+        newContent = lines.join("\n");
+      } else {
+        newContent = `${formattedTags}
+
+${content}`;
+      }
     }
     await this.app.vault.modify(file, newContent);
     new import_obsidian4.Notice(`Added tags: ${formattedTags}`);
