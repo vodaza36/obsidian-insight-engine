@@ -25,7 +25,7 @@ export class TagSuggestionModal extends Modal {
 
         // Pre-select tags that already exist on the note
         suggestedTags.forEach(tag => {
-            if (this.existingNoteTags.has(tag.name.replace('#', ''))) {
+            if (this.existingNoteTags.has(tag.name.replace('#', '').toLowerCase())) {
                 this.selectedTags.add(tag.name);
             }
         });
@@ -101,14 +101,13 @@ export class TagSuggestionModal extends Modal {
     }
 
     private createTagToggle(container: HTMLElement, tag: TagSuggestion) {
-        const isOnNote = this.existingNoteTags.has(tag.name.replace('#', ''));
+        const tagWithoutHash = tag.name.replace('#', '').toLowerCase();
+        const isOnNote = this.existingNoteTags.has(tagWithoutHash);
         new Setting(container)
             .setName(tag.name)
             .setDesc(isOnNote ? 'Already on note' : '')
             .addToggle(toggle => {
-                if (isOnNote) {
-                    toggle.setValue(true);
-                }
+                toggle.setValue(isOnNote);
                 toggle.onChange(value => {
                     if (value) {
                         this.selectedTags.add(tag.name);

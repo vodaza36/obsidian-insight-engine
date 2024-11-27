@@ -105,7 +105,10 @@ export default class TagAgent extends Plugin {
 		const content = await this.app.vault.read(file);
 		const existingTags = this.getAllVaultTags();
 		const fileCache = this.app.metadataCache.getFileCache(file);
-		const existingNoteTags = new Set(fileCache ? getAllTags(fileCache) : []);
+		const existingNoteTags = new Set(
+			(fileCache && getAllTags(fileCache) || [])
+				.map(tag => tag.replace('#', '').toLowerCase())
+		);
 		
 		// Show loading modal
 		const loadingModal = new LoadingModal(

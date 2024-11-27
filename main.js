@@ -33380,7 +33380,7 @@ var TagSuggestionModal = class extends import_obsidian.Modal {
     this.existingNoteTags = existingNoteTags;
     this.callback = callback;
     suggestedTags.forEach((tag) => {
-      if (this.existingNoteTags.has(tag.name.replace("#", ""))) {
+      if (this.existingNoteTags.has(tag.name.replace("#", "").toLowerCase())) {
         this.selectedTags.add(tag.name);
       }
     });
@@ -33432,11 +33432,10 @@ var TagSuggestionModal = class extends import_obsidian.Modal {
     );
   }
   createTagToggle(container, tag) {
-    const isOnNote = this.existingNoteTags.has(tag.name.replace("#", ""));
+    const tagWithoutHash = tag.name.replace("#", "").toLowerCase();
+    const isOnNote = this.existingNoteTags.has(tagWithoutHash);
     new import_obsidian.Setting(container).setName(tag.name).setDesc(isOnNote ? "Already on note" : "").addToggle((toggle) => {
-      if (isOnNote) {
-        toggle.setValue(true);
-      }
+      toggle.setValue(isOnNote);
       toggle.onChange((value) => {
         if (value) {
           this.selectedTags.add(tag.name);
@@ -33625,7 +33624,9 @@ var TagAgent = class extends import_obsidian4.Plugin {
     const content = await this.app.vault.read(file);
     const existingTags = this.getAllVaultTags();
     const fileCache = this.app.metadataCache.getFileCache(file);
-    const existingNoteTags = new Set(fileCache ? (0, import_obsidian4.getAllTags)(fileCache) : []);
+    const existingNoteTags = new Set(
+      (fileCache && (0, import_obsidian4.getAllTags)(fileCache) || []).map((tag) => tag.replace("#", "").toLowerCase())
+    );
     const loadingModal = new LoadingModal(
       this.app,
       "Generating tags...",
