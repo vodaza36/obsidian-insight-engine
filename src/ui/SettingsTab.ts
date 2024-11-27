@@ -30,6 +30,9 @@ export class TagAgentSettingTab extends PluginSettingTab {
 						if (value === LLMProvider.OLLAMA && !this.plugin.settings.llmHost) {
 							this.plugin.settings.llmHost = 'http://localhost:11434';
 						}
+						if (value === LLMProvider.OPENAI) {
+							this.plugin.settings.modelName = 'gpt-4';
+						}
 						await this.plugin.saveSettings();
 						this.display(); // Refresh the settings UI
 					});
@@ -58,6 +61,27 @@ export class TagAgentSettingTab extends PluginSettingTab {
 						.setValue(this.plugin.settings.llmHost || '')
 						.onChange(async (value) => {
 							this.plugin.settings.llmHost = value;
+							await this.plugin.saveSettings();
+						})
+				);
+		}
+
+		if (this.plugin.settings.llmProvider === LLMProvider.OPENAI) {
+			new Setting(containerEl)
+				.setName('OpenAI API Key')
+				.setDesc('Your OpenAI API key')
+				.addText((text) =>
+					text
+						.setPlaceholder('sk-...')
+						.setValue(this.plugin.settings.apiKey || '')
+						.onChange(async (value) => {
+							this.plugin.settings.apiKey = value;
+							// Set environment variable
+							if (value) {
+								process.env.OPENAI_API_KEY = value;
+							} else {
+								delete process.env.OPENAI_API_KEY;
+							}
 							await this.plugin.saveSettings();
 						})
 				);

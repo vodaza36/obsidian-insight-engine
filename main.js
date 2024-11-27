@@ -33250,11 +33250,31 @@ var LLMProvider = /* @__PURE__ */ ((LLMProvider2) => {
   return LLMProvider2;
 })(LLMProvider || {});
 var LLMFactory = class {
+  static validateConfig(provider, settings) {
+    switch (provider) {
+      case "openai" /* OPENAI */:
+        if (!settings.apiKey) {
+          return "OpenAI API key is required. Please configure it in the settings.";
+        }
+        break;
+      case "ollama" /* OLLAMA */:
+        if (!settings.llmHost) {
+          return "Ollama host URL is required. Please configure it in the settings.";
+        }
+        break;
+    }
+    return null;
+  }
   static createModel(provider, modelName, options = {}) {
+    const validationError = this.validateConfig(provider, options);
+    if (validationError) {
+      throw new Error(validationError);
+    }
     switch (provider) {
       case "openai" /* OPENAI */:
         return new ChatOpenAI({
           modelName,
+          openAIApiKey: options.apiKey,
           ...options
         });
       case "ollama" /* OLLAMA */:
@@ -33441,6 +33461,9 @@ var TagAgentSettingTab = class extends import_obsidian2.PluginSettingTab {
         if (value === "ollama" /* OLLAMA */ && !this.plugin.settings.llmHost) {
           this.plugin.settings.llmHost = "http://localhost:11434";
         }
+        if (value === "openai" /* OPENAI */) {
+          this.plugin.settings.modelName = "gpt-4";
+        }
         await this.plugin.saveSettings();
         this.display();
       });
@@ -33455,6 +33478,19 @@ var TagAgentSettingTab = class extends import_obsidian2.PluginSettingTab {
       new import_obsidian2.Setting(containerEl).setName("LLM Host").setDesc("The host address of your LLM server").addText(
         (text) => text.setPlaceholder("http://localhost:11434").setValue(this.plugin.settings.llmHost || "").onChange(async (value) => {
           this.plugin.settings.llmHost = value;
+          await this.plugin.saveSettings();
+        })
+      );
+    }
+    if (this.plugin.settings.llmProvider === "openai" /* OPENAI */) {
+      new import_obsidian2.Setting(containerEl).setName("OpenAI API Key").setDesc("Your OpenAI API key").addText(
+        (text) => text.setPlaceholder("sk-...").setValue(this.plugin.settings.apiKey || "").onChange(async (value) => {
+          this.plugin.settings.apiKey = value;
+          if (value) {
+            process.env.OPENAI_API_KEY = value;
+          } else {
+            delete process.env.OPENAI_API_KEY;
+          }
           await this.plugin.saveSettings();
         })
       );
@@ -33506,12 +33542,16 @@ var TagAgent = class extends import_obsidian4.Plugin {
   }
   async onload() {
     await this.loadSettings();
-    this.initializeTagGenerator();
     this.addSettingTab(new TagAgentSettingTab(this.app, this));
+    this.initializeTagGenerator();
     this.addCommand({
       id: "generate-note-tags",
       name: "Generate Tags for Current Note",
       editorCallback: async (editor, view) => {
+        if (!this.tagGenerator) {
+          new import_obsidian4.Notice("Please configure the Tag Agent settings first.");
+          return;
+        }
         if (view.file) {
           await this.generateTagsForNote(view.file);
         }
@@ -33519,16 +33559,22 @@ var TagAgent = class extends import_obsidian4.Plugin {
     });
   }
   initializeTagGenerator() {
-    const model = LLMFactory.createModel(
-      this.settings.llmProvider,
-      this.settings.modelName,
-      {
-        baseUrl: this.settings.llmHost,
-        temperature: 0,
-        maxRetries: 2
-      }
-    );
-    this.tagGenerator = new TagGenerator(model);
+    try {
+      const model = LLMFactory.createModel(
+        this.settings.llmProvider,
+        this.settings.modelName,
+        {
+          baseUrl: this.settings.llmHost,
+          temperature: 0,
+          maxRetries: 2,
+          apiKey: this.settings.apiKey
+        }
+      );
+      this.tagGenerator = new TagGenerator(model);
+    } catch (error) {
+      console.warn("Failed to initialize tag generator:", error);
+      new import_obsidian4.Notice("Tag generation is disabled until configuration is complete. Please check settings.");
+    }
   }
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());

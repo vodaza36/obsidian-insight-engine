@@ -24,16 +24,22 @@ export default class TagAgent extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
-		this.initializeTagGenerator();
 
-		// Add settings tab
+		// Add settings tab first, before trying to initialize the generator
 		this.addSettingTab(new TagAgentSettingTab(this.app, this));
+		
+		// Try to initialize the tag generator
+		this.initializeTagGenerator();
 
 		// Add command to generate tags for current note
 		this.addCommand({
 			id: 'generate-note-tags',
 			name: 'Generate Tags for Current Note',
 			editorCallback: async (editor, view) => {
+				if (!this.tagGenerator) {
+					new Notice('Please configure the Tag Agent settings first.');
+					return;
+				}
 				if (view.file) {
 					await this.generateTagsForNote(view.file);
 				}
@@ -42,16 +48,23 @@ export default class TagAgent extends Plugin {
 	}
 
 	private initializeTagGenerator() {
-		const model = LLMFactory.createModel(
-			this.settings.llmProvider,
-			this.settings.modelName,
-			{
-				baseUrl: this.settings.llmHost,
-				temperature: 0,
-				maxRetries: 2
-			}
-		);
-		this.tagGenerator = new TagGenerator(model);
+		try {
+			const model = LLMFactory.createModel(
+				this.settings.llmProvider,
+				this.settings.modelName,
+				{
+					baseUrl: this.settings.llmHost,
+					temperature: 0,
+					maxRetries: 2,
+					apiKey: this.settings.apiKey
+				}
+			);
+			this.tagGenerator = new TagGenerator(model);
+		} catch (error) {
+			// If initialization fails, we'll show a notice but not prevent the plugin from loading
+			console.warn('Failed to initialize tag generator:', error);
+			new Notice('Tag generation is disabled until configuration is complete. Please check settings.');
+		}
 	}
 
 	async loadSettings() {

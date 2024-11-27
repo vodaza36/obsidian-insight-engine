@@ -4,6 +4,7 @@ export interface TagAgentSettings {
 	llmProvider: LLMProvider;
 	modelName: string;
 	llmHost?: string;
+	apiKey?: string;
 }
 
 export const DEFAULT_SETTINGS: TagAgentSettings = {
