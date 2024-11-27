@@ -183,6 +183,11 @@ export default class TagAgent extends Plugin {
 		return [];
 	}
 
+	private formatTagsForProperty(tags: string[]): string {
+		// Remove '#' prefix for YAML format and join with commas
+		return tags.map(tag => tag.replace(/^#/, '')).join(', ');
+	}
+
 	private async appendTagsToNote(file: TFile, tags: string[]) {
 		const content = await this.app.vault.read(file);
 		
@@ -197,6 +202,7 @@ export default class TagAgent extends Plugin {
 		let newContent: string;
 		
 		if (this.settings.tagFormat === 'property') {
+			const propertyFormattedTags = this.formatTagsForProperty(uniqueTags);
 			const hasProperties = content.includes('---\n');
 			if (hasProperties) {
 				const [frontmatter, ...rest] = content.split('---\n');
@@ -204,16 +210,16 @@ export default class TagAgent extends Plugin {
 					// Replace existing tags with combined unique tags
 					const updatedFrontmatter = frontmatter.replace(
 						/tags:.*(\r?\n|$)/,
-						`tags: ${formattedTags}\n`
+						`tags: [${propertyFormattedTags}]\n`
 					);
 					newContent = `${updatedFrontmatter}---\n${rest.join('---\n')}`;
 				} else {
 					// Add new tags property
-					newContent = `${frontmatter}tags: ${formattedTags}\n---\n${rest.join('---\n')}`;
+					newContent = `${frontmatter}tags: [${propertyFormattedTags}]\n---\n${rest.join('---\n')}`;
 				}
 			} else {
 				// Create new properties section
-				newContent = `---\ntags: ${formattedTags}\n---\n\n${content}`;
+				newContent = `---\ntags: [${propertyFormattedTags}]\n---\n\n${content}`;
 			}
 		} else { // 'line' format
 			const lines = content.split('\n');

@@ -33680,6 +33680,9 @@ var TagAgent = class extends import_obsidian4.Plugin {
     }
     return [];
   }
+  formatTagsForProperty(tags) {
+    return tags.map((tag) => tag.replace(/^#/, "")).join(", ");
+  }
   async appendTagsToNote(file, tags) {
     const content = await this.app.vault.read(file);
     const existingTags = this.getExistingTags(content, this.settings.tagFormat);
@@ -33688,25 +33691,26 @@ var TagAgent = class extends import_obsidian4.Plugin {
     const formattedTags = uniqueTags.join(" ");
     let newContent;
     if (this.settings.tagFormat === "property") {
+      const propertyFormattedTags = this.formatTagsForProperty(uniqueTags);
       const hasProperties = content.includes("---\n");
       if (hasProperties) {
         const [frontmatter, ...rest] = content.split("---\n");
         if (frontmatter.includes("tags:")) {
           const updatedFrontmatter = frontmatter.replace(
             /tags:.*(\r?\n|$)/,
-            `tags: ${formattedTags}
+            `tags: [${propertyFormattedTags}]
 `
           );
           newContent = `${updatedFrontmatter}---
 ${rest.join("---\n")}`;
         } else {
-          newContent = `${frontmatter}tags: ${formattedTags}
+          newContent = `${frontmatter}tags: [${propertyFormattedTags}]
 ---
 ${rest.join("---\n")}`;
         }
       } else {
         newContent = `---
-tags: ${formattedTags}
+tags: [${propertyFormattedTags}]
 ---
 
 ${content}`;
