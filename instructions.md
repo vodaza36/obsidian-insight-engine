@@ -88,3 +88,7 @@ promptValue.toChatMessages();
 const llmChain = promptTemplate.pipe(model).pipe(parser);
 await llmChain.invoke({ language: "italian", text: "hi" });
 ```    
+
+# Roadmap
+- Add the plugin to the Obsidian marketplace
+- Add cost estimation

@@ -92,7 +92,7 @@ export class TagAgentSettingTab extends PluginSettingTab {
 			.setDesc('Choose how tags should be formatted in your notes')
 			.addDropdown((dropdown: DropdownComponent) => {
 				dropdown
-					.addOption('property', 'YAML Formatter')
+					.addOption('property', 'Frontmatter')
 					.addOption('line', 'Inline Tags')
 					.setValue(this.plugin.settings.tagFormat)
 					.onChange(async (value) => {

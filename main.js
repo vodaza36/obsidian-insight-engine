@@ -33512,7 +33512,7 @@ var TagAgentSettingTab = class extends import_obsidian2.PluginSettingTab {
       );
     }
     new import_obsidian2.Setting(containerEl).setName("Tag Format").setDesc("Choose how tags should be formatted in your notes").addDropdown((dropdown) => {
-      dropdown.addOption("property", "Property").addOption("line", "Line").setValue(this.plugin.settings.tagFormat).onChange(async (value) => {
+      dropdown.addOption("property", "YAML Formatter").addOption("line", "Inline Tags").setValue(this.plugin.settings.tagFormat).onChange(async (value) => {
         this.plugin.settings.tagFormat = value;
         await this.plugin.saveSettings();
       });
