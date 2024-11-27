@@ -33291,7 +33291,8 @@ var LLMFactory = class {
 // src/models/types.ts
 var DEFAULT_SETTINGS = {
   llmProvider: "ollama" /* OLLAMA */,
-  modelName: "llama2"
+  modelName: "llama2",
+  tagFormat: "property"
 };
 
 // node_modules/@langchain/core/dist/prompts/index.js
@@ -33495,6 +33496,12 @@ var TagAgentSettingTab = class extends import_obsidian2.PluginSettingTab {
         })
       );
     }
+    new import_obsidian2.Setting(containerEl).setName("Tag Format").setDesc("Choose how tags should be formatted in your notes").addDropdown((dropdown) => {
+      dropdown.addOption("property", "Property").addOption("line", "Line").setValue(this.plugin.settings.tagFormat).onChange(async (value) => {
+        this.plugin.settings.tagFormat = value;
+        await this.plugin.saveSettings();
+      });
+    });
   }
 };
 
@@ -33590,7 +33597,9 @@ var TagAgent = class extends import_obsidian4.Plugin {
       const cachedMetadata = this.app.metadataCache.getFileCache(file);
       if (cachedMetadata == null ? void 0 : cachedMetadata.tags) {
         cachedMetadata.tags.forEach((tag) => {
-          tags.add(tag.tag.substring(1).toLowerCase());
+          const tagText = tag.tag;
+          const cleanedTag = tagText.startsWith("#") ? tagText.substring(1) : tagText;
+          tags.add(cleanedTag.toLowerCase());
         });
       }
     });

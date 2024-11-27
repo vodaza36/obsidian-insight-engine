@@ -84,8 +84,10 @@ export default class TagAgent extends Plugin {
 			const cachedMetadata = this.app.metadataCache.getFileCache(file);
 			if (cachedMetadata?.tags) {
 				cachedMetadata.tags.forEach(tag => {
-					// Remove the '#' prefix and convert to lowercase
-					tags.add(tag.tag.substring(1).toLowerCase());
+					const tagText = tag.tag;
+					// Only remove the '#' if it exists at the start
+					const cleanedTag = tagText.startsWith('#') ? tagText.substring(1) : tagText;
+					tags.add(cleanedTag.toLowerCase());
 				});
 			}
 		});

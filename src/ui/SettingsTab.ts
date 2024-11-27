@@ -86,5 +86,19 @@ export class TagAgentSettingTab extends PluginSettingTab {
 						})
 				);
 		}
+
+		new Setting(containerEl)
+			.setName('Tag Format')
+			.setDesc('Choose how tags should be formatted in your notes')
+			.addDropdown((dropdown: DropdownComponent) => {
+				dropdown
+					.addOption('property', 'Property')
+					.addOption('line', 'Line')
+					.setValue(this.plugin.settings.tagFormat)
+					.onChange(async (value) => {
+						this.plugin.settings.tagFormat = value as 'property' | 'line';
+						await this.plugin.saveSettings();
+					});
+			});
 	}
 }

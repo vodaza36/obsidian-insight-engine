@@ -5,11 +5,13 @@ export interface TagAgentSettings {
 	modelName: string;
 	llmHost?: string;
 	apiKey?: string;
+	tagFormat: 'property' | 'line';
 }
 
 export const DEFAULT_SETTINGS: TagAgentSettings = {
 	llmProvider: LLMProvider.OLLAMA,
 	modelName: 'llama2',
+	tagFormat: 'property',
 };
 
 export interface TagSuggestion {
