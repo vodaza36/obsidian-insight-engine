@@ -98,7 +98,6 @@ export class TagSuggestionModal extends Modal {
                     .setCta()
                     .onClick(() => {
                         this.close();
-                        this.callback(Array.from(this.selectedTags), Array.from(this.tagsToRemove));
                     })
             );
     }

@@ -33429,7 +33429,6 @@ var TagSuggestionModal = class extends import_obsidian.Modal {
     new import_obsidian.Setting(buttonContainer).addButton(
       (btn) => btn.setButtonText("Add Selected Tags").setCta().onClick(() => {
         this.close();
-        this.callback(Array.from(this.selectedTags), Array.from(this.tagsToRemove));
       })
     );
   }
