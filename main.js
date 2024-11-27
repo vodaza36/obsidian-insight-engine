@@ -102,12 +102,12 @@ var init_json = __esm({
 var require_decamelize = __commonJS({
   "node_modules/decamelize/index.js"(exports, module2) {
     "use strict";
-    module2.exports = function(str, sep) {
-      if (typeof str !== "string") {
+    module2.exports = function(str2, sep) {
+      if (typeof str2 !== "string") {
         throw new TypeError("Expected a string");
       }
       sep = typeof sep === "undefined" ? "_" : sep;
-      return str.replace(/([a-z\d])([A-Z])/g, "$1" + sep + "$2").replace(/([A-Z]+)([A-Z][a-z\d]+)/g, "$1" + sep + "$2").toLowerCase();
+      return str2.replace(/([a-z\d])([A-Z])/g, "$1" + sep + "$2").replace(/([A-Z]+)([A-Z][a-z\d]+)/g, "$1" + sep + "$2").toLowerCase();
     };
   }
 });
@@ -382,7 +382,7 @@ var init_serializable = __esm({
 
 // node_modules/@langchain/core/dist/messages/base.js
 function mergeContent(firstContent, secondContent) {
-  var _a;
+  var _a2;
   if (typeof firstContent === "string") {
     if (typeof secondContent === "string") {
       return firstContent + secondContent;
@@ -390,7 +390,7 @@ function mergeContent(firstContent, secondContent) {
       return [{ type: "text", text: firstContent }, ...secondContent];
     }
   } else if (Array.isArray(secondContent)) {
-    return (_a = _mergeLists(firstContent, secondContent)) != null ? _a : [
+    return (_a2 = _mergeLists(firstContent, secondContent)) != null ? _a2 : [
       ...firstContent,
       ...secondContent
     ];
@@ -703,7 +703,7 @@ var init_ai = __esm({
         };
       }
       constructor(fields, kwargs) {
-        var _a, _b, _c, _d, _e;
+        var _a2, _b, _c, _d, _e;
         let initParams;
         if (typeof fields === "string") {
           initParams = {
@@ -714,7 +714,7 @@ var init_ai = __esm({
           };
         } else {
           initParams = fields;
-          const rawToolCalls = (_a = initParams.additional_kwargs) == null ? void 0 : _a.tool_calls;
+          const rawToolCalls = (_a2 = initParams.additional_kwargs) == null ? void 0 : _a2.tool_calls;
           const toolCalls = initParams.tool_calls;
           if (!(rawToolCalls == null) && rawToolCalls.length > 0 && (toolCalls === void 0 || toolCalls.length === 0)) {
             console.warn([
@@ -780,7 +780,7 @@ var init_ai = __esm({
     };
     AIMessageChunk = class _AIMessageChunk extends BaseMessageChunk {
       constructor(fields) {
-        var _a, _b, _c, _d, _e;
+        var _a2, _b, _c, _d, _e;
         let initParams;
         if (typeof fields === "string") {
           initParams = {
@@ -792,7 +792,7 @@ var init_ai = __esm({
         } else if (fields.tool_call_chunks === void 0) {
           initParams = {
             ...fields,
-            tool_calls: (_a = fields.tool_calls) != null ? _a : [],
+            tool_calls: (_a2 = fields.tool_calls) != null ? _a2 : [],
             invalid_tool_calls: [],
             tool_call_chunks: [],
             usage_metadata: fields.usage_metadata !== void 0 ? fields.usage_metadata : void 0
@@ -884,13 +884,13 @@ var init_ai = __esm({
         };
       }
       concat(chunk) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __;
+        var _a2, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __;
         const combinedFields = {
           content: mergeContent(this.content, chunk.content),
           additional_kwargs: _mergeDicts(this.additional_kwargs, chunk.additional_kwargs),
           response_metadata: _mergeDicts(this.response_metadata, chunk.response_metadata),
           tool_call_chunks: [],
-          id: (_a = this.id) != null ? _a : chunk.id
+          id: (_a2 = this.id) != null ? _a2 : chunk.id
         };
         if (this.tool_call_chunks !== void 0 || chunk.tool_call_chunks !== void 0) {
           const rawToolCalls = _mergeLists(this.tool_call_chunks, chunk.tool_call_chunks);
@@ -1172,16 +1172,16 @@ function addIssueToContext(ctx, issueData) {
   });
   ctx.common.issues.push(issue);
 }
-function __classPrivateFieldGet(receiver, state, kind, f) {
-  if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+function __classPrivateFieldGet6(receiver, state, kind2, f) {
+  if (kind2 === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
   if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
-  return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+  return kind2 === "m" ? f : kind2 === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 }
-function __classPrivateFieldSet(receiver, state, value, kind, f) {
-  if (kind === "m") throw new TypeError("Private method is not writable");
-  if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+function __classPrivateFieldSet5(receiver, state, value, kind2, f) {
+  if (kind2 === "m") throw new TypeError("Private method is not writable");
+  if (kind2 === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
   if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
-  return kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value), value;
+  return kind2 === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value), value;
 }
 function processCreateParams(params) {
   if (!params)
@@ -1193,13 +1193,13 @@ function processCreateParams(params) {
   if (errorMap2)
     return { errorMap: errorMap2, description };
   const customMap = (iss, ctx) => {
-    var _a, _b;
+    var _a2, _b;
     const { message } = params;
     if (iss.code === "invalid_enum_value") {
       return { message: message !== null && message !== void 0 ? message : ctx.defaultError };
     }
     if (typeof ctx.data === "undefined") {
-      return { message: (_a = message !== null && message !== void 0 ? message : required_error) !== null && _a !== void 0 ? _a : ctx.defaultError };
+      return { message: (_a2 = message !== null && message !== void 0 ? message : required_error) !== null && _a2 !== void 0 ? _a2 : ctx.defaultError };
     }
     if (iss.code !== "invalid_type")
       return { message: ctx.defaultError };
@@ -1319,10 +1319,10 @@ function createZodEnum(values, params) {
 function custom(check, params = {}, fatal) {
   if (check)
     return ZodAny.create().superRefine((data, ctx) => {
-      var _a, _b;
+      var _a2, _b;
       if (!check(data)) {
         const p = typeof params === "function" ? params(data) : typeof params === "string" ? { message: params } : params;
-        const _fatal = (_b = (_a = p.fatal) !== null && _a !== void 0 ? _a : fatal) !== null && _b !== void 0 ? _b : true;
+        const _fatal = (_b = (_a2 = p.fatal) !== null && _a2 !== void 0 ? _a2 : fatal) !== null && _b !== void 0 ? _b : true;
         const p2 = typeof p === "string" ? { message: p } : p;
         ctx.addIssue({ code: "custom", ...p2, fatal: _fatal });
       }
@@ -1337,10 +1337,10 @@ var init_lib = __esm({
       function assertIs(_arg) {
       }
       util2.assertIs = assertIs;
-      function assertNever(_x) {
+      function assertNever2(_x) {
         throw new Error();
       }
-      util2.assertNever = assertNever;
+      util2.assertNever = assertNever2;
       util2.arrayToEnum = (items) => {
         const obj = {};
         for (const item of items) {
@@ -1882,11 +1882,11 @@ var init_lib = __esm({
         throw result.error;
       }
       safeParse(data, params) {
-        var _a;
+        var _a2;
         const ctx = {
           common: {
             issues: [],
-            async: (_a = params === null || params === void 0 ? void 0 : params.async) !== null && _a !== void 0 ? _a : false,
+            async: (_a2 = params === null || params === void 0 ? void 0 : params.async) !== null && _a2 !== void 0 ? _a2 : false,
             contextualErrorMap: params === null || params === void 0 ? void 0 : params.errorMap
           },
           path: (params === null || params === void 0 ? void 0 : params.path) || [],
@@ -2208,7 +2208,7 @@ var init_lib = __esm({
           } else if (check.kind === "url") {
             try {
               new URL(input.data);
-            } catch (_a) {
+            } catch (_a2) {
               ctx = this._getOrReturnCtx(input, ctx);
               addIssueToContext(ctx, {
                 validation: "url",
@@ -2378,7 +2378,7 @@ var init_lib = __esm({
         return this._addCheck({ kind: "ip", ...errorUtil.errToObj(options) });
       }
       datetime(options) {
-        var _a, _b;
+        var _a2, _b;
         if (typeof options === "string") {
           return this._addCheck({
             kind: "datetime",
@@ -2391,7 +2391,7 @@ var init_lib = __esm({
         return this._addCheck({
           kind: "datetime",
           precision: typeof (options === null || options === void 0 ? void 0 : options.precision) === "undefined" ? null : options === null || options === void 0 ? void 0 : options.precision,
-          offset: (_a = options === null || options === void 0 ? void 0 : options.offset) !== null && _a !== void 0 ? _a : false,
+          offset: (_a2 = options === null || options === void 0 ? void 0 : options.offset) !== null && _a2 !== void 0 ? _a2 : false,
           local: (_b = options === null || options === void 0 ? void 0 : options.local) !== null && _b !== void 0 ? _b : false,
           ...errorUtil.errToObj(options === null || options === void 0 ? void 0 : options.message)
         });
@@ -2555,11 +2555,11 @@ var init_lib = __esm({
       }
     };
     ZodString.create = (params) => {
-      var _a;
+      var _a2;
       return new ZodString({
         checks: [],
         typeName: ZodFirstPartyTypeKind.ZodString,
-        coerce: (_a = params === null || params === void 0 ? void 0 : params.coerce) !== null && _a !== void 0 ? _a : false,
+        coerce: (_a2 = params === null || params === void 0 ? void 0 : params.coerce) !== null && _a2 !== void 0 ? _a2 : false,
         ...processCreateParams(params)
       });
     };
@@ -2663,13 +2663,13 @@ var init_lib = __esm({
       lt(value, message) {
         return this.setLimit("max", value, false, errorUtil.toString(message));
       }
-      setLimit(kind, value, inclusive, message) {
+      setLimit(kind2, value, inclusive, message) {
         return new _ZodNumber({
           ...this._def,
           checks: [
             ...this._def.checks,
             {
-              kind,
+              kind: kind2,
               value,
               inclusive,
               message: errorUtil.toString(message)
@@ -2871,13 +2871,13 @@ var init_lib = __esm({
       lt(value, message) {
         return this.setLimit("max", value, false, errorUtil.toString(message));
       }
-      setLimit(kind, value, inclusive, message) {
+      setLimit(kind2, value, inclusive, message) {
         return new _ZodBigInt({
           ...this._def,
           checks: [
             ...this._def.checks,
             {
-              kind,
+              kind: kind2,
               value,
               inclusive,
               message: errorUtil.toString(message)
@@ -2952,11 +2952,11 @@ var init_lib = __esm({
       }
     };
     ZodBigInt.create = (params) => {
-      var _a;
+      var _a2;
       return new ZodBigInt({
         checks: [],
         typeName: ZodFirstPartyTypeKind.ZodBigInt,
-        coerce: (_a = params === null || params === void 0 ? void 0 : params.coerce) !== null && _a !== void 0 ? _a : false,
+        coerce: (_a2 = params === null || params === void 0 ? void 0 : params.coerce) !== null && _a2 !== void 0 ? _a2 : false,
         ...processCreateParams(params)
       });
     };
@@ -3436,8 +3436,8 @@ var init_lib = __esm({
           unknownKeys: "strict",
           ...message !== void 0 ? {
             errorMap: (issue, ctx) => {
-              var _a, _b, _c, _d;
-              const defaultError = (_c = (_b = (_a = this._def).errorMap) === null || _b === void 0 ? void 0 : _b.call(_a, issue, ctx).message) !== null && _c !== void 0 ? _c : ctx.defaultError;
+              var _a2, _b, _c, _d;
+              const defaultError = (_c = (_b = (_a2 = this._def).errorMap) === null || _b === void 0 ? void 0 : _b.call(_a2, issue, ctx).message) !== null && _c !== void 0 ? _c : ctx.defaultError;
               if (issue.code === "unrecognized_keys")
                 return {
                   message: (_d = errorUtil.errToObj(message).message) !== null && _d !== void 0 ? _d : defaultError
@@ -4358,10 +4358,10 @@ var init_lib = __esm({
           });
           return INVALID;
         }
-        if (!__classPrivateFieldGet(this, _ZodEnum_cache, "f")) {
-          __classPrivateFieldSet(this, _ZodEnum_cache, new Set(this._def.values), "f");
+        if (!__classPrivateFieldGet6(this, _ZodEnum_cache, "f")) {
+          __classPrivateFieldSet5(this, _ZodEnum_cache, new Set(this._def.values), "f");
         }
-        if (!__classPrivateFieldGet(this, _ZodEnum_cache, "f").has(input.data)) {
+        if (!__classPrivateFieldGet6(this, _ZodEnum_cache, "f").has(input.data)) {
           const ctx = this._getOrReturnCtx(input);
           const expectedValues = this._def.values;
           addIssueToContext(ctx, {
@@ -4429,10 +4429,10 @@ var init_lib = __esm({
           });
           return INVALID;
         }
-        if (!__classPrivateFieldGet(this, _ZodNativeEnum_cache, "f")) {
-          __classPrivateFieldSet(this, _ZodNativeEnum_cache, new Set(util.getValidEnumValues(this._def.values)), "f");
+        if (!__classPrivateFieldGet6(this, _ZodNativeEnum_cache, "f")) {
+          __classPrivateFieldSet5(this, _ZodNativeEnum_cache, new Set(util.getValidEnumValues(this._def.values)), "f");
         }
-        if (!__classPrivateFieldGet(this, _ZodNativeEnum_cache, "f").has(input.data)) {
+        if (!__classPrivateFieldGet6(this, _ZodNativeEnum_cache, "f").has(input.data)) {
           const expectedValues = util.objectValues(nativeEnumValues);
           addIssueToContext(ctx, {
             received: ctx.data,
@@ -5470,7 +5470,7 @@ var init_esm_browser = __esm({
 var require_eventemitter3 = __commonJS({
   "node_modules/eventemitter3/index.js"(exports, module2) {
     "use strict";
-    var has = Object.prototype.hasOwnProperty;
+    var has2 = Object.prototype.hasOwnProperty;
     var prefix = "~";
     function Events() {
     }
@@ -5505,7 +5505,7 @@ var require_eventemitter3 = __commonJS({
       var names = [], events, name;
       if (this._eventsCount === 0) return names;
       for (name in events = this._events) {
-        if (has.call(events, name)) names.push(prefix ? name.slice(1) : name);
+        if (has2.call(events, name)) names.push(prefix ? name.slice(1) : name);
       }
       if (Object.getOwnPropertySymbols) {
         return names.concat(Object.getOwnPropertySymbols(events));
@@ -5773,7 +5773,7 @@ var require_dist = __commonJS({
     var timeoutError = new p_timeout_1.TimeoutError();
     var PQueue = class extends EventEmitter {
       constructor(options) {
-        var _a, _b, _c, _d;
+        var _a2, _b, _c, _d;
         super();
         this._intervalCount = 0;
         this._intervalEnd = 0;
@@ -5782,7 +5782,7 @@ var require_dist = __commonJS({
         this._resolveIdle = empty;
         options = Object.assign({ carryoverConcurrencyCount: false, intervalCap: Infinity, interval: 0, concurrency: Infinity, autoStart: true, queueClass: priority_queue_1.default }, options);
         if (!(typeof options.intervalCap === "number" && options.intervalCap >= 1)) {
-          throw new TypeError(`Expected \`intervalCap\` to be a number from 1 and up, got \`${(_b = (_a = options.intervalCap) === null || _a === void 0 ? void 0 : _a.toString()) !== null && _b !== void 0 ? _b : ""}\` (${typeof options.intervalCap})`);
+          throw new TypeError(`Expected \`intervalCap\` to be a number from 1 and up, got \`${(_b = (_a2 = options.intervalCap) === null || _a2 === void 0 ? void 0 : _a2.toString()) !== null && _b !== void 0 ? _b : ""}\` (${typeof options.intervalCap})`);
         }
         if (options.interval === void 0 || !(Number.isFinite(options.interval) && options.interval >= 0)) {
           throw new TypeError(`Expected \`interval\` to be a finite number >= 0, got \`${(_d = (_c = options.interval) === null || _c === void 0 ? void 0 : _c.toString()) !== null && _d !== void 0 ? _d : ""}\` (${typeof options.interval})`);
@@ -6038,8 +6038,8 @@ var init_fetch = __esm({
     DEFAULT_FETCH_IMPLEMENTATION = (...args) => fetch(...args);
     LANGSMITH_FETCH_IMPLEMENTATION_KEY = Symbol.for("ls:fetch_implementation");
     _getFetchImplementation = () => {
-      var _a;
-      return (_a = globalThis[LANGSMITH_FETCH_IMPLEMENTATION_KEY]) != null ? _a : DEFAULT_FETCH_IMPLEMENTATION;
+      var _a2;
+      return (_a2 = globalThis[LANGSMITH_FETCH_IMPLEMENTATION_KEY]) != null ? _a2 : DEFAULT_FETCH_IMPLEMENTATION;
     };
   }
 });
@@ -6075,7 +6075,7 @@ var init_async_caller = __esm({
     ];
     AsyncCaller = class {
       constructor(params) {
-        var _a, _b;
+        var _a2, _b;
         Object.defineProperty(this, "maxConcurrency", {
           enumerable: true,
           configurable: true,
@@ -6100,7 +6100,7 @@ var init_async_caller = __esm({
           writable: true,
           value: void 0
         });
-        this.maxConcurrency = (_a = params.maxConcurrency) != null ? _a : Infinity;
+        this.maxConcurrency = (_a2 = params.maxConcurrency) != null ? _a2 : Infinity;
         this.maxRetries = (_b = params.maxRetries) != null ? _b : 6;
         if ("default" in import_p_queue.default) {
           this.queue = new import_p_queue.default.default({
@@ -6153,8 +6153,8 @@ var init_async_caller = __esm({
           return Promise.race([
             this.call(callable, ...args),
             new Promise((_, reject) => {
-              var _a;
-              (_a = options.signal) == null ? void 0 : _a.addEventListener("abort", () => {
+              var _a2;
+              (_a2 = options.signal) == null ? void 0 : _a2.addEventListener("abort", () => {
                 reject(new Error("AbortError"));
               });
             })
@@ -6189,12 +6189,12 @@ var init_messages = __esm({
 });
 
 // node_modules/langsmith/dist/utils/_uuid.js
-function assertUuid(str, which) {
-  if (!validate_default(str)) {
-    const msg = which !== void 0 ? `Invalid UUID for ${which}: ${str}` : `Invalid UUID: ${str}`;
+function assertUuid(str2, which) {
+  if (!validate_default(str2)) {
+    const msg = which !== void 0 ? `Invalid UUID for ${which}: ${str2}` : `Invalid UUID: ${str2}`;
     throw new Error(msg);
   }
-  return str;
+  return str2;
 }
 var init_uuid = __esm({
   "node_modules/langsmith/dist/utils/_uuid.js"() {
@@ -6250,9 +6250,9 @@ var require_constants = __commonJS({
 // node_modules/semver/internal/debug.js
 var require_debug = __commonJS({
   "node_modules/semver/internal/debug.js"(exports, module2) {
-    var debug = typeof process === "object" && process.env && process.env.NODE_DEBUG && /\bsemver\b/i.test(process.env.NODE_DEBUG) ? (...args) => console.error("SEMVER", ...args) : () => {
+    var debug2 = typeof process === "object" && process.env && process.env.NODE_DEBUG && /\bsemver\b/i.test(process.env.NODE_DEBUG) ? (...args) => console.error("SEMVER", ...args) : () => {
     };
-    module2.exports = debug;
+    module2.exports = debug2;
   }
 });
 
@@ -6264,7 +6264,7 @@ var require_re = __commonJS({
       MAX_SAFE_BUILD_LENGTH,
       MAX_LENGTH
     } = require_constants();
-    var debug = require_debug();
+    var debug2 = require_debug();
     exports = module2.exports = {};
     var re = exports.re = [];
     var safeRe = exports.safeRe = [];
@@ -6286,7 +6286,7 @@ var require_re = __commonJS({
     var createToken = (name, value, isGlobal) => {
       const safe = makeSafeRegex(value);
       const index = R++;
-      debug(name, index, value);
+      debug2(name, index, value);
       t[name] = index;
       src[index] = value;
       re[index] = new RegExp(value, isGlobal ? "g" : void 0);
@@ -6383,7 +6383,7 @@ var require_identifiers = __commonJS({
 // node_modules/semver/classes/semver.js
 var require_semver = __commonJS({
   "node_modules/semver/classes/semver.js"(exports, module2) {
-    var debug = require_debug();
+    var debug2 = require_debug();
     var { MAX_LENGTH, MAX_SAFE_INTEGER } = require_constants();
     var { safeRe: re, t } = require_re();
     var parseOptions = require_parse_options();
@@ -6405,7 +6405,7 @@ var require_semver = __commonJS({
             `version is longer than ${MAX_LENGTH} characters`
           );
         }
-        debug("SemVer", version2, options);
+        debug2("SemVer", version2, options);
         this.options = options;
         this.loose = !!options.loose;
         this.includePrerelease = !!options.includePrerelease;
@@ -6453,7 +6453,7 @@ var require_semver = __commonJS({
         return this.version;
       }
       compare(other) {
-        debug("SemVer.compare", this.version, this.options, other);
+        debug2("SemVer.compare", this.version, this.options, other);
         if (!(other instanceof _SemVer)) {
           if (typeof other === "string" && other === this.version) {
             return 0;
@@ -6486,7 +6486,7 @@ var require_semver = __commonJS({
         do {
           const a = this.prerelease[i];
           const b = other.prerelease[i];
-          debug("prerelease compare", i, a, b);
+          debug2("prerelease compare", i, a, b);
           if (a === void 0 && b === void 0) {
             return 0;
           } else if (b === void 0) {
@@ -6508,7 +6508,7 @@ var require_semver = __commonJS({
         do {
           const a = this.build[i];
           const b = other.build[i];
-          debug("build compare", i, a, b);
+          debug2("build compare", i, a, b);
           if (a === void 0 && b === void 0) {
             return 0;
           } else if (b === void 0) {
@@ -7098,21 +7098,21 @@ var require_range = __commonJS({
         const loose = this.options.loose;
         const hr = loose ? re[t.HYPHENRANGELOOSE] : re[t.HYPHENRANGE];
         range = range.replace(hr, hyphenReplace(this.options.includePrerelease));
-        debug("hyphen replace", range);
+        debug2("hyphen replace", range);
         range = range.replace(re[t.COMPARATORTRIM], comparatorTrimReplace);
-        debug("comparator trim", range);
+        debug2("comparator trim", range);
         range = range.replace(re[t.TILDETRIM], tildeTrimReplace);
-        debug("tilde trim", range);
+        debug2("tilde trim", range);
         range = range.replace(re[t.CARETTRIM], caretTrimReplace);
-        debug("caret trim", range);
+        debug2("caret trim", range);
         let rangeList = range.split(" ").map((comp) => parseComparator(comp, this.options)).join(" ").split(/\s+/).map((comp) => replaceGTE0(comp, this.options));
         if (loose) {
           rangeList = rangeList.filter((comp) => {
-            debug("loose invalid filter", comp, this.options);
+            debug2("loose invalid filter", comp, this.options);
             return !!comp.match(re[t.COMPARATORLOOSE]);
           });
         }
-        debug("range list", rangeList);
+        debug2("range list", rangeList);
         const rangeMap = /* @__PURE__ */ new Map();
         const comparators = rangeList.map((comp) => new Comparator(comp, this.options));
         for (const comp of comparators) {
@@ -7167,7 +7167,7 @@ var require_range = __commonJS({
     var cache2 = new LRU();
     var parseOptions = require_parse_options();
     var Comparator = require_comparator();
-    var debug = require_debug();
+    var debug2 = require_debug();
     var SemVer = require_semver();
     var {
       safeRe: re,
@@ -7192,15 +7192,15 @@ var require_range = __commonJS({
       return result;
     };
     var parseComparator = (comp, options) => {
-      debug("comp", comp, options);
+      debug2("comp", comp, options);
       comp = replaceCarets(comp, options);
-      debug("caret", comp);
+      debug2("caret", comp);
       comp = replaceTildes(comp, options);
-      debug("tildes", comp);
+      debug2("tildes", comp);
       comp = replaceXRanges(comp, options);
-      debug("xrange", comp);
+      debug2("xrange", comp);
       comp = replaceStars(comp, options);
-      debug("stars", comp);
+      debug2("stars", comp);
       return comp;
     };
     var isX = (id) => !id || id.toLowerCase() === "x" || id === "*";
@@ -7210,7 +7210,7 @@ var require_range = __commonJS({
     var replaceTilde = (comp, options) => {
       const r = options.loose ? re[t.TILDELOOSE] : re[t.TILDE];
       return comp.replace(r, (_, M, m, p, pr) => {
-        debug("tilde", comp, _, M, m, p, pr);
+        debug2("tilde", comp, _, M, m, p, pr);
         let ret;
         if (isX(M)) {
           ret = "";
@@ -7219,12 +7219,12 @@ var require_range = __commonJS({
         } else if (isX(p)) {
           ret = `>=${M}.${m}.0 <${M}.${+m + 1}.0-0`;
         } else if (pr) {
-          debug("replaceTilde pr", pr);
+          debug2("replaceTilde pr", pr);
           ret = `>=${M}.${m}.${p}-${pr} <${M}.${+m + 1}.0-0`;
         } else {
           ret = `>=${M}.${m}.${p} <${M}.${+m + 1}.0-0`;
         }
-        debug("tilde return", ret);
+        debug2("tilde return", ret);
         return ret;
       });
     };
@@ -7232,11 +7232,11 @@ var require_range = __commonJS({
       return comp.trim().split(/\s+/).map((c) => replaceCaret(c, options)).join(" ");
     };
     var replaceCaret = (comp, options) => {
-      debug("caret", comp, options);
+      debug2("caret", comp, options);
       const r = options.loose ? re[t.CARETLOOSE] : re[t.CARET];
       const z2 = options.includePrerelease ? "-0" : "";
       return comp.replace(r, (_, M, m, p, pr) => {
-        debug("caret", comp, _, M, m, p, pr);
+        debug2("caret", comp, _, M, m, p, pr);
         let ret;
         if (isX(M)) {
           ret = "";
@@ -7249,7 +7249,7 @@ var require_range = __commonJS({
             ret = `>=${M}.${m}.0${z2} <${+M + 1}.0.0-0`;
           }
         } else if (pr) {
-          debug("replaceCaret pr", pr);
+          debug2("replaceCaret pr", pr);
           if (M === "0") {
             if (m === "0") {
               ret = `>=${M}.${m}.${p}-${pr} <${M}.${m}.${+p + 1}-0`;
@@ -7260,7 +7260,7 @@ var require_range = __commonJS({
             ret = `>=${M}.${m}.${p}-${pr} <${+M + 1}.0.0-0`;
           }
         } else {
-          debug("no pr");
+          debug2("no pr");
           if (M === "0") {
             if (m === "0") {
               ret = `>=${M}.${m}.${p}${z2} <${M}.${m}.${+p + 1}-0`;
@@ -7271,19 +7271,19 @@ var require_range = __commonJS({
             ret = `>=${M}.${m}.${p} <${+M + 1}.0.0-0`;
           }
         }
-        debug("caret return", ret);
+        debug2("caret return", ret);
         return ret;
       });
     };
     var replaceXRanges = (comp, options) => {
-      debug("replaceXRanges", comp, options);
+      debug2("replaceXRanges", comp, options);
       return comp.split(/\s+/).map((c) => replaceXRange(c, options)).join(" ");
     };
     var replaceXRange = (comp, options) => {
       comp = comp.trim();
       const r = options.loose ? re[t.XRANGELOOSE] : re[t.XRANGE];
       return comp.replace(r, (ret, gtlt, M, m, p, pr) => {
-        debug("xRange", comp, ret, gtlt, M, m, p, pr);
+        debug2("xRange", comp, ret, gtlt, M, m, p, pr);
         const xM = isX(M);
         const xm = xM || isX(m);
         const xp = xm || isX(p);
@@ -7330,16 +7330,16 @@ var require_range = __commonJS({
         } else if (xp) {
           ret = `>=${M}.${m}.0${pr} <${M}.${+m + 1}.0-0`;
         }
-        debug("xRange return", ret);
+        debug2("xRange return", ret);
         return ret;
       });
     };
     var replaceStars = (comp, options) => {
-      debug("replaceStars", comp, options);
+      debug2("replaceStars", comp, options);
       return comp.trim().replace(re[t.STAR], "");
     };
     var replaceGTE0 = (comp, options) => {
-      debug("replaceGTE0", comp, options);
+      debug2("replaceGTE0", comp, options);
       return comp.trim().replace(re[options.includePrerelease ? t.GTE0PRE : t.GTE0], "");
     };
     var hyphenReplace = (incPr) => ($0, from, fM, fm, fp, fpr, fb, to, tM, tm, tp, tpr) => {
@@ -7377,7 +7377,7 @@ var require_range = __commonJS({
       }
       if (version2.prerelease.length && !options.includePrerelease) {
         for (let i = 0; i < set.length; i++) {
-          debug(set[i].semver);
+          debug2(set[i].semver);
           if (set[i].semver === Comparator.ANY) {
             continue;
           }
@@ -7413,7 +7413,7 @@ var require_comparator = __commonJS({
           }
         }
         comp = comp.trim().split(/\s+/).join(" ");
-        debug("comparator", comp, options);
+        debug2("comparator", comp, options);
         this.options = options;
         this.loose = !!options.loose;
         this.parse(comp);
@@ -7422,7 +7422,7 @@ var require_comparator = __commonJS({
         } else {
           this.value = this.operator + this.semver.version;
         }
-        debug("comp", this);
+        debug2("comp", this);
       }
       parse(comp) {
         const r = this.options.loose ? re[t.COMPARATORLOOSE] : re[t.COMPARATOR];
@@ -7444,7 +7444,7 @@ var require_comparator = __commonJS({
         return this.value;
       }
       test(version2) {
-        debug("Comparator.test", version2, this.options.loose);
+        debug2("Comparator.test", version2, this.options.loose);
         if (this.semver === ANY || version2 === ANY) {
           return true;
         }
@@ -7501,7 +7501,7 @@ var require_comparator = __commonJS({
     var parseOptions = require_parse_options();
     var { safeRe: re, t } = require_re();
     var cmp = require_cmp();
-    var debug = require_debug();
+    var debug2 = require_debug();
     var SemVer = require_semver();
     var Range = require_range();
   }
@@ -8134,12 +8134,12 @@ function defaultOptions() {
     edgesLimit: Number.MAX_SAFE_INTEGER
   };
 }
-function stringify(obj, replacer, spacer, options) {
-  var _a;
+function stringify2(obj, replacer, spacer, options) {
+  var _a2;
   try {
     return JSON.stringify(obj, replacer, spacer);
   } catch (e) {
-    if (!((_a = e.message) == null ? void 0 : _a.includes("Converting circular structure to JSON"))) {
+    if (!((_a2 = e.message) == null ? void 0 : _a2.includes("Converting circular structure to JSON"))) {
       console.warn("[WARNING]: LangSmith received unserializable value.");
       return "[Unserializable]";
     }
@@ -8247,10 +8247,10 @@ var init_fast_safe_stringify = __esm({
 
 // node_modules/langsmith/dist/client.js
 function mergeRuntimeEnvIntoRunCreate(run) {
-  var _a, _b;
+  var _a2, _b;
   const runtimeEnv = getRuntimeEnvironment();
   const envVars = getLangChainEnvVarsMetadata();
-  const extra = (_a = run.extra) != null ? _a : {};
+  const extra = (_a2 = run.extra) != null ? _a2 : {};
   const metadata = extra.metadata;
   run.extra = {
     ...extra,
@@ -8273,11 +8273,11 @@ async function toArray(iterable) {
   }
   return result;
 }
-function trimQuotes(str) {
-  if (str === void 0) {
+function trimQuotes(str2) {
+  if (str2 === void 0) {
     return void 0;
   }
-  return str.trim().replace(/^"(.*)"$/, "$1").replace(/^'(.*)'$/, "$1");
+  return str2.trim().replace(/^"(.*)"$/, "$1").replace(/^'(.*)'$/, "$1");
 }
 var getTracingSamplingRate, isLocalhost, handle429, AutoBatchQueue, DEFAULT_BATCH_SIZE_LIMIT_BYTES, SERVER_INFO_REQUEST_TIMEOUT, Client;
 var init_client = __esm({
@@ -8310,9 +8310,9 @@ var init_client = __esm({
       return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
     };
     handle429 = async (response) => {
-      var _a;
+      var _a2;
       if ((response == null ? void 0 : response.status) === 429) {
-        const retryAfter = parseInt((_a = response.headers.get("retry-after")) != null ? _a : "30", 10) * 1e3;
+        const retryAfter = parseInt((_a2 = response.headers.get("retry-after")) != null ? _a2 : "30", 10) * 1e3;
         if (retryAfter > 0) {
           await new Promise((resolve) => setTimeout(resolve, retryAfter));
           return true;
@@ -8343,7 +8343,7 @@ var init_client = __esm({
         const itemPromise = new Promise((resolve) => {
           itemPromiseResolve = resolve;
         });
-        const size = stringify(item.item).length;
+        const size = stringify2(item.item).length;
         this.items.push({
           action: item.action,
           payload: item.item,
@@ -8356,13 +8356,13 @@ var init_client = __esm({
         return itemPromise;
       }
       pop(upToSizeBytes) {
-        var _a, _b;
+        var _a2, _b;
         if (upToSizeBytes < 1) {
           throw new Error("Number of bytes to pop off may not be less than 1.");
         }
         const popped = [];
         let poppedSizeBytes = 0;
-        while (poppedSizeBytes + ((_b = (_a = this.peek()) == null ? void 0 : _a.size) != null ? _b : 0) < upToSizeBytes && this.items.length > 0) {
+        while (poppedSizeBytes + ((_b = (_a2 = this.peek()) == null ? void 0 : _a2.size) != null ? _b : 0) < upToSizeBytes && this.items.length > 0) {
           const item = this.items.shift();
           if (item) {
             popped.push(item);
@@ -8386,7 +8386,7 @@ var init_client = __esm({
     SERVER_INFO_REQUEST_TIMEOUT = 1e3;
     Client = class _Client {
       constructor(config = {}) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o;
+        var _a2, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o;
         Object.defineProperty(this, "apiKey", {
           enumerable: true,
           configurable: true,
@@ -8521,7 +8521,7 @@ var init_client = __esm({
         });
         const defaultConfig = _Client.getDefaultClientConfig();
         this.tracingSampleRate = getTracingSamplingRate();
-        this.apiUrl = (_b = trimQuotes((_a = config.apiUrl) != null ? _a : defaultConfig.apiUrl)) != null ? _b : "";
+        this.apiUrl = (_b = trimQuotes((_a2 = config.apiUrl) != null ? _a2 : defaultConfig.apiUrl)) != null ? _b : "";
         if (this.apiUrl.endsWith("/")) {
           this.apiUrl = this.apiUrl.slice(0, -1);
         }
@@ -8550,9 +8550,9 @@ var init_client = __esm({
         this.fetchOptions = config.fetchOptions || {};
       }
       static getDefaultClientConfig() {
-        var _a;
+        var _a2;
         const apiKey = getLangSmithEnvironmentVariable("API_KEY");
-        const apiUrl = (_a = getLangSmithEnvironmentVariable("ENDPOINT")) != null ? _a : "https://api.smith.langchain.com";
+        const apiUrl = (_a2 = getLangSmithEnvironmentVariable("ENDPOINT")) != null ? _a2 : "https://api.smith.langchain.com";
         const hideInputs = getLangSmithEnvironmentVariable("HIDE_INPUTS") === "true";
         const hideOutputs = getLangSmithEnvironmentVariable("HIDE_OUTPUTS") === "true";
         return {
@@ -8627,8 +8627,8 @@ var init_client = __esm({
         return runParams;
       }
       async _getResponse(path, queryParams) {
-        var _a;
-        const paramsString = (_a = queryParams == null ? void 0 : queryParams.toString()) != null ? _a : "";
+        var _a2;
+        const paramsString = (_a2 = queryParams == null ? void 0 : queryParams.toString()) != null ? _a2 : "";
         const url = `${this.apiUrl}${path}?${paramsString}`;
         const response = await this.caller.call(_getFetchImplementation(), url, {
           method: "GET",
@@ -8645,10 +8645,10 @@ var init_client = __esm({
       }
       async *_getPaginated(path, queryParams = new URLSearchParams(), transform) {
         let offset = Number(queryParams.get("offset")) || 0;
-        const limit = Number(queryParams.get("limit")) || 100;
+        const limit2 = Number(queryParams.get("limit")) || 100;
         while (true) {
           queryParams.set("offset", String(offset));
-          queryParams.set("limit", String(limit));
+          queryParams.set("limit", String(limit2));
           const url = `${this.apiUrl}${path}?${queryParams}`;
           const response = await this.caller.call(_getFetchImplementation(), url, {
             method: "GET",
@@ -8662,7 +8662,7 @@ var init_client = __esm({
             break;
           }
           yield items;
-          if (items.length < limit) {
+          if (items.length < limit2) {
             break;
           }
           offset += items.length;
@@ -8723,9 +8723,9 @@ var init_client = __esm({
         }
       }
       async _getBatchSizeLimitBytes() {
-        var _a, _b, _c;
+        var _a2, _b, _c;
         const serverInfo = await this._ensureServerInfo();
-        return (_c = (_b = this.batchSizeBytesLimit) != null ? _b : (_a = serverInfo.batch_ingest_config) == null ? void 0 : _a.size_limit_bytes) != null ? _c : DEFAULT_BATCH_SIZE_LIMIT_BYTES;
+        return (_c = (_b = this.batchSizeBytesLimit) != null ? _b : (_a2 = serverInfo.batch_ingest_config) == null ? void 0 : _a2.size_limit_bytes) != null ? _c : DEFAULT_BATCH_SIZE_LIMIT_BYTES;
       }
       drainAutoBatchQueue(batchSizeLimit) {
         while (this.autoBatchQueue.items.length > 0) {
@@ -8738,7 +8738,7 @@ var init_client = __esm({
         }
       }
       async _processBatch(batch, done) {
-        var _a;
+        var _a2;
         if (!batch.length) {
           done();
           return;
@@ -8749,7 +8749,7 @@ var init_client = __esm({
             runUpdates: batch.filter((item) => item.action === "update").map((item) => item.item)
           };
           const serverInfo = await this._ensureServerInfo();
-          if ((_a = serverInfo == null ? void 0 : serverInfo.batch_ingest_config) == null ? void 0 : _a.use_multipart_endpoint) {
+          if ((_a2 = serverInfo == null ? void 0 : serverInfo.batch_ingest_config) == null ? void 0 : _a2.use_multipart_endpoint) {
             await this.multipartIngestRuns(ingestParams);
           } else {
             await this.batchIngestRuns(ingestParams);
@@ -8790,7 +8790,7 @@ var init_client = __esm({
       async _ensureServerInfo() {
         if (this._getServerInfoPromise === void 0) {
           this._getServerInfoPromise = (async () => {
-            var _a;
+            var _a2;
             if (this._serverInfo === void 0) {
               try {
                 this._serverInfo = await this._getServerInfo();
@@ -8798,7 +8798,7 @@ var init_client = __esm({
                 console.warn(`[WARNING]: LangSmith failed to fetch info on supported operations. Falling back to batch operations and default limits.`);
               }
             }
-            return (_a = this._serverInfo) != null ? _a : {};
+            return (_a2 = this._serverInfo) != null ? _a2 : {};
           })();
         }
         return this._getServerInfoPromise.then((serverInfo) => {
@@ -8815,7 +8815,7 @@ var init_client = __esm({
         return await this.settings;
       }
       async createRun(run) {
-        var _a;
+        var _a2;
         if (!this._filterForSampling([run]).length) {
           return;
         }
@@ -8825,7 +8825,7 @@ var init_client = __esm({
         const runCreate = this.prepareRunCreateOrUpdateInputs({
           session_name,
           ...run,
-          start_time: (_a = run.start_time) != null ? _a : Date.now()
+          start_time: (_a2 = run.start_time) != null ? _a2 : Date.now()
         });
         if (this.autoBatchTracing && runCreate.trace_id !== void 0 && runCreate.dotted_order !== void 0) {
           void this.processRunOperation({
@@ -8838,7 +8838,7 @@ var init_client = __esm({
         const response = await this.caller.call(_getFetchImplementation(), `${this.apiUrl}/runs`, {
           method: "POST",
           headers,
-          body: stringify(mergedRunCreateParam),
+          body: stringify2(mergedRunCreateParam),
           signal: AbortSignal.timeout(this.timeout_ms),
           ...this.fetchOptions
         });
@@ -8849,11 +8849,11 @@ var init_client = __esm({
        * @param runs
        */
       async batchIngestRuns({ runCreates, runUpdates }) {
-        var _a, _b;
+        var _a2, _b;
         if (runCreates === void 0 && runUpdates === void 0) {
           return;
         }
-        let preparedCreateParams = (_a = runCreates == null ? void 0 : runCreates.map((create) => this.prepareRunCreateOrUpdateInputs(create))) != null ? _a : [];
+        let preparedCreateParams = (_a2 = runCreates == null ? void 0 : runCreates.map((create) => this.prepareRunCreateOrUpdateInputs(create))) != null ? _a2 : [];
         let preparedUpdateParams = (_b = runUpdates == null ? void 0 : runUpdates.map((update) => this.prepareRunCreateOrUpdateInputs(update))) != null ? _b : [];
         if (preparedCreateParams.length > 0 && preparedUpdateParams.length > 0) {
           const createById = preparedCreateParams.reduce((params, run) => {
@@ -8898,7 +8898,7 @@ var init_client = __esm({
           }
         }
         if (batchChunks.post.length > 0 || batchChunks.patch.length > 0) {
-          await this._postBatchIngestRuns(stringify(batchChunks));
+          await this._postBatchIngestRuns(stringify2(batchChunks));
         }
       }
       async _postBatchIngestRuns(body) {
@@ -8984,7 +8984,7 @@ var init_client = __esm({
           for (const originalPayload of payloads) {
             const { inputs, outputs, events, attachments, ...payload } = originalPayload;
             const fields = { inputs, outputs, events };
-            const stringifiedPayload = stringify(payload);
+            const stringifiedPayload = stringify2(payload);
             accumulatedParts.push({
               name: `${method}.${payload.id}`,
               payload: new Blob([stringifiedPayload], {
@@ -8996,7 +8996,7 @@ var init_client = __esm({
               if (value === void 0) {
                 continue;
               }
-              const stringifiedValue = stringify(value);
+              const stringifiedValue = stringify2(value);
               accumulatedParts.push({
                 name: `${method}.${payload.id}.${key}`,
                 payload: new Blob([stringifiedValue], {
@@ -9090,7 +9090,7 @@ Context: ${context}`);
         const response = await this.caller.call(_getFetchImplementation(), `${this.apiUrl}/runs/${runId}`, {
           method: "PATCH",
           headers,
-          body: stringify(run),
+          body: stringify2(run),
           signal: AbortSignal.timeout(this.timeout_ms),
           ...this.fetchOptions
         });
@@ -9137,8 +9137,8 @@ Context: ${context}`);
         const treemap = {};
         const runs = {};
         childRuns.sort((a, b) => {
-          var _a, _b;
-          return ((_a = a == null ? void 0 : a.dotted_order) != null ? _a : "").localeCompare((_b = b == null ? void 0 : b.dotted_order) != null ? _b : "");
+          var _a2, _b;
+          return ((_a2 = a == null ? void 0 : a.dotted_order) != null ? _a2 : "").localeCompare((_b = b == null ? void 0 : b.dotted_order) != null ? _b : "");
         });
         for (const childRun of childRuns) {
           if (childRun.parent_run_id === null || childRun.parent_run_id === void 0) {
@@ -9240,7 +9240,7 @@ Context: ${context}`);
        * });
        */
       async *listRuns(props) {
-        const { projectId, projectName, parentRunId, traceId, referenceExampleId, startTime, executionOrder, isRoot, runType, error, id, query, filter, traceFilter, treeFilter, limit, select } = props;
+        const { projectId, projectName, parentRunId, traceId, referenceExampleId, startTime, executionOrder, isRoot, runType, error, id, query, filter, traceFilter, treeFilter, limit: limit2, select } = props;
         let projectIds = [];
         if (projectId) {
           projectIds = Array.isArray(projectId) ? projectId : [projectId];
@@ -9293,19 +9293,19 @@ Context: ${context}`);
           start_time: startTime ? startTime.toISOString() : null,
           error,
           id,
-          limit,
+          limit: limit2,
           trace: traceId,
           select: select ? select : default_select,
           is_root: isRoot
         };
         let runsYielded = 0;
         for await (const runs of this._getCursorPaginatedList("/runs/query", body)) {
-          if (limit) {
-            if (runsYielded >= limit) {
+          if (limit2) {
+            if (runsYielded >= limit2) {
               break;
             }
-            if (runs.length + runsYielded > limit) {
-              const newRuns = runs.slice(0, limit - runsYielded);
+            if (runs.length + runsYielded > limit2) {
+              const newRuns = runs.slice(0, limit2 - runsYielded);
               yield* newRuns;
               break;
             }
@@ -9830,10 +9830,10 @@ Message: ${result.detail.join("\n")}`);
         const dataset = datasetText.trim().split("\n").map((line) => JSON.parse(line));
         return dataset;
       }
-      async *listDatasets({ limit = 100, offset = 0, datasetIds, datasetName, datasetNameContains, metadata } = {}) {
+      async *listDatasets({ limit: limit2 = 100, offset = 0, datasetIds, datasetName, datasetNameContains, metadata } = {}) {
         const path = "/datasets";
         const params = new URLSearchParams({
-          limit: limit.toString(),
+          limit: limit2.toString(),
           offset: offset.toString()
         });
         if (datasetIds !== void 0) {
@@ -9954,9 +9954,9 @@ Message: ${result.detail.join("\n")}`);
        * limit = 5
        * examples = await client.similarExamples(inputs, dataset_id, limit)
        */
-      async similarExamples(inputs, datasetId, limit, { filter } = {}) {
+      async similarExamples(inputs, datasetId, limit2, { filter } = {}) {
         const data = {
-          limit,
+          limit: limit2,
           inputs
         };
         if (filter !== void 0) {
@@ -10057,7 +10057,7 @@ Message: ${result.detail.join("\n")}`);
         const path = `/examples/${exampleId}`;
         return await this._get(path);
       }
-      async *listExamples({ datasetId, datasetName, exampleIds, asOf, splits, inlineS3Urls, metadata, limit, offset, filter } = {}) {
+      async *listExamples({ datasetId, datasetName, exampleIds, asOf, splits, inlineS3Urls, metadata, limit: limit2, offset, filter } = {}) {
         let datasetId_;
         if (datasetId !== void 0 && datasetName !== void 0) {
           throw new Error("Must provide either datasetName or datasetId, not both");
@@ -10090,8 +10090,8 @@ Message: ${result.detail.join("\n")}`);
           const serializedMetadata = JSON.stringify(metadata);
           params.append("metadata", serializedMetadata);
         }
-        if (limit !== void 0) {
-          params.append("limit", limit.toString());
+        if (limit2 !== void 0) {
+          params.append("limit", limit2.toString());
         }
         if (offset !== void 0) {
           params.append("offset", offset.toString());
@@ -10105,7 +10105,7 @@ Message: ${result.detail.join("\n")}`);
             yield example;
             i++;
           }
-          if (limit !== void 0 && i >= limit) {
+          if (limit2 !== void 0 && i >= limit2) {
             break;
           }
         }
@@ -10219,7 +10219,7 @@ Message: ${result.detail.join("\n")}`);
         return feedbacks[0];
       }
       async createFeedback(runId, key, { score, value, correction, comment, sourceInfo, feedbackSourceType = "api", sourceRunId, feedbackId, feedbackConfig, projectId, comparativeExperimentId }) {
-        var _a;
+        var _a2;
         if (!runId && !projectId) {
           throw new Error("One of runId or projectId must be provided");
         }
@@ -10233,7 +10233,7 @@ Message: ${result.detail.join("\n")}`);
         if (sourceRunId !== void 0 && (feedback_source == null ? void 0 : feedback_source.metadata) !== void 0 && !feedback_source.metadata["__run"]) {
           feedback_source.metadata["__run"] = { run_id: sourceRunId };
         }
-        if ((feedback_source == null ? void 0 : feedback_source.metadata) !== void 0 && ((_a = feedback_source.metadata["__run"]) == null ? void 0 : _a.run_id) !== void 0) {
+        if ((feedback_source == null ? void 0 : feedback_source.metadata) !== void 0 && ((_a2 = feedback_source.metadata["__run"]) == null ? void 0 : _a2.run_id) !== void 0) {
           assertUuid(feedback_source.metadata["__run"].run_id);
         }
         const feedback = {
@@ -10364,7 +10364,7 @@ Message: ${result.detail.join("\n")}`);
         return result;
       }
       async createComparativeExperiment({ name, experimentIds, referenceDatasetId, createdAt, description, metadata, id }) {
-        var _a;
+        var _a2;
         if (experimentIds.length === 0) {
           throw new Error("At least one experiment is required");
         }
@@ -10382,7 +10382,7 @@ Message: ${result.detail.join("\n")}`);
           experiment_ids: experimentIds,
           reference_dataset_id: referenceDatasetId,
           description,
-          created_at: (_a = createdAt != null ? createdAt : /* @__PURE__ */ new Date()) == null ? void 0 : _a.toISOString(),
+          created_at: (_a2 = createdAt != null ? createdAt : /* @__PURE__ */ new Date()) == null ? void 0 : _a2.toISOString(),
           extra: {}
         };
         if (metadata)
@@ -10461,7 +10461,7 @@ Message: ${result.detail.join("\n")}`);
        * @returns An iterator of AnnotationQueue objects
        */
       async *listAnnotationQueues(options = {}) {
-        const { queueIds, name, nameContains, limit } = options;
+        const { queueIds, name, nameContains, limit: limit2 } = options;
         const params = new URLSearchParams();
         if (queueIds) {
           queueIds.forEach((id, i) => {
@@ -10473,12 +10473,12 @@ Message: ${result.detail.join("\n")}`);
           params.append("name", name);
         if (nameContains)
           params.append("name_contains", nameContains);
-        params.append("limit", (limit !== void 0 ? Math.min(limit, 100) : 100).toString());
+        params.append("limit", (limit2 !== void 0 ? Math.min(limit2, 100) : 100).toString());
         let count = 0;
         for await (const queues of this._getPaginated("/annotation-queues", params)) {
           yield* queues;
           count++;
-          if (limit !== void 0 && count >= limit)
+          if (limit2 !== void 0 && count >= limit2)
             break;
         }
       }
@@ -10663,9 +10663,9 @@ ${detail}`);
         }
       }
       async *listPrompts(options) {
-        var _a;
+        var _a2;
         const params = new URLSearchParams();
-        params.append("sort_field", (_a = options == null ? void 0 : options.sortField) != null ? _a : "updated_at");
+        params.append("sort_field", (_a2 = options == null ? void 0 : options.sortField) != null ? _a2 : "updated_at");
         params.append("sort_direction", "desc");
         params.append("is_archived", (!!(options == null ? void 0 : options.isArchived)).toString());
         if ((options == null ? void 0 : options.isPublic) !== void 0) {
@@ -10880,7 +10880,7 @@ ${detail}`);
          * @returns {Promise<void>}
          */
       async clonePublicDataset(tokenOrUrl, options = {}) {
-        var _a, _b;
+        var _a2, _b;
         const { sourceApiUrl = this.apiUrl, datasetName } = options;
         const [parsedApiUrl, tokenUuid] = this.parseTokenOrUrl(tokenOrUrl, sourceApiUrl);
         const sourceClient = new _Client({
@@ -10903,7 +10903,7 @@ ${detail}`);
         const dataset = await this.createDataset(finalDatasetName, {
           description: ds.description,
           dataType: ds.data_type || "kv",
-          inputsSchema: (_a = ds.inputs_schema_definition) != null ? _a : void 0,
+          inputsSchema: (_a2 = ds.inputs_schema_definition) != null ? _a2 : void 0,
           outputsSchema: (_b = ds.outputs_schema_definition) != null ? _b : void 0
         });
         try {
@@ -10917,7 +10917,7 @@ ${detail}`);
           throw e;
         }
       }
-      parseTokenOrUrl(urlOrToken, apiUrl, numParts = 2, kind = "dataset") {
+      parseTokenOrUrl(urlOrToken, apiUrl, numParts = 2, kind2 = "dataset") {
         try {
           assertUuid(urlOrToken);
           return [apiUrl, urlOrToken];
@@ -10930,10 +10930,10 @@ ${detail}`);
             const tokenUuid = pathParts[pathParts.length - numParts];
             return [apiUrl, tokenUuid];
           } else {
-            throw new Error(`Invalid public ${kind} URL: ${urlOrToken}`);
+            throw new Error(`Invalid public ${kind2} URL: ${urlOrToken}`);
           }
         } catch (error) {
-          throw new Error(`Invalid public ${kind} URL or token: ${urlOrToken}`);
+          throw new Error(`Invalid public ${kind2} URL or token: ${urlOrToken}`);
         }
       }
       /**
@@ -11033,11 +11033,11 @@ function getEnvironmentVariables() {
   }
 }
 function getEnvironmentVariable(name) {
-  var _a;
+  var _a2;
   try {
     return typeof process !== "undefined" ? (
       // eslint-disable-next-line no-process-env
-      (_a = process.env) == null ? void 0 : _a[name]
+      (_a2 = process.env) == null ? void 0 : _a2[name]
     ) : void 0;
   } catch (e) {
     return void 0;
@@ -11156,9 +11156,9 @@ function isCallbackManagerLike(x) {
   return typeof x === "object" && x != null && Array.isArray(x.handlers);
 }
 function isRunnableConfigLike(x) {
-  var _a;
+  var _a2;
   return x !== void 0 && typeof x.callbacks === "object" && // Callback manager with a langchain tracer
-  (containsLangChainTracerLike((_a = x.callbacks) == null ? void 0 : _a.handlers) || // Or it's an array with a LangChainTracerLike object within it
+  (containsLangChainTracerLike((_a2 = x.callbacks) == null ? void 0 : _a2.handlers) || // Or it's an array with a LangChainTracerLike object within it
   containsLangChainTracerLike(x.callbacks));
 }
 var Baggage, RunTree;
@@ -11215,7 +11215,7 @@ var init_run_trees = __esm({
     };
     RunTree = class _RunTree {
       constructor(originalConfig) {
-        var _a, _b, _c, _d, _e;
+        var _a2, _b, _c, _d, _e;
         Object.defineProperty(this, "id", {
           enumerable: true,
           configurable: true,
@@ -11360,7 +11360,7 @@ var init_run_trees = __esm({
         }
         const defaultConfig = _RunTree.getDefaultConfig();
         const { metadata, ...config } = originalConfig;
-        const client2 = (_a = config.client) != null ? _a : _RunTree.getSharedClient();
+        const client2 = (_a2 = config.client) != null ? _a2 : _RunTree.getSharedClient();
         const dedupedMetadata = {
           ...metadata,
           ...(_b = config == null ? void 0 : config.extra) == null ? void 0 : _b.metadata
@@ -11386,11 +11386,11 @@ var init_run_trees = __esm({
         }
       }
       static getDefaultConfig() {
-        var _a, _b, _c;
+        var _a2, _b, _c;
         return {
           id: v4_default(),
           run_type: "chain",
-          project_name: (_b = (_a = getEnvironmentVariable("LANGCHAIN_PROJECT")) != null ? _a : getEnvironmentVariable("LANGCHAIN_SESSION")) != null ? _b : (
+          project_name: (_b = (_a2 = getEnvironmentVariable("LANGCHAIN_PROJECT")) != null ? _a2 : getEnvironmentVariable("LANGCHAIN_SESSION")) != null ? _b : (
             // TODO: Deprecate
             "default"
           ),
@@ -11411,7 +11411,7 @@ var init_run_trees = __esm({
         return _RunTree.sharedClient;
       }
       createChild(config) {
-        var _a, _b, _c, _d, _e, _f, _g;
+        var _a2, _b, _c, _d, _e, _f, _g;
         const child_execution_order = this.child_execution_order + 1;
         const child = new _RunTree({
           ...config,
@@ -11426,7 +11426,7 @@ var init_run_trees = __esm({
           child[_LC_CONTEXT_VARIABLES_KEY] = this[_LC_CONTEXT_VARIABLES_KEY];
         }
         const LC_CHILD = Symbol.for("lc:child_config");
-        const presentConfig = (_b = (_a = config.extra) == null ? void 0 : _a[LC_CHILD]) != null ? _b : this.extra[LC_CHILD];
+        const presentConfig = (_b = (_a2 = config.extra) == null ? void 0 : _a2[LC_CHILD]) != null ? _b : this.extra[LC_CHILD];
         if (isRunnableConfigLike(presentConfig)) {
           const newConfig = { ...presentConfig };
           const callbacks = isCallbackManagerLike(newConfig.callbacks) ? (_d = (_c = newConfig.callbacks).copy) == null ? void 0 : _d.call(_c) : void 0;
@@ -11448,8 +11448,8 @@ var init_run_trees = __esm({
         return child;
       }
       async end(outputs, error, endTime = Date.now(), metadata) {
-        var _a, _b, _c;
-        this.outputs = (_a = this.outputs) != null ? _a : outputs;
+        var _a2, _b, _c;
+        this.outputs = (_a2 = this.outputs) != null ? _a2 : outputs;
         this.error = (_b = this.error) != null ? _b : error;
         this.end_time = (_c = this.end_time) != null ? _c : endTime;
         if (metadata && Object.keys(metadata).length > 0) {
@@ -11457,8 +11457,8 @@ var init_run_trees = __esm({
         }
       }
       _convertToCreate(run, runtimeEnv, excludeChildRuns = true) {
-        var _a, _b;
-        const runExtra = (_a = run.extra) != null ? _a : {};
+        var _a2, _b;
+        const runExtra = (_a2 = run.extra) != null ? _a2 : {};
         if (!runExtra.runtime) {
           runExtra.runtime = {};
         }
@@ -11516,14 +11516,14 @@ var init_run_trees = __esm({
         }
       }
       async patchRun() {
-        var _a;
+        var _a2;
         try {
           const runUpdate = {
             end_time: this.end_time,
             error: this.error,
             inputs: this.inputs,
             outputs: this.outputs,
-            parent_run_id: (_a = this.parent_run) == null ? void 0 : _a.id,
+            parent_run_id: (_a2 = this.parent_run) == null ? void 0 : _a2.id,
             reference_example_id: this.reference_example_id,
             extra: this.extra,
             events: this.events,
@@ -11541,14 +11541,14 @@ var init_run_trees = __esm({
         return this._convertToCreate(this, void 0, false);
       }
       static fromRunnableConfig(parentConfig, props) {
-        var _a, _b, _c, _d, _e, _f, _g;
+        var _a2, _b, _c, _d, _e, _f, _g;
         const callbackManager = parentConfig == null ? void 0 : parentConfig.callbacks;
         let parentRun;
         let projectName;
         let client2;
         let tracingEnabled = isTracingEnabled();
         if (callbackManager) {
-          const parentRunId = (_b = (_a = callbackManager == null ? void 0 : callbackManager.getParentRunId) == null ? void 0 : _a.call(callbackManager)) != null ? _b : "";
+          const parentRunId = (_b = (_a2 = callbackManager == null ? void 0 : callbackManager.getParentRunId) == null ? void 0 : _a2.call(callbackManager)) != null ? _b : "";
           const langChainTracer = (_c = callbackManager == null ? void 0 : callbackManager.handlers) == null ? void 0 : _c.find((handler) => (handler == null ? void 0 : handler.name) == "langchain_tracer");
           parentRun = (_d = langChainTracer == null ? void 0 : langChainTracer.getRun) == null ? void 0 : _d.call(langChainTracer, parentRunId);
           projectName = langChainTracer == null ? void 0 : langChainTracer.projectName;
@@ -11587,7 +11587,7 @@ var init_run_trees = __esm({
         return this.fromHeaders({ "langsmith-trace": dottedOrder });
       }
       static fromHeaders(headers, inheritArgs) {
-        var _a, _b, _c, _d;
+        var _a2, _b, _c, _d;
         const rawHeaders = "get" in headers && typeof headers.get === "function" ? {
           "langsmith-trace": headers.get("langsmith-trace"),
           baggage: headers.get("baggage")
@@ -11603,7 +11603,7 @@ var init_run_trees = __esm({
         const traceId = parsedDottedOrder[0].uuid;
         const config = {
           ...inheritArgs,
-          name: (_a = inheritArgs == null ? void 0 : inheritArgs["name"]) != null ? _a : "parent",
+          name: (_a2 = inheritArgs == null ? void 0 : inheritArgs["name"]) != null ? _a2 : "parent",
           run_type: (_b = inheritArgs == null ? void 0 : inheritArgs["run_type"]) != null ? _b : "chain",
           start_time: (_c = inheritArgs == null ? void 0 : inheritArgs["start_time"]) != null ? _c : Date.now(),
           id: (_d = parsedDottedOrder.at(-1)) == null ? void 0 : _d.uuid,
@@ -11618,10 +11618,10 @@ var init_run_trees = __esm({
         return new _RunTree(config);
       }
       toHeaders(headers) {
-        var _a;
+        var _a2;
         const result = {
           "langsmith-trace": this.dotted_order,
-          baggage: new Baggage((_a = this.extra) == null ? void 0 : _a.metadata, this.tags).toHeader()
+          baggage: new Baggage((_a2 = this.extra) == null ? void 0 : _a2.metadata, this.tags).toHeader()
         };
         if (headers) {
           for (const [key, value] of Object.entries(result)) {
@@ -11660,8 +11660,8 @@ var init_traceable = __esm({
     mockAsyncLocalStorage = new MockAsyncLocalStorage();
     AsyncLocalStorageProvider = class {
       getInstance() {
-        var _a;
-        return (_a = globalThis[TRACING_ALS_KEY]) != null ? _a : mockAsyncLocalStorage;
+        var _a2;
+        return (_a2 = globalThis[TRACING_ALS_KEY]) != null ? _a2 : mockAsyncLocalStorage;
       }
       initializeGlobalInstance(instance) {
         if (globalThis[TRACING_ALS_KEY] === void 0) {
@@ -11727,12 +11727,12 @@ function _deepClone(obj) {
       return obj;
   }
 }
-function isInteger(str) {
+function isInteger(str2) {
   let i = 0;
-  const len = str.length;
+  const len = str2.length;
   let charCode;
   while (i < len) {
-    charCode = str.charCodeAt(i);
+    charCode = str2.charCodeAt(i);
     if (charCode >= 48 && charCode <= 57) {
       i++;
       continue;
@@ -11826,8 +11826,8 @@ var init_helpers = __esm({
 });
 
 // node_modules/@langchain/core/dist/utils/fast-json-patch/src/core.js
-var core_exports = {};
-__export(core_exports, {
+var core_exports2 = {};
+__export(core_exports2, {
   JsonPatchError: () => JsonPatchError,
   _areEquals: () => _areEquals,
   applyOperation: () => applyOperation,
@@ -12178,7 +12178,7 @@ var init_fast_json_patch = __esm({
     init_core();
     init_helpers();
     fast_json_patch_default = {
-      ...core_exports,
+      ...core_exports2,
       // ...duplex,
       JsonPatchError: PatchError,
       deepClone: _deepClone,
@@ -12200,11 +12200,11 @@ async function getRuntimeEnvironment2() {
   return runtimeEnvironment2;
 }
 function getEnvironmentVariable2(name) {
-  var _a;
+  var _a2;
   try {
     return typeof process !== "undefined" ? (
       // eslint-disable-next-line no-process-env
-      (_a = process.env) == null ? void 0 : _a[name]
+      (_a2 = process.env) == null ? void 0 : _a2[name]
     ) : void 0;
   } catch (e) {
     return void 0;
@@ -12279,7 +12279,7 @@ var init_base2 = __esm({
         ];
       }
       constructor(input) {
-        var _a, _b, _c, _d, _e, _f, _g;
+        var _a2, _b, _c, _d, _e, _f, _g;
         super();
         Object.defineProperty(this, "lc_serializable", {
           enumerable: true,
@@ -12337,7 +12337,7 @@ var init_base2 = __esm({
         });
         this.lc_kwargs = input || {};
         if (input) {
-          this.ignoreLLM = (_a = input.ignoreLLM) != null ? _a : this.ignoreLLM;
+          this.ignoreLLM = (_a2 = input.ignoreLLM) != null ? _a2 : this.ignoreLLM;
           this.ignoreChain = (_b = input.ignoreChain) != null ? _b : this.ignoreChain;
           this.ignoreAgent = (_c = input.ignoreAgent) != null ? _c : this.ignoreAgent;
           this.ignoreRetriever = (_d = input.ignoreRetriever) != null ? _d : this.ignoreRetriever;
@@ -12445,7 +12445,7 @@ ${error.stack}` : "");
         return storedRun;
       }
       async _endTrace(run) {
-        var _a;
+        var _a2;
         const parentRun = run.parent_run_id !== void 0 && this.runMap.get(run.parent_run_id);
         if (parentRun) {
           parentRun.child_execution_order = Math.max(parentRun.child_execution_order, run.child_execution_order);
@@ -12453,7 +12453,7 @@ ${error.stack}` : "");
           await this.persistRun(run);
         }
         this.runMap.delete(run.id);
-        await ((_a = this.onRunUpdate) == null ? void 0 : _a.call(this, run));
+        await ((_a2 = this.onRunUpdate) == null ? void 0 : _a2.call(this, run));
       }
       _getExecutionOrder(parentRunId) {
         const parentRun = parentRunId !== void 0 && this.runMap.get(parentRunId);
@@ -12494,8 +12494,8 @@ ${error.stack}` : "");
         return this._addRunToRunMap(run);
       }
       async handleLLMStart(llm, prompts, runId, parentRunId, extraParams, tags, metadata, name) {
-        var _a, _b, _c;
-        const run = (_a = this.runMap.get(runId)) != null ? _a : this._createRunForLLMStart(llm, prompts, runId, parentRunId, extraParams, tags, metadata, name);
+        var _a2, _b, _c;
+        const run = (_a2 = this.runMap.get(runId)) != null ? _a2 : this._createRunForLLMStart(llm, prompts, runId, parentRunId, extraParams, tags, metadata, name);
         await ((_b = this.onRunCreate) == null ? void 0 : _b.call(this, run));
         await ((_c = this.onLLMStart) == null ? void 0 : _c.call(this, run));
         return run;
@@ -12532,14 +12532,14 @@ ${error.stack}` : "");
         return this._addRunToRunMap(run);
       }
       async handleChatModelStart(llm, messages, runId, parentRunId, extraParams, tags, metadata, name) {
-        var _a, _b, _c;
-        const run = (_a = this.runMap.get(runId)) != null ? _a : this._createRunForChatModelStart(llm, messages, runId, parentRunId, extraParams, tags, metadata, name);
+        var _a2, _b, _c;
+        const run = (_a2 = this.runMap.get(runId)) != null ? _a2 : this._createRunForChatModelStart(llm, messages, runId, parentRunId, extraParams, tags, metadata, name);
         await ((_b = this.onRunCreate) == null ? void 0 : _b.call(this, run));
         await ((_c = this.onLLMStart) == null ? void 0 : _c.call(this, run));
         return run;
       }
       async handleLLMEnd(output, runId) {
-        var _a;
+        var _a2;
         const run = this.runMap.get(runId);
         if (!run || (run == null ? void 0 : run.run_type) !== "llm") {
           throw new Error("No LLM run to end.");
@@ -12550,12 +12550,12 @@ ${error.stack}` : "");
           name: "end",
           time: new Date(run.end_time).toISOString()
         });
-        await ((_a = this.onLLMEnd) == null ? void 0 : _a.call(this, run));
+        await ((_a2 = this.onLLMEnd) == null ? void 0 : _a2.call(this, run));
         await this._endTrace(run);
         return run;
       }
       async handleLLMError(error, runId) {
-        var _a;
+        var _a2;
         const run = this.runMap.get(runId);
         if (!run || (run == null ? void 0 : run.run_type) !== "llm") {
           throw new Error("No LLM run to end.");
@@ -12566,7 +12566,7 @@ ${error.stack}` : "");
           name: "error",
           time: new Date(run.end_time).toISOString()
         });
-        await ((_a = this.onLLMError) == null ? void 0 : _a.call(this, run));
+        await ((_a2 = this.onLLMError) == null ? void 0 : _a2.call(this, run));
         await this._endTrace(run);
         return run;
       }
@@ -12601,14 +12601,14 @@ ${error.stack}` : "");
         return this._addRunToRunMap(run);
       }
       async handleChainStart(chain, inputs, runId, parentRunId, tags, metadata, runType, name) {
-        var _a, _b, _c;
-        const run = (_a = this.runMap.get(runId)) != null ? _a : this._createRunForChainStart(chain, inputs, runId, parentRunId, tags, metadata, runType, name);
+        var _a2, _b, _c;
+        const run = (_a2 = this.runMap.get(runId)) != null ? _a2 : this._createRunForChainStart(chain, inputs, runId, parentRunId, tags, metadata, runType, name);
         await ((_b = this.onRunCreate) == null ? void 0 : _b.call(this, run));
         await ((_c = this.onChainStart) == null ? void 0 : _c.call(this, run));
         return run;
       }
       async handleChainEnd(outputs, runId, _parentRunId, _tags, kwargs) {
-        var _a;
+        var _a2;
         const run = this.runMap.get(runId);
         if (!run) {
           throw new Error("No chain run to end.");
@@ -12622,12 +12622,12 @@ ${error.stack}` : "");
         if ((kwargs == null ? void 0 : kwargs.inputs) !== void 0) {
           run.inputs = _coerceToDict(kwargs.inputs, "input");
         }
-        await ((_a = this.onChainEnd) == null ? void 0 : _a.call(this, run));
+        await ((_a2 = this.onChainEnd) == null ? void 0 : _a2.call(this, run));
         await this._endTrace(run);
         return run;
       }
       async handleChainError(error, runId, _parentRunId, _tags, kwargs) {
-        var _a;
+        var _a2;
         const run = this.runMap.get(runId);
         if (!run) {
           throw new Error("No chain run to end.");
@@ -12641,7 +12641,7 @@ ${error.stack}` : "");
         if ((kwargs == null ? void 0 : kwargs.inputs) !== void 0) {
           run.inputs = _coerceToDict(kwargs.inputs, "input");
         }
-        await ((_a = this.onChainError) == null ? void 0 : _a.call(this, run));
+        await ((_a2 = this.onChainError) == null ? void 0 : _a2.call(this, run));
         await this._endTrace(run);
         return run;
       }
@@ -12676,15 +12676,15 @@ ${error.stack}` : "");
         return this._addRunToRunMap(run);
       }
       async handleToolStart(tool, input, runId, parentRunId, tags, metadata, name) {
-        var _a, _b, _c;
-        const run = (_a = this.runMap.get(runId)) != null ? _a : this._createRunForToolStart(tool, input, runId, parentRunId, tags, metadata, name);
+        var _a2, _b, _c;
+        const run = (_a2 = this.runMap.get(runId)) != null ? _a2 : this._createRunForToolStart(tool, input, runId, parentRunId, tags, metadata, name);
         await ((_b = this.onRunCreate) == null ? void 0 : _b.call(this, run));
         await ((_c = this.onToolStart) == null ? void 0 : _c.call(this, run));
         return run;
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       async handleToolEnd(output, runId) {
-        var _a;
+        var _a2;
         const run = this.runMap.get(runId);
         if (!run || (run == null ? void 0 : run.run_type) !== "tool") {
           throw new Error("No tool run to end");
@@ -12695,12 +12695,12 @@ ${error.stack}` : "");
           name: "end",
           time: new Date(run.end_time).toISOString()
         });
-        await ((_a = this.onToolEnd) == null ? void 0 : _a.call(this, run));
+        await ((_a2 = this.onToolEnd) == null ? void 0 : _a2.call(this, run));
         await this._endTrace(run);
         return run;
       }
       async handleToolError(error, runId) {
-        var _a;
+        var _a2;
         const run = this.runMap.get(runId);
         if (!run || (run == null ? void 0 : run.run_type) !== "tool") {
           throw new Error("No tool run to end");
@@ -12711,12 +12711,12 @@ ${error.stack}` : "");
           name: "error",
           time: new Date(run.end_time).toISOString()
         });
-        await ((_a = this.onToolError) == null ? void 0 : _a.call(this, run));
+        await ((_a2 = this.onToolError) == null ? void 0 : _a2.call(this, run));
         await this._endTrace(run);
         return run;
       }
       async handleAgentAction(action, runId) {
-        var _a;
+        var _a2;
         const run = this.runMap.get(runId);
         if (!run || (run == null ? void 0 : run.run_type) !== "chain") {
           return;
@@ -12729,10 +12729,10 @@ ${error.stack}` : "");
           time: (/* @__PURE__ */ new Date()).toISOString(),
           kwargs: { action }
         });
-        await ((_a = this.onAgentAction) == null ? void 0 : _a.call(this, run));
+        await ((_a2 = this.onAgentAction) == null ? void 0 : _a2.call(this, run));
       }
       async handleAgentEnd(action, runId) {
-        var _a;
+        var _a2;
         const run = this.runMap.get(runId);
         if (!run || (run == null ? void 0 : run.run_type) !== "chain") {
           return;
@@ -12742,7 +12742,7 @@ ${error.stack}` : "");
           time: (/* @__PURE__ */ new Date()).toISOString(),
           kwargs: { action }
         });
-        await ((_a = this.onAgentEnd) == null ? void 0 : _a.call(this, run));
+        await ((_a2 = this.onAgentEnd) == null ? void 0 : _a2.call(this, run));
       }
       /**
        * Create and add a run to the run map for retriever start events.
@@ -12775,14 +12775,14 @@ ${error.stack}` : "");
         return this._addRunToRunMap(run);
       }
       async handleRetrieverStart(retriever, query, runId, parentRunId, tags, metadata, name) {
-        var _a, _b, _c;
-        const run = (_a = this.runMap.get(runId)) != null ? _a : this._createRunForRetrieverStart(retriever, query, runId, parentRunId, tags, metadata, name);
+        var _a2, _b, _c;
+        const run = (_a2 = this.runMap.get(runId)) != null ? _a2 : this._createRunForRetrieverStart(retriever, query, runId, parentRunId, tags, metadata, name);
         await ((_b = this.onRunCreate) == null ? void 0 : _b.call(this, run));
         await ((_c = this.onRetrieverStart) == null ? void 0 : _c.call(this, run));
         return run;
       }
       async handleRetrieverEnd(documents, runId) {
-        var _a;
+        var _a2;
         const run = this.runMap.get(runId);
         if (!run || (run == null ? void 0 : run.run_type) !== "retriever") {
           throw new Error("No retriever run to end");
@@ -12793,12 +12793,12 @@ ${error.stack}` : "");
           name: "end",
           time: new Date(run.end_time).toISOString()
         });
-        await ((_a = this.onRetrieverEnd) == null ? void 0 : _a.call(this, run));
+        await ((_a2 = this.onRetrieverEnd) == null ? void 0 : _a2.call(this, run));
         await this._endTrace(run);
         return run;
       }
       async handleRetrieverError(error, runId) {
-        var _a;
+        var _a2;
         const run = this.runMap.get(runId);
         if (!run || (run == null ? void 0 : run.run_type) !== "retriever") {
           throw new Error("No retriever run to end");
@@ -12809,12 +12809,12 @@ ${error.stack}` : "");
           name: "error",
           time: new Date(run.end_time).toISOString()
         });
-        await ((_a = this.onRetrieverError) == null ? void 0 : _a.call(this, run));
+        await ((_a2 = this.onRetrieverError) == null ? void 0 : _a2.call(this, run));
         await this._endTrace(run);
         return run;
       }
       async handleText(text, runId) {
-        var _a;
+        var _a2;
         const run = this.runMap.get(runId);
         if (!run || (run == null ? void 0 : run.run_type) !== "chain") {
           return;
@@ -12824,10 +12824,10 @@ ${error.stack}` : "");
           time: (/* @__PURE__ */ new Date()).toISOString(),
           kwargs: { text }
         });
-        await ((_a = this.onText) == null ? void 0 : _a.call(this, run));
+        await ((_a2 = this.onText) == null ? void 0 : _a2.call(this, run));
       }
       async handleLLMNewToken(token, idx, runId, _parentRunId, _tags, fields) {
-        var _a;
+        var _a2;
         const run = this.runMap.get(runId);
         if (!run || (run == null ? void 0 : run.run_type) !== "llm") {
           throw new Error(`Invalid "runId" provided to "handleLLMNewToken" callback.`);
@@ -12837,7 +12837,7 @@ ${error.stack}` : "");
           time: (/* @__PURE__ */ new Date()).toISOString(),
           kwargs: { token, idx, chunk: fields == null ? void 0 : fields.chunk }
         });
-        await ((_a = this.onLLMNewToken) == null ? void 0 : _a.call(this, run, token, { chunk: fields == null ? void 0 : fields.chunk }));
+        await ((_a2 = this.onLLMNewToken) == null ? void 0 : _a2.call(this, run, token, { chunk: fields == null ? void 0 : fields.chunk }));
         return run;
       }
     };
@@ -13162,9 +13162,9 @@ var init_console = __esm({
        * @returns void
        */
       onToolEnd(run) {
-        var _a;
+        var _a2;
         const crumbs = this.getBreadcrumbs(run);
-        console.log(`${wrap(color.cyan, "[tool/end]")} [${crumbs}] [${elapsed(run)}] Exiting Tool run with output: "${formatKVMapItem((_a = run.outputs) == null ? void 0 : _a.output)}"`);
+        console.log(`${wrap(color.cyan, "[tool/end]")} [${crumbs}] [${elapsed(run)}] Exiting Tool run with output: "${formatKVMapItem((_a2 = run.outputs) == null ? void 0 : _a2.output)}"`);
       }
       /**
        * Method used to log any errors of a tool run.
@@ -13253,7 +13253,7 @@ var init_tracer_langchain = __esm({
     init_tracer();
     LangChainTracer = class _LangChainTracer extends BaseTracer {
       constructor(fields = {}) {
-        var _a;
+        var _a2;
         super(fields);
         Object.defineProperty(this, "name", {
           enumerable: true,
@@ -13280,7 +13280,7 @@ var init_tracer_langchain = __esm({
           value: void 0
         });
         const { exampleId, projectName, client: client2 } = fields;
-        this.projectName = (_a = projectName != null ? projectName : getEnvironmentVariable2("LANGCHAIN_PROJECT")) != null ? _a : getEnvironmentVariable2("LANGCHAIN_SESSION");
+        this.projectName = (_a2 = projectName != null ? projectName : getEnvironmentVariable2("LANGCHAIN_PROJECT")) != null ? _a2 : getEnvironmentVariable2("LANGCHAIN_SESSION");
         this.exampleId = exampleId;
         this.client = client2 != null ? client2 : getDefaultLangChainClientSingleton();
         const traceableTree = _LangChainTracer.getTraceableRunTree();
@@ -13323,7 +13323,7 @@ var init_tracer_langchain = __esm({
         return this.runMap.get(id);
       }
       updateFromRunTree(runTree) {
-        var _a, _b, _c;
+        var _a2, _b, _c;
         let rootRun = runTree;
         const visited = /* @__PURE__ */ new Set();
         while (rootRun.parent_run) {
@@ -13346,7 +13346,7 @@ var init_tracer_langchain = __esm({
             queue2.push(...current.child_runs);
           }
         }
-        this.client = (_a = runTree.client) != null ? _a : this.client;
+        this.client = (_a2 = runTree.client) != null ? _a2 : this.client;
         this.projectName = (_b = runTree.project_name) != null ? _b : this.projectName;
         this.exampleId = (_c = runTree.reference_example_id) != null ? _c : this.exampleId;
       }
@@ -13466,6 +13466,15 @@ var init_callbacks2 = __esm({
 });
 
 // node_modules/@langchain/core/dist/callbacks/manager.js
+function parseCallbackConfigArg(arg) {
+  if (!arg) {
+    return {};
+  } else if (Array.isArray(arg) || "name" in arg) {
+    return { callbacks: arg };
+  } else {
+    return arg;
+  }
+}
 function ensureHandler(handler) {
   if ("name" in handler) {
     return handler;
@@ -13545,9 +13554,9 @@ var init_manager = __esm({
       }
       async handleText(text) {
         await Promise.all(this.handlers.map((handler) => consumeCallback(async () => {
-          var _a;
+          var _a2;
           try {
-            await ((_a = handler.handleText) == null ? void 0 : _a.call(handler, text, this.runId, this._parentRunId, this.tags));
+            await ((_a2 = handler.handleText) == null ? void 0 : _a2.call(handler, text, this.runId, this._parentRunId, this.tags));
           } catch (err) {
             const logFunction = handler.raiseError ? console.error : console.warn;
             logFunction(`Error in handler ${handler.constructor.name}, handleText: ${err}`);
@@ -13559,9 +13568,9 @@ var init_manager = __esm({
       }
       async handleCustomEvent(eventName, data, _runId, _tags, _metadata) {
         await Promise.all(this.handlers.map((handler) => consumeCallback(async () => {
-          var _a;
+          var _a2;
           try {
-            await ((_a = handler.handleCustomEvent) == null ? void 0 : _a.call(handler, eventName, data, this.runId, this.tags, this.metadata));
+            await ((_a2 = handler.handleCustomEvent) == null ? void 0 : _a2.call(handler, eventName, data, this.runId, this.tags, this.metadata));
           } catch (err) {
             const logFunction = handler.raiseError ? console.error : console.warn;
             logFunction(`Error in handler ${handler.constructor.name}, handleCustomEvent: ${err}`);
@@ -13585,10 +13594,10 @@ var init_manager = __esm({
       }
       async handleRetrieverEnd(documents) {
         await Promise.all(this.handlers.map((handler) => consumeCallback(async () => {
-          var _a;
+          var _a2;
           if (!handler.ignoreRetriever) {
             try {
-              await ((_a = handler.handleRetrieverEnd) == null ? void 0 : _a.call(handler, documents, this.runId, this._parentRunId, this.tags));
+              await ((_a2 = handler.handleRetrieverEnd) == null ? void 0 : _a2.call(handler, documents, this.runId, this._parentRunId, this.tags));
             } catch (err) {
               const logFunction = handler.raiseError ? console.error : console.warn;
               logFunction(`Error in handler ${handler.constructor.name}, handleRetriever`);
@@ -13601,10 +13610,10 @@ var init_manager = __esm({
       }
       async handleRetrieverError(err) {
         await Promise.all(this.handlers.map((handler) => consumeCallback(async () => {
-          var _a;
+          var _a2;
           if (!handler.ignoreRetriever) {
             try {
-              await ((_a = handler.handleRetrieverError) == null ? void 0 : _a.call(handler, err, this.runId, this._parentRunId, this.tags));
+              await ((_a2 = handler.handleRetrieverError) == null ? void 0 : _a2.call(handler, err, this.runId, this._parentRunId, this.tags));
             } catch (error) {
               const logFunction = handler.raiseError ? console.error : console.warn;
               logFunction(`Error in handler ${handler.constructor.name}, handleRetrieverError: ${error}`);
@@ -13619,10 +13628,10 @@ var init_manager = __esm({
     CallbackManagerForLLMRun = class extends BaseRunManager {
       async handleLLMNewToken(token, idx, _runId, _parentRunId, _tags, fields) {
         await Promise.all(this.handlers.map((handler) => consumeCallback(async () => {
-          var _a;
+          var _a2;
           if (!handler.ignoreLLM) {
             try {
-              await ((_a = handler.handleLLMNewToken) == null ? void 0 : _a.call(handler, token, idx != null ? idx : { prompt: 0, completion: 0 }, this.runId, this._parentRunId, this.tags, fields));
+              await ((_a2 = handler.handleLLMNewToken) == null ? void 0 : _a2.call(handler, token, idx != null ? idx : { prompt: 0, completion: 0 }, this.runId, this._parentRunId, this.tags, fields));
             } catch (err) {
               const logFunction = handler.raiseError ? console.error : console.warn;
               logFunction(`Error in handler ${handler.constructor.name}, handleLLMNewToken: ${err}`);
@@ -13635,10 +13644,10 @@ var init_manager = __esm({
       }
       async handleLLMError(err) {
         await Promise.all(this.handlers.map((handler) => consumeCallback(async () => {
-          var _a;
+          var _a2;
           if (!handler.ignoreLLM) {
             try {
-              await ((_a = handler.handleLLMError) == null ? void 0 : _a.call(handler, err, this.runId, this._parentRunId, this.tags));
+              await ((_a2 = handler.handleLLMError) == null ? void 0 : _a2.call(handler, err, this.runId, this._parentRunId, this.tags));
             } catch (err2) {
               const logFunction = handler.raiseError ? console.error : console.warn;
               logFunction(`Error in handler ${handler.constructor.name}, handleLLMError: ${err2}`);
@@ -13651,10 +13660,10 @@ var init_manager = __esm({
       }
       async handleLLMEnd(output) {
         await Promise.all(this.handlers.map((handler) => consumeCallback(async () => {
-          var _a;
+          var _a2;
           if (!handler.ignoreLLM) {
             try {
-              await ((_a = handler.handleLLMEnd) == null ? void 0 : _a.call(handler, output, this.runId, this._parentRunId, this.tags));
+              await ((_a2 = handler.handleLLMEnd) == null ? void 0 : _a2.call(handler, output, this.runId, this._parentRunId, this.tags));
             } catch (err) {
               const logFunction = handler.raiseError ? console.error : console.warn;
               logFunction(`Error in handler ${handler.constructor.name}, handleLLMEnd: ${err}`);
@@ -13679,10 +13688,10 @@ var init_manager = __esm({
       }
       async handleChainError(err, _runId, _parentRunId, _tags, kwargs) {
         await Promise.all(this.handlers.map((handler) => consumeCallback(async () => {
-          var _a;
+          var _a2;
           if (!handler.ignoreChain) {
             try {
-              await ((_a = handler.handleChainError) == null ? void 0 : _a.call(handler, err, this.runId, this._parentRunId, this.tags, kwargs));
+              await ((_a2 = handler.handleChainError) == null ? void 0 : _a2.call(handler, err, this.runId, this._parentRunId, this.tags, kwargs));
             } catch (err2) {
               const logFunction = handler.raiseError ? console.error : console.warn;
               logFunction(`Error in handler ${handler.constructor.name}, handleChainError: ${err2}`);
@@ -13695,10 +13704,10 @@ var init_manager = __esm({
       }
       async handleChainEnd(output, _runId, _parentRunId, _tags, kwargs) {
         await Promise.all(this.handlers.map((handler) => consumeCallback(async () => {
-          var _a;
+          var _a2;
           if (!handler.ignoreChain) {
             try {
-              await ((_a = handler.handleChainEnd) == null ? void 0 : _a.call(handler, output, this.runId, this._parentRunId, this.tags, kwargs));
+              await ((_a2 = handler.handleChainEnd) == null ? void 0 : _a2.call(handler, output, this.runId, this._parentRunId, this.tags, kwargs));
             } catch (err) {
               const logFunction = handler.raiseError ? console.error : console.warn;
               logFunction(`Error in handler ${handler.constructor.name}, handleChainEnd: ${err}`);
@@ -13711,10 +13720,10 @@ var init_manager = __esm({
       }
       async handleAgentAction(action) {
         await Promise.all(this.handlers.map((handler) => consumeCallback(async () => {
-          var _a;
+          var _a2;
           if (!handler.ignoreAgent) {
             try {
-              await ((_a = handler.handleAgentAction) == null ? void 0 : _a.call(handler, action, this.runId, this._parentRunId, this.tags));
+              await ((_a2 = handler.handleAgentAction) == null ? void 0 : _a2.call(handler, action, this.runId, this._parentRunId, this.tags));
             } catch (err) {
               const logFunction = handler.raiseError ? console.error : console.warn;
               logFunction(`Error in handler ${handler.constructor.name}, handleAgentAction: ${err}`);
@@ -13727,10 +13736,10 @@ var init_manager = __esm({
       }
       async handleAgentEnd(action) {
         await Promise.all(this.handlers.map((handler) => consumeCallback(async () => {
-          var _a;
+          var _a2;
           if (!handler.ignoreAgent) {
             try {
-              await ((_a = handler.handleAgentEnd) == null ? void 0 : _a.call(handler, action, this.runId, this._parentRunId, this.tags));
+              await ((_a2 = handler.handleAgentEnd) == null ? void 0 : _a2.call(handler, action, this.runId, this._parentRunId, this.tags));
             } catch (err) {
               const logFunction = handler.raiseError ? console.error : console.warn;
               logFunction(`Error in handler ${handler.constructor.name}, handleAgentEnd: ${err}`);
@@ -13755,10 +13764,10 @@ var init_manager = __esm({
       }
       async handleToolError(err) {
         await Promise.all(this.handlers.map((handler) => consumeCallback(async () => {
-          var _a;
+          var _a2;
           if (!handler.ignoreAgent) {
             try {
-              await ((_a = handler.handleToolError) == null ? void 0 : _a.call(handler, err, this.runId, this._parentRunId, this.tags));
+              await ((_a2 = handler.handleToolError) == null ? void 0 : _a2.call(handler, err, this.runId, this._parentRunId, this.tags));
             } catch (err2) {
               const logFunction = handler.raiseError ? console.error : console.warn;
               logFunction(`Error in handler ${handler.constructor.name}, handleToolError: ${err2}`);
@@ -13772,10 +13781,10 @@ var init_manager = __esm({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       async handleToolEnd(output) {
         await Promise.all(this.handlers.map((handler) => consumeCallback(async () => {
-          var _a;
+          var _a2;
           if (!handler.ignoreAgent) {
             try {
-              await ((_a = handler.handleToolEnd) == null ? void 0 : _a.call(handler, output, this.runId, this._parentRunId, this.tags));
+              await ((_a2 = handler.handleToolEnd) == null ? void 0 : _a2.call(handler, output, this.runId, this._parentRunId, this.tags));
             } catch (err) {
               const logFunction = handler.raiseError ? console.error : console.warn;
               logFunction(`Error in handler ${handler.constructor.name}, handleToolEnd: ${err}`);
@@ -13789,7 +13798,7 @@ var init_manager = __esm({
     };
     CallbackManager = class _CallbackManager extends BaseCallbackManager {
       constructor(parentRunId, options) {
-        var _a, _b, _c, _d, _e, _f;
+        var _a2, _b, _c, _d, _e, _f;
         super();
         Object.defineProperty(this, "handlers", {
           enumerable: true,
@@ -13839,7 +13848,7 @@ var init_manager = __esm({
           writable: true,
           value: void 0
         });
-        this.handlers = (_a = options == null ? void 0 : options.handlers) != null ? _a : this.handlers;
+        this.handlers = (_a2 = options == null ? void 0 : options.handlers) != null ? _a2 : this.handlers;
         this.inheritableHandlers = (_b = options == null ? void 0 : options.inheritableHandlers) != null ? _b : this.inheritableHandlers;
         this.tags = (_c = options == null ? void 0 : options.tags) != null ? _c : this.tags;
         this.inheritableTags = (_d = options == null ? void 0 : options.inheritableTags) != null ? _d : this.inheritableTags;
@@ -13866,9 +13875,9 @@ var init_manager = __esm({
               handler._createRunForLLMStart(llm, [prompt], runId_, this._parentRunId, extraParams, this.tags, this.metadata, runName);
             }
             return consumeCallback(async () => {
-              var _a;
+              var _a2;
               try {
-                await ((_a = handler.handleLLMStart) == null ? void 0 : _a.call(handler, llm, [prompt], runId_, this._parentRunId, extraParams, this.tags, this.metadata, runName));
+                await ((_a2 = handler.handleLLMStart) == null ? void 0 : _a2.call(handler, llm, [prompt], runId_, this._parentRunId, extraParams, this.tags, this.metadata, runName));
               } catch (err) {
                 const logFunction = handler.raiseError ? console.error : console.warn;
                 logFunction(`Error in handler ${handler.constructor.name}, handleLLMStart: ${err}`);
@@ -13892,10 +13901,10 @@ var init_manager = __esm({
               handler._createRunForChatModelStart(llm, [messageGroup], runId_, this._parentRunId, extraParams, this.tags, this.metadata, runName);
             }
             return consumeCallback(async () => {
-              var _a, _b;
+              var _a2, _b;
               try {
                 if (handler.handleChatModelStart) {
-                  await ((_a = handler.handleChatModelStart) == null ? void 0 : _a.call(handler, llm, [messageGroup], runId_, this._parentRunId, extraParams, this.tags, this.metadata, runName));
+                  await ((_a2 = handler.handleChatModelStart) == null ? void 0 : _a2.call(handler, llm, [messageGroup], runId_, this._parentRunId, extraParams, this.tags, this.metadata, runName));
                 } else if (handler.handleLLMStart) {
                   const messageString = getBufferString(messageGroup);
                   await ((_b = handler.handleLLMStart) == null ? void 0 : _b.call(handler, llm, [messageString], runId_, this._parentRunId, extraParams, this.tags, this.metadata, runName));
@@ -13921,9 +13930,9 @@ var init_manager = __esm({
             handler._createRunForChainStart(chain, inputs, runId, this._parentRunId, this.tags, this.metadata, runType, runName);
           }
           return consumeCallback(async () => {
-            var _a;
+            var _a2;
             try {
-              await ((_a = handler.handleChainStart) == null ? void 0 : _a.call(handler, chain, inputs, runId, this._parentRunId, this.tags, this.metadata, runType, runName));
+              await ((_a2 = handler.handleChainStart) == null ? void 0 : _a2.call(handler, chain, inputs, runId, this._parentRunId, this.tags, this.metadata, runType, runName));
             } catch (err) {
               const logFunction = handler.raiseError ? console.error : console.warn;
               logFunction(`Error in handler ${handler.constructor.name}, handleChainStart: ${err}`);
@@ -13944,9 +13953,9 @@ var init_manager = __esm({
             handler._createRunForToolStart(tool, input, runId, this._parentRunId, this.tags, this.metadata, runName);
           }
           return consumeCallback(async () => {
-            var _a;
+            var _a2;
             try {
-              await ((_a = handler.handleToolStart) == null ? void 0 : _a.call(handler, tool, input, runId, this._parentRunId, this.tags, this.metadata, runName));
+              await ((_a2 = handler.handleToolStart) == null ? void 0 : _a2.call(handler, tool, input, runId, this._parentRunId, this.tags, this.metadata, runName));
             } catch (err) {
               const logFunction = handler.raiseError ? console.error : console.warn;
               logFunction(`Error in handler ${handler.constructor.name}, handleToolStart: ${err}`);
@@ -13967,9 +13976,9 @@ var init_manager = __esm({
             handler._createRunForRetrieverStart(retriever, query, runId, this._parentRunId, this.tags, this.metadata, runName);
           }
           return consumeCallback(async () => {
-            var _a;
+            var _a2;
             try {
-              await ((_a = handler.handleRetrieverStart) == null ? void 0 : _a.call(handler, retriever, query, runId, this._parentRunId, this.tags, this.metadata, runName));
+              await ((_a2 = handler.handleRetrieverStart) == null ? void 0 : _a2.call(handler, retriever, query, runId, this._parentRunId, this.tags, this.metadata, runName));
             } catch (err) {
               const logFunction = handler.raiseError ? console.error : console.warn;
               logFunction(`Error in handler ${handler.constructor.name}, handleRetrieverStart: ${err}`);
@@ -13983,10 +13992,10 @@ var init_manager = __esm({
       }
       async handleCustomEvent(eventName, data, runId, _tags, _metadata) {
         await Promise.all(this.handlers.map((handler) => consumeCallback(async () => {
-          var _a;
+          var _a2;
           if (!handler.ignoreCustomEvent) {
             try {
-              await ((_a = handler.handleCustomEvent) == null ? void 0 : _a.call(handler, eventName, data, runId, this.tags, this.metadata));
+              await ((_a2 = handler.handleCustomEvent) == null ? void 0 : _a2.call(handler, eventName, data, runId, this.tags, this.metadata));
             } catch (err) {
               const logFunction = handler.raiseError ? console.error : console.warn;
               logFunction(`Error in handler ${handler.constructor.name}, handleCustomEvent: ${err}`);
@@ -14084,12 +14093,12 @@ var init_manager = __esm({
       }
       // TODO: Deprecate async method in favor of this one.
       static _configureSync(inheritableHandlers, localHandlers, inheritableTags, localTags, inheritableMetadata, localMetadata, options) {
-        var _a, _b, _c, _d, _e;
+        var _a2, _b, _c, _d, _e;
         let callbackManager;
         if (inheritableHandlers || localHandlers) {
           if (Array.isArray(inheritableHandlers) || !inheritableHandlers) {
             callbackManager = new _CallbackManager();
-            callbackManager.setHandlers((_a = inheritableHandlers == null ? void 0 : inheritableHandlers.map(ensureHandler)) != null ? _a : [], true);
+            callbackManager.setHandlers((_a2 = inheritableHandlers == null ? void 0 : inheritableHandlers.map(ensureHandler)) != null ? _a2 : [], true);
           } else {
             callbackManager = inheritableHandlers;
           }
@@ -14155,21 +14164,21 @@ var init_async_local_storage = __esm({
     _CONTEXT_VARIABLES_KEY = Symbol.for("lc:context_variables");
     AsyncLocalStorageProvider2 = class {
       getInstance() {
-        var _a;
-        return (_a = getGlobalAsyncLocalStorageInstance()) != null ? _a : mockAsyncLocalStorage2;
+        var _a2;
+        return (_a2 = getGlobalAsyncLocalStorageInstance()) != null ? _a2 : mockAsyncLocalStorage2;
       }
       getRunnableConfig() {
-        var _a, _b;
+        var _a2, _b;
         const storage = this.getInstance();
-        return (_b = (_a = storage.getStore()) == null ? void 0 : _a.extra) == null ? void 0 : _b[LC_CHILD_KEY];
+        return (_b = (_a2 = storage.getStore()) == null ? void 0 : _a2.extra) == null ? void 0 : _b[LC_CHILD_KEY];
       }
       runWithConfig(config, callback, avoidCreatingRootRunTree) {
-        var _a;
+        var _a2;
         const callbackManager = CallbackManager._configureSync(config == null ? void 0 : config.callbacks, void 0, config == null ? void 0 : config.tags, void 0, config == null ? void 0 : config.metadata);
         const storage = this.getInstance();
         const previousValue = storage.getStore();
         const parentRunId = callbackManager == null ? void 0 : callbackManager.getParentRunId();
-        const langChainTracer = (_a = callbackManager == null ? void 0 : callbackManager.handlers) == null ? void 0 : _a.find((handler) => (handler == null ? void 0 : handler.name) === "langchain_tracer");
+        const langChainTracer = (_a2 = callbackManager == null ? void 0 : callbackManager.handlers) == null ? void 0 : _a2.find((handler) => (handler == null ? void 0 : handler.name) === "langchain_tracer");
         let runTree;
         if (langChainTracer && parentRunId) {
           runTree = langChainTracer.convertToRunTree(parentRunId);
@@ -14394,7 +14403,7 @@ var init_stream = __esm({
     };
     AsyncGeneratorWithSetup = class {
       constructor(params) {
-        var _a, _b;
+        var _a2, _b;
         Object.defineProperty(this, "generator", {
           enumerable: true,
           configurable: true,
@@ -14433,7 +14442,7 @@ var init_stream = __esm({
         });
         this.generator = params.generator;
         this.config = params.config;
-        this.signal = (_b = params.signal) != null ? _b : (_a = this.config) == null ? void 0 : _a.signal;
+        this.signal = (_b = params.signal) != null ? _b : (_a2 = this.config) == null ? void 0 : _a2.signal;
         this.setup = new Promise((resolve, reject) => {
           void AsyncLocalStorageProviderSingleton2.runWithConfig(params.config, async () => {
             this.firstResult = params.generator.next();
@@ -14446,8 +14455,8 @@ var init_stream = __esm({
         });
       }
       async next(...args) {
-        var _a;
-        (_a = this.signal) == null ? void 0 : _a.throwIfAborted();
+        var _a2;
+        (_a2 = this.signal) == null ? void 0 : _a2.throwIfAborted();
         if (!this.firstResultUsed) {
           this.firstResultUsed = true;
           return this.firstResult;
@@ -14515,14 +14524,14 @@ var init_log_stream = __esm({
     init_ai();
     RunLogPatch = class {
       constructor(fields) {
-        var _a;
+        var _a2;
         Object.defineProperty(this, "ops", {
           enumerable: true,
           configurable: true,
           writable: true,
           value: void 0
         });
-        this.ops = (_a = fields.ops) != null ? _a : [];
+        this.ops = (_a2 = fields.ops) != null ? _a2 : [];
       }
       concat(other) {
         const ops = this.ops.concat(other.ops);
@@ -14560,7 +14569,7 @@ var init_log_stream = __esm({
     isLogStreamHandler = (handler) => handler.name === "log_stream_tracer";
     LogStreamCallbackHandler = class extends BaseTracer {
       constructor(fields) {
-        var _a, _b;
+        var _a2, _b;
         super({ _awaitHandler: true, ...fields });
         Object.defineProperty(this, "autoClose", {
           enumerable: true,
@@ -14652,7 +14661,7 @@ var init_log_stream = __esm({
           writable: true,
           value: "log_stream_tracer"
         });
-        this.autoClose = (_a = fields == null ? void 0 : fields.autoClose) != null ? _a : true;
+        this.autoClose = (_a2 = fields == null ? void 0 : fields.autoClose) != null ? _a2 : true;
         this.includeNames = fields == null ? void 0 : fields.includeNames;
         this.includeTypes = fields == null ? void 0 : fields.includeTypes;
         this.includeTags = fields == null ? void 0 : fields.includeTags;
@@ -14670,11 +14679,11 @@ var init_log_stream = __esm({
       async persistRun(_run) {
       }
       _includeRun(run) {
-        var _a;
+        var _a2;
         if (run.id === this.rootId) {
           return false;
         }
-        const runTags = (_a = run.tags) != null ? _a : [];
+        const runTags = (_a2 = run.tags) != null ? _a2 : [];
         let include = this.includeNames === void 0 && this.includeTags === void 0 && this.includeTypes === void 0;
         if (this.includeNames !== void 0) {
           include = include || this.includeNames.includes(run.name);
@@ -14684,8 +14693,8 @@ var init_log_stream = __esm({
         }
         if (this.includeTags !== void 0) {
           include = include || runTags.find((tag) => {
-            var _a2;
-            return (_a2 = this.includeTags) == null ? void 0 : _a2.includes(tag);
+            var _a3;
+            return (_a3 = this.includeTags) == null ? void 0 : _a3.includes(tag);
           }) !== void 0;
         }
         if (this.excludeNames !== void 0) {
@@ -14696,8 +14705,8 @@ var init_log_stream = __esm({
         }
         if (this.excludeTags !== void 0) {
           include = include && runTags.every((tag) => {
-            var _a2;
-            return !((_a2 = this.excludeTags) == null ? void 0 : _a2.includes(tag));
+            var _a3;
+            return !((_a3 = this.excludeTags) == null ? void 0 : _a3.includes(tag));
           });
         }
         return include;
@@ -14722,7 +14731,7 @@ var init_log_stream = __esm({
         }
       }
       async onRunCreate(run) {
-        var _a, _b, _c;
+        var _a2, _b, _c;
         if (this.rootId === void 0) {
           this.rootId = run.id;
           await this.writer.write(new RunLogPatch({
@@ -14755,7 +14764,7 @@ var init_log_stream = __esm({
           id: run.id,
           name: run.name,
           type: run.run_type,
-          tags: (_a = run.tags) != null ? _a : [],
+          tags: (_a2 = run.tags) != null ? _a2 : [],
           metadata: (_c = (_b = run.extra) == null ? void 0 : _b.metadata) != null ? _c : {},
           start_time: new Date(run.start_time).toISOString(),
           streamed_output: [],
@@ -14918,7 +14927,7 @@ var init_event_stream = __esm({
     isStreamEventsHandler = (handler) => handler.name === "event_stream_tracer";
     EventStreamCallbackHandler = class extends BaseTracer {
       constructor(fields) {
-        var _a;
+        var _a2;
         super({ _awaitHandler: true, ...fields });
         Object.defineProperty(this, "autoClose", {
           enumerable: true,
@@ -14998,7 +15007,7 @@ var init_event_stream = __esm({
           writable: true,
           value: "event_stream_tracer"
         });
-        this.autoClose = (_a = fields == null ? void 0 : fields.autoClose) != null ? _a : true;
+        this.autoClose = (_a2 = fields == null ? void 0 : fields.autoClose) != null ? _a2 : true;
         this.includeNames = fields == null ? void 0 : fields.includeNames;
         this.includeTypes = fields == null ? void 0 : fields.includeTypes;
         this.includeTags = fields == null ? void 0 : fields.includeTags;
@@ -15015,8 +15024,8 @@ var init_event_stream = __esm({
       async persistRun(_run) {
       }
       _includeRun(run) {
-        var _a;
-        const runTags = (_a = run.tags) != null ? _a : [];
+        var _a2;
+        const runTags = (_a2 = run.tags) != null ? _a2 : [];
         let include = this.includeNames === void 0 && this.includeTags === void 0 && this.includeTypes === void 0;
         if (this.includeNames !== void 0) {
           include = include || this.includeNames.includes(run.name);
@@ -15026,8 +15035,8 @@ var init_event_stream = __esm({
         }
         if (this.includeTags !== void 0) {
           include = include || runTags.find((tag) => {
-            var _a2;
-            return (_a2 = this.includeTags) == null ? void 0 : _a2.includes(tag);
+            var _a3;
+            return (_a3 = this.includeTags) == null ? void 0 : _a3.includes(tag);
           }) !== void 0;
         }
         if (this.excludeNames !== void 0) {
@@ -15038,8 +15047,8 @@ var init_event_stream = __esm({
         }
         if (this.excludeTags !== void 0) {
           include = include && runTags.every((tag) => {
-            var _a2;
-            return !((_a2 = this.excludeTags) == null ? void 0 : _a2.includes(tag));
+            var _a3;
+            return !((_a3 = this.excludeTags) == null ? void 0 : _a3.includes(tag));
           });
         }
         return include;
@@ -15120,11 +15129,11 @@ var init_event_stream = __esm({
         }
       }
       async onLLMStart(run) {
-        var _a, _b, _c, _d, _e, _f;
+        var _a2, _b, _c, _d, _e, _f;
         const runName = assignName(run);
         const runType = run.inputs.messages !== void 0 ? "chat_model" : "llm";
         const runInfo = {
-          tags: (_a = run.tags) != null ? _a : [],
+          tags: (_a2 = run.tags) != null ? _a2 : [],
           metadata: (_c = (_b = run.extra) == null ? void 0 : _b.metadata) != null ? _c : {},
           name: runName,
           runType,
@@ -15182,14 +15191,14 @@ var init_event_stream = __esm({
         }, runInfo);
       }
       async onLLMEnd(run) {
-        var _a, _b, _c, _d;
+        var _a2, _b, _c, _d;
         const runInfo = this.runInfoMap.get(run.id);
         this.runInfoMap.delete(run.id);
         let eventName;
         if (runInfo === void 0) {
           throw new Error(`onLLMEnd: Run ID ${run.id} not found in run map.`);
         }
-        const generations = (_a = run.outputs) == null ? void 0 : _a.generations;
+        const generations = (_a2 = run.outputs) == null ? void 0 : _a2.generations;
         let output;
         if (runInfo.runType === "chat_model") {
           for (const generation of generations != null ? generations : []) {
@@ -15228,9 +15237,9 @@ var init_event_stream = __esm({
         }, runInfo);
       }
       async onChainStart(run) {
-        var _a, _b, _c, _d, _e, _f, _g;
+        var _a2, _b, _c, _d, _e, _f, _g;
         const runName = assignName(run);
-        const runType = (_a = run.run_type) != null ? _a : "chain";
+        const runType = (_a2 = run.run_type) != null ? _a2 : "chain";
         const runInfo = {
           tags: (_b = run.tags) != null ? _b : [],
           metadata: (_d = (_c = run.extra) == null ? void 0 : _c.metadata) != null ? _d : {},
@@ -15259,14 +15268,14 @@ var init_event_stream = __esm({
         }, runInfo);
       }
       async onChainEnd(run) {
-        var _a, _b, _c, _d, _e;
+        var _a2, _b, _c, _d, _e;
         const runInfo = this.runInfoMap.get(run.id);
         this.runInfoMap.delete(run.id);
         if (runInfo === void 0) {
           throw new Error(`onChainEnd: Run ID ${run.id} not found in run map.`);
         }
         const eventName = `on_${run.run_type}_end`;
-        const inputs = (_b = (_a = run.inputs) != null ? _a : runInfo.inputs) != null ? _b : {};
+        const inputs = (_b = (_a2 = run.inputs) != null ? _a2 : runInfo.inputs) != null ? _b : {};
         const outputs = (_d = (_c = run.outputs) == null ? void 0 : _c.output) != null ? _d : run.outputs;
         const data = {
           output: outputs,
@@ -15286,10 +15295,10 @@ var init_event_stream = __esm({
         }, runInfo);
       }
       async onToolStart(run) {
-        var _a, _b, _c, _d, _e, _f, _g, _h;
+        var _a2, _b, _c, _d, _e, _f, _g, _h;
         const runName = assignName(run);
         const runInfo = {
-          tags: (_a = run.tags) != null ? _a : [],
+          tags: (_a2 = run.tags) != null ? _a2 : [],
           metadata: (_c = (_b = run.extra) == null ? void 0 : _b.metadata) != null ? _c : {},
           name: runName,
           runType: "tool",
@@ -15308,7 +15317,7 @@ var init_event_stream = __esm({
         }, runInfo);
       }
       async onToolEnd(run) {
-        var _a;
+        var _a2;
         const runInfo = this.runInfoMap.get(run.id);
         this.runInfoMap.delete(run.id);
         if (runInfo === void 0) {
@@ -15317,7 +15326,7 @@ var init_event_stream = __esm({
         if (runInfo.inputs === void 0) {
           throw new Error(`onToolEnd: Run ID ${run.id} is a tool call, and is expected to have traced inputs.`);
         }
-        const output = ((_a = run.outputs) == null ? void 0 : _a.output) === void 0 ? run.outputs : run.outputs.output;
+        const output = ((_a2 = run.outputs) == null ? void 0 : _a2.output) === void 0 ? run.outputs : run.outputs.output;
         await this.sendEndEvent({
           event: "on_tool_end",
           data: {
@@ -15331,11 +15340,11 @@ var init_event_stream = __esm({
         }, runInfo);
       }
       async onRetrieverStart(run) {
-        var _a, _b, _c, _d, _e, _f;
+        var _a2, _b, _c, _d, _e, _f;
         const runName = assignName(run);
         const runType = "retriever";
         const runInfo = {
-          tags: (_a = run.tags) != null ? _a : [],
+          tags: (_a2 = run.tags) != null ? _a2 : [],
           metadata: (_c = (_b = run.extra) == null ? void 0 : _b.metadata) != null ? _c : {},
           name: runName,
           runType,
@@ -15358,7 +15367,7 @@ var init_event_stream = __esm({
         }, runInfo);
       }
       async onRetrieverEnd(run) {
-        var _a, _b;
+        var _a2, _b;
         const runInfo = this.runInfoMap.get(run.id);
         this.runInfoMap.delete(run.id);
         if (runInfo === void 0) {
@@ -15367,7 +15376,7 @@ var init_event_stream = __esm({
         await this.sendEndEvent({
           event: "on_retriever_end",
           data: {
-            output: (_b = (_a = run.outputs) == null ? void 0 : _a.documents) != null ? _b : run.outputs,
+            output: (_b = (_a2 = run.outputs) == null ? void 0 : _a2.documents) != null ? _b : run.outputs,
             input: runInfo.inputs
           },
           run_id: run.id,
@@ -15406,14 +15415,14 @@ async function getCallbackManagerForConfig(config) {
   return CallbackManager._configureSync(config == null ? void 0 : config.callbacks, void 0, config == null ? void 0 : config.tags, void 0, config == null ? void 0 : config.metadata);
 }
 function mergeConfigs(...configs) {
-  var _a, _b, _c;
+  var _a2, _b, _c;
   const copy = {};
   for (const options of configs.filter((c) => !!c)) {
     for (const key of Object.keys(options)) {
       if (key === "metadata") {
         copy[key] = { ...copy[key], ...options[key] };
       } else if (key === "tags") {
-        const baseKeys = (_a = copy[key]) != null ? _a : [];
+        const baseKeys = (_a2 = copy[key]) != null ? _a2 : [];
         copy[key] = [...new Set(baseKeys.concat((_b = options[key]) != null ? _b : []))];
       } else if (key === "configurable") {
         copy[key] = { ...copy[key], ...options[key] };
@@ -15482,7 +15491,7 @@ function mergeConfigs(...configs) {
   return copy;
 }
 function ensureConfig(config) {
-  var _a;
+  var _a2;
   const implicitConfig = AsyncLocalStorageProviderSingleton2.getRunnableConfig();
   let empty = {
     tags: [],
@@ -15517,7 +15526,7 @@ function ensureConfig(config) {
   }
   if (empty == null ? void 0 : empty.configurable) {
     for (const key of Object.keys(empty.configurable)) {
-      if (PRIMITIVES.has(typeof empty.configurable[key]) && !((_a = empty.metadata) == null ? void 0 : _a[key])) {
+      if (PRIMITIVES.has(typeof empty.configurable[key]) && !((_a2 = empty.metadata) == null ? void 0 : _a2[key])) {
         if (!empty.metadata) {
           empty.metadata = {};
         }
@@ -15593,7 +15602,7 @@ var init_async_caller2 = __esm({
       // Conflict
     ];
     defaultFailedAttemptHandler = (error) => {
-      var _a, _b, _c;
+      var _a2, _b, _c;
       if (error.message.startsWith("Cancel") || error.message.startsWith("AbortError") || error.name === "AbortError") {
         throw error;
       }
@@ -15602,7 +15611,7 @@ var init_async_caller2 = __esm({
       }
       const status = (
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (_b = (_a = error == null ? void 0 : error.response) == null ? void 0 : _a.status) != null ? _b : error == null ? void 0 : error.status
+        (_b = (_a2 = error == null ? void 0 : error.response) == null ? void 0 : _a2.status) != null ? _b : error == null ? void 0 : error.status
       );
       if (status && STATUS_NO_RETRY2.includes(+status)) {
         throw error;
@@ -15615,7 +15624,7 @@ var init_async_caller2 = __esm({
     };
     AsyncCaller2 = class {
       constructor(params) {
-        var _a, _b, _c;
+        var _a2, _b, _c;
         Object.defineProperty(this, "maxConcurrency", {
           enumerable: true,
           configurable: true,
@@ -15640,7 +15649,7 @@ var init_async_caller2 = __esm({
           writable: true,
           value: void 0
         });
-        this.maxConcurrency = (_a = params.maxConcurrency) != null ? _a : Infinity;
+        this.maxConcurrency = (_a2 = params.maxConcurrency) != null ? _a2 : Infinity;
         this.maxRetries = (_b = params.maxRetries) != null ? _b : 6;
         this.onFailedAttempt = (_c = params.onFailedAttempt) != null ? _c : defaultFailedAttemptHandler;
         const PQueue = "default" in import_p_queue3.default ? import_p_queue3.default.default : import_p_queue3.default;
@@ -15668,8 +15677,8 @@ var init_async_caller2 = __esm({
           return Promise.race([
             this.call(callable, ...args),
             new Promise((_, reject) => {
-              var _a;
-              (_a = options.signal) == null ? void 0 : _a.addEventListener("abort", () => {
+              var _a2;
+              (_a2 = options.signal) == null ? void 0 : _a2.addEventListener("abort", () => {
                 reject(new Error("AbortError"));
               });
             })
@@ -15819,9 +15828,9 @@ var init_utils3 = __esm({
         this.excludeTags = fields.excludeTags;
       }
       includeEvent(event, rootType) {
-        var _a;
+        var _a2;
         let include = this.includeNames === void 0 && this.includeTypes === void 0 && this.includeTags === void 0;
-        const eventTags = (_a = event.tags) != null ? _a : [];
+        const eventTags = (_a2 = event.tags) != null ? _a2 : [];
         if (this.includeNames !== void 0) {
           include = include || this.includeNames.includes(event.name);
         }
@@ -15830,8 +15839,8 @@ var init_utils3 = __esm({
         }
         if (this.includeTags !== void 0) {
           include = include || eventTags.some((tag) => {
-            var _a2;
-            return (_a2 = this.includeTags) == null ? void 0 : _a2.includes(tag);
+            var _a3;
+            return (_a3 = this.includeTags) == null ? void 0 : _a3.includes(tag);
           });
         }
         if (this.excludeNames !== void 0) {
@@ -15842,8 +15851,8 @@ var init_utils3 = __esm({
         }
         if (this.excludeTags !== void 0) {
           include = include && eventTags.every((tag) => {
-            var _a2;
-            return !((_a2 = this.excludeTags) == null ? void 0 : _a2.includes(tag));
+            var _a3;
+            return !((_a3 = this.excludeTags) == null ? void 0 : _a3.includes(tag));
           });
         }
         return include;
@@ -15945,11 +15954,11 @@ var init_any = __esm({
 
 // node_modules/zod-to-json-schema/dist/esm/parsers/array.js
 function parseArrayDef(def, refs) {
-  var _a, _b, _c;
+  var _a2, _b, _c;
   const res = {
     type: "array"
   };
-  if (((_a = def.type) == null ? void 0 : _a._def) && ((_c = (_b = def.type) == null ? void 0 : _b._def) == null ? void 0 : _c.typeName) !== ZodFirstPartyTypeKind.ZodAny) {
+  if (((_a2 = def.type) == null ? void 0 : _a2._def) && ((_c = (_b = def.type) == null ? void 0 : _b._def) == null ? void 0 : _c.typeName) !== ZodFirstPartyTypeKind.ZodAny) {
     res.items = parseDef(def.type._def, {
       ...refs,
       currentPath: [...refs.currentPath, "items"]
@@ -16398,8 +16407,8 @@ var init_string = __esm({
     };
     escapeNonAlphaNumeric = (value) => Array.from(value).map((c) => /[a-zA-Z0-9]/.test(c) ? c : `\\${c}`).join("");
     addFormat = (schema, value, message, refs) => {
-      var _a;
-      if (schema.format || ((_a = schema.anyOf) == null ? void 0 : _a.some((x) => x.format))) {
+      var _a2;
+      if (schema.format || ((_a2 = schema.anyOf) == null ? void 0 : _a2.some((x) => x.format))) {
         if (!schema.anyOf) {
           schema.anyOf = [];
         }
@@ -16427,8 +16436,8 @@ var init_string = __esm({
       }
     };
     addPattern = (schema, regex2, message, refs) => {
-      var _a;
-      if (schema.pattern || ((_a = schema.allOf) == null ? void 0 : _a.some((x) => x.pattern))) {
+      var _a2;
+      if (schema.pattern || ((_a2 = schema.allOf) == null ? void 0 : _a2.some((x) => x.pattern))) {
         if (!schema.allOf) {
           schema.allOf = [];
         }
@@ -16456,7 +16465,7 @@ var init_string = __esm({
       }
     };
     processRegExp = (regexOrFunction, refs) => {
-      var _a;
+      var _a2;
       const regex2 = typeof regexOrFunction === "function" ? regexOrFunction() : regexOrFunction;
       if (!refs.applyRegexFlags || !regex2.flags)
         return regex2.source;
@@ -16484,7 +16493,7 @@ var init_string = __esm({
                 pattern += source[i];
                 pattern += `${source[i - 2]}-${source[i]}`.toUpperCase();
                 inCharRange = false;
-              } else if (source[i + 1] === "-" && ((_a = source[i + 2]) == null ? void 0 : _a.match(/[a-z]/))) {
+              } else if (source[i + 1] === "-" && ((_a2 = source[i + 2]) == null ? void 0 : _a2.match(/[a-z]/))) {
                 pattern += source[i];
                 inCharRange = true;
               } else {
@@ -16536,19 +16545,19 @@ var init_string = __esm({
 
 // node_modules/zod-to-json-schema/dist/esm/parsers/record.js
 function parseRecordDef(def, refs) {
-  var _a, _b, _c, _d, _e, _f, _g;
-  if (refs.target === "openApi3" && ((_a = def.keyType) == null ? void 0 : _a._def.typeName) === ZodFirstPartyTypeKind.ZodEnum) {
+  var _a2, _b, _c, _d, _e, _f, _g;
+  if (refs.target === "openApi3" && ((_a2 = def.keyType) == null ? void 0 : _a2._def.typeName) === ZodFirstPartyTypeKind.ZodEnum) {
     return {
       type: "object",
       required: def.keyType._def.values,
       properties: def.keyType._def.values.reduce((acc, key) => {
-        var _a2;
+        var _a3;
         return {
           ...acc,
-          [key]: (_a2 = parseDef(def.valueType._def, {
+          [key]: (_a3 = parseDef(def.valueType._def, {
             ...refs,
             currentPath: [...refs.currentPath, "properties", key]
-          })) != null ? _a2 : {}
+          })) != null ? _a3 : {}
         };
       }, {}),
       additionalProperties: false
@@ -16837,12 +16846,12 @@ var init_number = __esm({
 
 // node_modules/zod-to-json-schema/dist/esm/parsers/object.js
 function decideAdditionalProperties(def, refs) {
-  var _a, _b;
+  var _a2, _b;
   if (refs.removeAdditionalStrategy === "strict") {
-    return def.catchall._def.typeName === "ZodNever" ? def.unknownKeys !== "strict" : (_a = parseDef(def.catchall._def, {
+    return def.catchall._def.typeName === "ZodNever" ? def.unknownKeys !== "strict" : (_a2 = parseDef(def.catchall._def, {
       ...refs,
       currentPath: [...refs.currentPath, "additionalProperties"]
-    })) != null ? _a : true;
+    })) != null ? _a2 : true;
   } else {
     return def.catchall._def.typeName === "ZodNever" ? def.unknownKeys === "passthrough" : (_b = parseDef(def.catchall._def, {
       ...refs,
@@ -16886,8 +16895,8 @@ var init_optional = __esm({
   "node_modules/zod-to-json-schema/dist/esm/parsers/optional.js"() {
     init_parseDef();
     parseOptionalDef = (def, refs) => {
-      var _a;
-      if (refs.currentPath.toString() === ((_a = refs.propertyPath) == null ? void 0 : _a.toString())) {
+      var _a2;
+      if (refs.currentPath.toString() === ((_a2 = refs.propertyPath) == null ? void 0 : _a2.toString())) {
         return parseDef(def.innerType._def, refs);
       }
       const innerSchema = parseDef(def.innerType._def, {
@@ -17034,10 +17043,10 @@ var init_readonly = __esm({
 
 // node_modules/zod-to-json-schema/dist/esm/parseDef.js
 function parseDef(def, refs, forceResolution = false) {
-  var _a;
+  var _a2;
   const seenItem = refs.seen.get(def);
   if (refs.override) {
-    const overrideResult = (_a = refs.override) == null ? void 0 : _a.call(refs, def, refs, seenItem, forceResolution);
+    const overrideResult = (_a2 = refs.override) == null ? void 0 : _a2.call(refs, def, refs, seenItem, forceResolution);
     if (overrideResult !== ignoreOverride) {
       return overrideResult;
     }
@@ -17209,23 +17218,23 @@ var init_zodToJsonSchema = __esm({
     init_parseDef();
     init_Refs();
     zodToJsonSchema = (schema, options) => {
-      var _a;
+      var _a2;
       const refs = getRefs(options);
       const definitions = typeof options === "object" && options.definitions ? Object.entries(options.definitions).reduce((acc, [name2, schema2]) => {
-        var _a2;
+        var _a3;
         return {
           ...acc,
-          [name2]: (_a2 = parseDef(schema2._def, {
+          [name2]: (_a3 = parseDef(schema2._def, {
             ...refs,
             currentPath: [...refs.basePath, refs.definitionPath, name2]
-          }, true)) != null ? _a2 : {}
+          }, true)) != null ? _a3 : {}
         };
       }, {}) : void 0;
       const name = typeof options === "string" ? options : (options == null ? void 0 : options.nameStrategy) === "title" ? void 0 : options == null ? void 0 : options.name;
-      const main = (_a = parseDef(schema._def, name === void 0 ? refs : {
+      const main = (_a2 = parseDef(schema._def, name === void 0 ? refs : {
         ...refs,
         currentPath: [...refs.basePath, refs.definitionPath, name]
-      }, false)) != null ? _a : {};
+      }, false)) != null ? _a2 : {};
       const title = typeof options === "object" && options.name !== void 0 && options.nameStrategy === "title" ? options.name : void 0;
       if (title !== void 0) {
         main.title = title;
@@ -17309,7 +17318,7 @@ function _generateMermaidGraphStyles(nodeColors) {
   return styles2;
 }
 function drawMermaid(nodes, edges, config) {
-  var _a, _b, _c, _d, _e;
+  var _a2, _b, _c, _d, _e;
   const { firstNode, lastNode, nodeColors, withStyles = true, curveStyle = "linear", wrapLabelNWords = 9 } = config != null ? config : {};
   let mermaidGraph = withStyles ? `%%{init: {'flowchart': {'curve': '${curveStyle}'}}}%%
 graph TD;
@@ -17326,7 +17335,7 @@ graph TD;
       formatDict[lastNode] = "{0}([{1}]):::last";
     }
     for (const [key, node] of Object.entries(nodes)) {
-      const nodeName = (_a = node.name.split(":").pop()) != null ? _a : "";
+      const nodeName = (_a2 = node.name.split(":").pop()) != null ? _a2 : "";
       const label = MARKDOWN_SPECIAL_CHARS.some((char) => nodeName.startsWith(char) && nodeName.endsWith(char)) ? `<p>${nodeName}</p>` : nodeName;
       let finalLabel = label;
       if (Object.keys((_b = node.metadata) != null ? _b : {}).length) {
@@ -17425,7 +17434,7 @@ var init_graph_mermaid = __esm({
 
 // node_modules/@langchain/core/dist/runnables/graph.js
 function nodeDataStr(id, data) {
-  var _a;
+  var _a2;
   if (id !== void 0 && !validate_default(id)) {
     return id;
   } else if (isRunnableInterface(data)) {
@@ -17437,7 +17446,7 @@ function nodeDataStr(id, data) {
       return data.getName();
     }
   } else {
-    return (_a = data.name) != null ? _a : "UnknownSchema";
+    return (_a2 = data.name) != null ? _a2 : "UnknownSchema";
   }
 }
 function nodeDataJson(node) {
@@ -17485,7 +17494,7 @@ var init_graph = __esm({
     init_graph_mermaid();
     Graph = class _Graph {
       constructor(params) {
-        var _a, _b;
+        var _a2, _b;
         Object.defineProperty(this, "nodes", {
           enumerable: true,
           configurable: true,
@@ -17498,7 +17507,7 @@ var init_graph = __esm({
           writable: true,
           value: []
         });
-        this.nodes = (_a = params == null ? void 0 : params.nodes) != null ? _a : this.nodes;
+        this.nodes = (_a2 = params == null ? void 0 : params.nodes) != null ? _a2 : this.nodes;
         this.edges = (_b = params == null ? void 0 : params.edges) != null ? _b : this.edges;
       }
       // Convert the graph to a JSON-serializable format.
@@ -17758,8 +17767,8 @@ Instead got an unsupported type.`);
   }
 }
 function convertRunnableToTool(runnable, fields) {
-  var _a, _b, _c;
-  const name = (_a = fields.name) != null ? _a : runnable.getName();
+  var _a2, _b, _c;
+  const name = (_a2 = fields.name) != null ? _a2 : runnable.getName();
   const description = (_c = fields.description) != null ? _c : (_b = fields.schema) == null ? void 0 : _b.description;
   if (fields.schema.constructor === z.ZodString) {
     return new RunnableToolLike({
@@ -17816,10 +17825,10 @@ var init_base4 = __esm({
         });
       }
       getName(suffix) {
-        var _a, _b;
+        var _a2, _b;
         const name = (
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (_b = (_a = this.name) != null ? _a : this.constructor.lc_name()) != null ? _b : this.constructor.name
+          (_b = (_a2 = this.name) != null ? _a2 : this.constructor.lc_name()) != null ? _b : this.constructor.name
         );
         return suffix ? `${name}${suffix}` : name;
       }
@@ -17892,9 +17901,9 @@ var init_base4 = __esm({
         return Array.from({ length }, () => ensureConfig(options));
       }
       async batch(inputs, options, batchOptions) {
-        var _a, _b;
+        var _a2, _b;
         const configList = this._getOptionsList(options != null ? options : {}, inputs.length);
-        const maxConcurrency = (_b = (_a = configList[0]) == null ? void 0 : _a.maxConcurrency) != null ? _b : batchOptions == null ? void 0 : batchOptions.maxConcurrency;
+        const maxConcurrency = (_b = (_a2 = configList[0]) == null ? void 0 : _a2.maxConcurrency) != null ? _b : batchOptions == null ? void 0 : batchOptions.maxConcurrency;
         const caller2 = new AsyncCaller2({
           maxConcurrency,
           onFailedAttempt: (e) => {
@@ -17970,10 +17979,10 @@ var init_base4 = __esm({
         return [runnableConfig, callOptions];
       }
       async _callWithConfig(func, input, options) {
-        var _a;
+        var _a2;
         const config = ensureConfig(options);
         const callbackManager_ = await getCallbackManagerForConfig(config);
-        const runManager = await (callbackManager_ == null ? void 0 : callbackManager_.handleChainStart(this.toJSON(), _coerceToDict2(input, "input"), config.runId, config == null ? void 0 : config.runType, void 0, void 0, (_a = config == null ? void 0 : config.runName) != null ? _a : this.getName()));
+        const runManager = await (callbackManager_ == null ? void 0 : callbackManager_.handleChainStart(this.toJSON(), _coerceToDict2(input, "input"), config.runId, config == null ? void 0 : config.runType, void 0, void 0, (_a2 = config == null ? void 0 : config.runName) != null ? _a2 : this.getName()));
         delete config.runId;
         let output;
         try {
@@ -17996,19 +18005,19 @@ var init_base4 = __esm({
        * @returns A promise that resolves to the output values.
        */
       async _batchWithConfig(func, inputs, options, batchOptions) {
-        var _a;
+        var _a2;
         const optionsList = this._getOptionsList(options != null ? options : {}, inputs.length);
         const callbackManagers = await Promise.all(optionsList.map(getCallbackManagerForConfig));
         const runManagers = await Promise.all(callbackManagers.map(async (callbackManager, i) => {
-          var _a2;
-          const handleStartRes = await (callbackManager == null ? void 0 : callbackManager.handleChainStart(this.toJSON(), _coerceToDict2(inputs[i], "input"), optionsList[i].runId, optionsList[i].runType, void 0, void 0, (_a2 = optionsList[i].runName) != null ? _a2 : this.getName()));
+          var _a3;
+          const handleStartRes = await (callbackManager == null ? void 0 : callbackManager.handleChainStart(this.toJSON(), _coerceToDict2(inputs[i], "input"), optionsList[i].runId, optionsList[i].runType, void 0, void 0, (_a3 = optionsList[i].runName) != null ? _a3 : this.getName()));
           delete optionsList[i].runId;
           return handleStartRes;
         }));
         let outputs;
         try {
           const promise = func.call(this, inputs, optionsList, runManagers, batchOptions);
-          outputs = await raceWithSignal(promise, (_a = optionsList == null ? void 0 : optionsList[0]) == null ? void 0 : _a.signal);
+          outputs = await raceWithSignal(promise, (_a2 = optionsList == null ? void 0 : optionsList[0]) == null ? void 0 : _a2.signal);
         } catch (e) {
           await Promise.all(runManagers.map((runManager) => runManager == null ? void 0 : runManager.handleChainError(e)));
           throw e;
@@ -18048,8 +18057,8 @@ var init_base4 = __esm({
         let runManager;
         try {
           const pipe = await pipeGeneratorWithSetup(transformer.bind(this), wrapInputForTracing(), async () => {
-            var _a;
-            return callbackManager_ == null ? void 0 : callbackManager_.handleChainStart(this.toJSON(), { input: "" }, config.runId, config.runType, void 0, void 0, (_a = config.runName) != null ? _a : this.getName());
+            var _a2;
+            return callbackManager_ == null ? void 0 : callbackManager_.handleChainStart(this.toJSON(), { input: "" }, config.runId, config.runType, void 0, void 0, (_a2 = config.runName) != null ? _a2 : this.getName());
           }, options == null ? void 0 : options.signal, config);
           delete config.runId;
           runManager = pipe.setup;
@@ -18224,13 +18233,13 @@ var init_base4 = __esm({
         }
       }
       async *_streamEventsV2(input, options, streamOptions) {
-        var _a, _b;
+        var _a2, _b;
         const eventStreamer = new EventStreamCallbackHandler({
           ...streamOptions,
           autoClose: false
         });
         const config = ensureConfig(options);
-        const runId = (_a = config.runId) != null ? _a : v4_default();
+        const runId = (_a2 = config.runId) != null ? _a2 : v4_default();
         config.runId = runId;
         const callbacks = config.callbacks;
         if (callbacks === void 0) {
@@ -18277,11 +18286,11 @@ var init_base4 = __esm({
         }
       }
       async *_streamEventsV1(input, options, streamOptions) {
-        var _a, _b, _c;
+        var _a2, _b, _c;
         let runLog;
         let hasEncounteredStartEvent = false;
         const config = ensureConfig(options);
-        const rootTags = (_a = config.tags) != null ? _a : [];
+        const rootTags = (_a2 = config.tags) != null ? _a2 : [];
         const rootMetadata = (_b = config.metadata) != null ? _b : {};
         const rootName = (_c = config.runName) != null ? _c : this.getName();
         const logStreamCallbackHandler = new LogStreamCallbackHandler({
@@ -18657,7 +18666,7 @@ var init_base4 = __esm({
         return "RunnableRetry";
       }
       constructor(fields) {
-        var _a, _b;
+        var _a2, _b;
         super(fields);
         Object.defineProperty(this, "lc_namespace", {
           enumerable: true,
@@ -18678,7 +18687,7 @@ var init_base4 = __esm({
           value: () => {
           }
         });
-        this.maxAttemptNumber = (_a = fields.maxAttemptNumber) != null ? _a : this.maxAttemptNumber;
+        this.maxAttemptNumber = (_a2 = fields.maxAttemptNumber) != null ? _a2 : this.maxAttemptNumber;
         this.onFailedAttempt = (_b = fields.onFailedAttempt) != null ? _b : this.onFailedAttempt;
       }
       _patchConfigForRetry(attempt, config, runManager) {
@@ -18756,7 +18765,7 @@ var init_base4 = __esm({
         return "RunnableSequence";
       }
       constructor(fields) {
-        var _a, _b;
+        var _a2, _b;
         super(fields);
         Object.defineProperty(this, "first", {
           enumerable: true,
@@ -18795,7 +18804,7 @@ var init_base4 = __esm({
           value: ["langchain_core", "runnables"]
         });
         this.first = fields.first;
-        this.middle = (_a = fields.middle) != null ? _a : this.middle;
+        this.middle = (_a2 = fields.middle) != null ? _a2 : this.middle;
         this.last = fields.last;
         this.name = fields.name;
         this.omitSequenceTags = (_b = fields.omitSequenceTags) != null ? _b : this.omitSequenceTags;
@@ -18804,7 +18813,7 @@ var init_base4 = __esm({
         return [this.first, ...this.middle, this.last];
       }
       async invoke(input, options) {
-        var _a;
+        var _a2;
         const config = ensureConfig(options);
         const callbackManager_ = await getCallbackManagerForConfig(config);
         const runManager = await (callbackManager_ == null ? void 0 : callbackManager_.handleChainStart(this.toJSON(), _coerceToDict2(input, "input"), config.runId, void 0, void 0, void 0, config == null ? void 0 : config.runName));
@@ -18820,7 +18829,7 @@ var init_base4 = __esm({
             }));
             nextStepInput = await raceWithSignal(promise, options == null ? void 0 : options.signal);
           }
-          if ((_a = options == null ? void 0 : options.signal) == null ? void 0 : _a.aborted) {
+          if ((_a2 = options == null ? void 0 : options.signal) == null ? void 0 : _a2.aborted) {
             throw new Error("Aborted");
           }
           finalOutput = await this.last.invoke(nextStepInput, patchConfig(config, {
@@ -18834,7 +18843,7 @@ var init_base4 = __esm({
         return finalOutput;
       }
       async batch(inputs, options, batchOptions) {
-        var _a;
+        var _a2;
         const configList = this._getOptionsList(options != null ? options : {}, inputs.length);
         const callbackManagers = await Promise.all(configList.map(getCallbackManagerForConfig));
         const runManagers = await Promise.all(callbackManagers.map(async (callbackManager, i) => {
@@ -18850,7 +18859,7 @@ var init_base4 = __esm({
               const childRunManager = runManager == null ? void 0 : runManager.getChild(this.omitSequenceTags ? void 0 : `seq:step:${i + 1}`);
               return patchConfig(configList[j], { callbacks: childRunManager });
             }), batchOptions);
-            nextStepInputs = await raceWithSignal(promise, (_a = configList[0]) == null ? void 0 : _a.signal);
+            nextStepInputs = await raceWithSignal(promise, (_a2 = configList[0]) == null ? void 0 : _a2.signal);
           }
         } catch (e) {
           await Promise.all(runManagers.map((runManager) => runManager == null ? void 0 : runManager.handleChainError(e)));
@@ -18860,7 +18869,7 @@ var init_base4 = __esm({
         return nextStepInputs;
       }
       async *_streamIterator(input, options) {
-        var _a;
+        var _a2;
         const callbackManager_ = await getCallbackManagerForConfig(options);
         const { runId, ...otherOptions } = options != null ? options : {};
         const runManager = await (callbackManager_ == null ? void 0 : callbackManager_.handleChainStart(this.toJSON(), _coerceToDict2(input, "input"), runId, void 0, void 0, void 0, otherOptions == null ? void 0 : otherOptions.runName));
@@ -18881,7 +18890,7 @@ var init_base4 = __esm({
             }));
           }
           for await (const chunk of finalGenerator) {
-            (_a = options == null ? void 0 : options.signal) == null ? void 0 : _a.throwIfAborted();
+            (_a2 = options == null ? void 0 : options.signal) == null ? void 0 : _a2.throwIfAborted();
             yield chunk;
             if (concatSupported) {
               if (finalOutput === void 0) {
@@ -18926,7 +18935,7 @@ var init_base4 = __esm({
         return graph;
       }
       pipe(coerceable) {
-        var _a;
+        var _a2;
         if (_RunnableSequence.isRunnableSequence(coerceable)) {
           return new _RunnableSequence({
             first: this.first,
@@ -18936,7 +18945,7 @@ var init_base4 = __esm({
               ...coerceable.middle
             ]),
             last: coerceable.last,
-            name: (_a = this.name) != null ? _a : coerceable.name
+            name: (_a2 = this.name) != null ? _a2 : coerceable.name
           });
         } else {
           return new _RunnableSequence({
@@ -19092,12 +19101,12 @@ var init_base4 = __esm({
         return raceWithSignal(promise, config == null ? void 0 : config.signal);
       }
       async *_streamIterator(input, options) {
-        var _a, _b;
+        var _a2, _b;
         const [config] = this._getOptionsList(options != null ? options : {}, 1);
         const result = await this.invoke(input, options);
         if (isAsyncIterable(result)) {
           for await (const item of result) {
-            (_a = config == null ? void 0 : config.signal) == null ? void 0 : _a.throwIfAborted();
+            (_a2 = config == null ? void 0 : config.signal) == null ? void 0 : _a2.throwIfAborted();
             yield item;
           }
           return;
@@ -19149,13 +19158,13 @@ var init_base4 = __esm({
       }
       async _invoke(input, config, runManager) {
         return new Promise((resolve, reject) => {
-          var _a;
+          var _a2;
           const childConfig = patchConfig(config, {
             callbacks: runManager == null ? void 0 : runManager.getChild(),
-            recursionLimit: ((_a = config == null ? void 0 : config.recursionLimit) != null ? _a : DEFAULT_RECURSION_LIMIT) - 1
+            recursionLimit: ((_a2 = config == null ? void 0 : config.recursionLimit) != null ? _a2 : DEFAULT_RECURSION_LIMIT) - 1
           });
           void AsyncLocalStorageProviderSingleton2.runWithConfig(childConfig, async () => {
-            var _a2, _b, _c;
+            var _a3, _b, _c;
             try {
               let output = await this.func(input, {
                 ...childConfig
@@ -19166,7 +19175,7 @@ var init_base4 = __esm({
                 }
                 output = await output.invoke(input, {
                   ...childConfig,
-                  recursionLimit: ((_a2 = childConfig.recursionLimit) != null ? _a2 : DEFAULT_RECURSION_LIMIT) - 1
+                  recursionLimit: ((_a3 = childConfig.recursionLimit) != null ? _a3 : DEFAULT_RECURSION_LIMIT) - 1
                 });
               } else if (isAsyncIterable(output)) {
                 let finalOutput;
@@ -19210,7 +19219,7 @@ var init_base4 = __esm({
         return this._callWithConfig(this._invoke.bind(this), input, options);
       }
       async *_transform(generator, runManager, config) {
-        var _a, _b, _c;
+        var _a2, _b, _c;
         let finalChunk;
         for await (const chunk of generator) {
           if (finalChunk === void 0) {
@@ -19225,7 +19234,7 @@ var init_base4 = __esm({
         }
         const childConfig = patchConfig(config, {
           callbacks: runManager == null ? void 0 : runManager.getChild(),
-          recursionLimit: ((_a = config == null ? void 0 : config.recursionLimit) != null ? _a : DEFAULT_RECURSION_LIMIT) - 1
+          recursionLimit: ((_a2 = config == null ? void 0 : config.recursionLimit) != null ? _a2 : DEFAULT_RECURSION_LIMIT) - 1
         });
         const output = await new Promise((resolve, reject) => {
           void AsyncLocalStorageProviderSingleton2.runWithConfig(childConfig, async () => {
@@ -19318,14 +19327,14 @@ var init_base4 = __esm({
         }
       }
       async invoke(input, options) {
-        var _a;
+        var _a2;
         const config = ensureConfig(options);
         const callbackManager_ = await getCallbackManagerForConfig(options);
         const { runId, ...otherConfigFields } = config;
         const runManager = await (callbackManager_ == null ? void 0 : callbackManager_.handleChainStart(this.toJSON(), _coerceToDict2(input, "input"), runId, void 0, void 0, void 0, otherConfigFields == null ? void 0 : otherConfigFields.runName));
         let firstError;
         for (const runnable of this.runnables()) {
-          (_a = config == null ? void 0 : config.signal) == null ? void 0 : _a.throwIfAborted();
+          (_a2 = config == null ? void 0 : config.signal) == null ? void 0 : _a2.throwIfAborted();
           try {
             const output = await runnable.invoke(input, patchConfig(otherConfigFields, { callbacks: runManager == null ? void 0 : runManager.getChild() }));
             await (runManager == null ? void 0 : runManager.handleChainEnd(_coerceToDict2(output, "output")));
@@ -19343,7 +19352,7 @@ var init_base4 = __esm({
         throw firstError;
       }
       async *_streamIterator(input, options) {
-        var _a;
+        var _a2;
         const config = ensureConfig(options);
         const callbackManager_ = await getCallbackManagerForConfig(options);
         const { runId, ...otherConfigFields } = config;
@@ -19351,7 +19360,7 @@ var init_base4 = __esm({
         let firstError;
         let stream;
         for (const runnable of this.runnables()) {
-          (_a = config == null ? void 0 : config.signal) == null ? void 0 : _a.throwIfAborted();
+          (_a2 = config == null ? void 0 : config.signal) == null ? void 0 : _a2.throwIfAborted();
           const childConfig = patchConfig(otherConfigFields, {
             callbacks: runManager == null ? void 0 : runManager.getChild()
           });
@@ -19386,7 +19395,7 @@ var init_base4 = __esm({
         await (runManager == null ? void 0 : runManager.handleChainEnd(_coerceToDict2(output, "output")));
       }
       async batch(inputs, options, batchOptions) {
-        var _a;
+        var _a2;
         if (batchOptions == null ? void 0 : batchOptions.returnExceptions) {
           throw new Error("Not implemented.");
         }
@@ -19399,7 +19408,7 @@ var init_base4 = __esm({
         }));
         let firstError;
         for (const runnable of this.runnables()) {
-          (_a = configList[0].signal) == null ? void 0 : _a.throwIfAborted();
+          (_a2 = configList[0].signal) == null ? void 0 : _a2.throwIfAborted();
           try {
             const outputs = await runnable.batch(inputs, runManagers.map((runManager, j) => patchConfig(configList[j], {
               callbacks: runManager == null ? void 0 : runManager.getChild()
@@ -19556,7 +19565,7 @@ var init_base4 = __esm({
     };
     RunnableToolLike = class extends RunnableBinding {
       constructor(fields) {
-        var _a;
+        var _a2;
         const sequence = RunnableSequence.from([
           RunnableLambda.from(async (input) => {
             let toolInput;
@@ -19575,7 +19584,7 @@ var init_base4 = __esm({
         ]).withConfig({ runName: fields.name });
         super({
           bound: sequence,
-          config: (_a = fields.config) != null ? _a : {}
+          config: (_a2 = fields.config) != null ? _a2 : {}
         });
         Object.defineProperty(this, "name", {
           enumerable: true,
@@ -20097,7 +20106,7 @@ var init_mustache = __esm({
       this.pos += match.length;
       return match;
     };
-    Context.prototype.push = function push(view) {
+    Context.prototype.push = function push2(view) {
       return new Context(view, this);
     };
     Context.prototype.lookup = function lookup(name) {
@@ -20235,10 +20244,10 @@ var init_mustache = __esm({
         return value;
     };
     Writer.prototype.escapedValue = function escapedValue(token, context, config) {
-      var escape = this.getConfigEscape(config) || mustache.escape;
+      var escape2 = this.getConfigEscape(config) || mustache.escape;
       var value = context.lookup(token[1]);
       if (value != null)
-        return typeof value === "number" && escape === mustache.escape ? String(value) : escape(value);
+        return typeof value === "number" && escape2 === mustache.escape ? String(value) : escape2(value);
     };
     Writer.prototype.rawValue = function rawValue(token) {
       return token[1];
@@ -20549,10 +20558,10 @@ var init_prompt = __esm({
        * @returns A new instance of PromptTemplate with the partially applied values.
        */
       async partial(values) {
-        var _a;
+        var _a2;
         const newInputVariables = this.inputVariables.filter((iv) => !(iv in values));
         const newPartialVariables = {
-          ...(_a = this.partialVariables) != null ? _a : {},
+          ...(_a2 = this.partialVariables) != null ? _a2 : {},
           ...values
         };
         const promptDict = {
@@ -20726,10 +20735,10 @@ var init_few_shot = __esm({
         throw new Error("One of 'examples' and 'example_selector' should be provided");
       }
       async partial(values) {
-        var _a;
+        var _a2;
         const newInputVariables = this.inputVariables.filter((iv) => !(iv in values));
         const newPartialVariables = {
-          ...(_a = this.partialVariables) != null ? _a : {},
+          ...(_a2 = this.partialVariables) != null ? _a2 : {},
           ...values
         };
         const promptDict = {
@@ -20800,7 +20809,7 @@ var init_few_shot = __esm({
         return "FewShotChatMessagePromptTemplate";
       }
       constructor(fields) {
-        var _a, _b, _c, _d, _e;
+        var _a2, _b, _c, _d, _e;
         super(fields);
         Object.defineProperty(this, "lc_serializable", {
           enumerable: true,
@@ -20858,7 +20867,7 @@ var init_few_shot = __esm({
         });
         this.examples = fields.examples;
         this.examplePrompt = fields.examplePrompt;
-        this.exampleSeparator = (_a = fields.exampleSeparator) != null ? _a : "\n\n";
+        this.exampleSeparator = (_a2 = fields.exampleSeparator) != null ? _a2 : "\n\n";
         this.exampleSelector = fields.exampleSelector;
         this.prefix = (_b = fields.prefix) != null ? _b : "";
         this.suffix = (_c = fields.suffix) != null ? _c : "";
@@ -20928,10 +20937,10 @@ var init_few_shot = __esm({
        * @returns A promise that resolves to an instance of `FewShotChatMessagePromptTemplate` with the given values partially formatted.
        */
       async partial(values) {
-        var _a;
+        var _a2;
         const newInputVariables = this.inputVariables.filter((variable) => !(variable in values));
         const newPartialVariables = {
-          ...(_a = this.partialVariables) != null ? _a : {},
+          ...(_a2 = this.partialVariables) != null ? _a2 : {},
           ...values
         };
         const promptDict = {
@@ -21001,8 +21010,8 @@ var init_base5 = __esm({
        * @returns A Promise that resolves to an object containing the merged variables.
        */
       async mergePartialAndUserVariables(userVariables) {
-        var _a;
-        const partialVariables = (_a = this.partialVariables) != null ? _a : {};
+        var _a2;
+        const partialVariables = (_a2 = this.partialVariables) != null ? _a2 : {};
         const partialValues = {};
         for (const [key, value] of Object.entries(partialVariables)) {
           if (typeof value === "string") {
@@ -21074,14 +21083,5132 @@ module.exports = __toCommonJS(main_exports);
 // src/core/TagAgent.ts
 var import_obsidian4 = require("obsidian");
 
-// src/models/types.ts
-var DEFAULT_SETTINGS = {
-  ollamaHost: "http://localhost:11434",
-  ollamaModel: "llama3.1"
+// node_modules/openai/internal/qs/formats.mjs
+var default_format = "RFC3986";
+var formatters = {
+  RFC1738: (v) => String(v).replace(/%20/g, "+"),
+  RFC3986: (v) => String(v)
 };
+var RFC1738 = "RFC1738";
+
+// node_modules/openai/internal/qs/utils.mjs
+var is_array = Array.isArray;
+var hex_table = (() => {
+  const array = [];
+  for (let i = 0; i < 256; ++i) {
+    array.push("%" + ((i < 16 ? "0" : "") + i.toString(16)).toUpperCase());
+  }
+  return array;
+})();
+var limit = 1024;
+var encode = (str2, _defaultEncoder, charset, _kind, format) => {
+  if (str2.length === 0) {
+    return str2;
+  }
+  let string = str2;
+  if (typeof str2 === "symbol") {
+    string = Symbol.prototype.toString.call(str2);
+  } else if (typeof str2 !== "string") {
+    string = String(str2);
+  }
+  if (charset === "iso-8859-1") {
+    return escape(string).replace(/%u[0-9a-f]{4}/gi, function($0) {
+      return "%26%23" + parseInt($0.slice(2), 16) + "%3B";
+    });
+  }
+  let out = "";
+  for (let j = 0; j < string.length; j += limit) {
+    const segment = string.length >= limit ? string.slice(j, j + limit) : string;
+    const arr2 = [];
+    for (let i = 0; i < segment.length; ++i) {
+      let c = segment.charCodeAt(i);
+      if (c === 45 || // -
+      c === 46 || // .
+      c === 95 || // _
+      c === 126 || // ~
+      c >= 48 && c <= 57 || // 0-9
+      c >= 65 && c <= 90 || // a-z
+      c >= 97 && c <= 122 || // A-Z
+      format === RFC1738 && (c === 40 || c === 41)) {
+        arr2[arr2.length] = segment.charAt(i);
+        continue;
+      }
+      if (c < 128) {
+        arr2[arr2.length] = hex_table[c];
+        continue;
+      }
+      if (c < 2048) {
+        arr2[arr2.length] = hex_table[192 | c >> 6] + hex_table[128 | c & 63];
+        continue;
+      }
+      if (c < 55296 || c >= 57344) {
+        arr2[arr2.length] = hex_table[224 | c >> 12] + hex_table[128 | c >> 6 & 63] + hex_table[128 | c & 63];
+        continue;
+      }
+      i += 1;
+      c = 65536 + ((c & 1023) << 10 | segment.charCodeAt(i) & 1023);
+      arr2[arr2.length] = hex_table[240 | c >> 18] + hex_table[128 | c >> 12 & 63] + hex_table[128 | c >> 6 & 63] + hex_table[128 | c & 63];
+    }
+    out += arr2.join("");
+  }
+  return out;
+};
+function is_buffer(obj) {
+  if (!obj || typeof obj !== "object") {
+    return false;
+  }
+  return !!(obj.constructor && obj.constructor.isBuffer && obj.constructor.isBuffer(obj));
+}
+function maybe_map(val, fn) {
+  if (is_array(val)) {
+    const mapped = [];
+    for (let i = 0; i < val.length; i += 1) {
+      mapped.push(fn(val[i]));
+    }
+    return mapped;
+  }
+  return fn(val);
+}
+
+// node_modules/openai/internal/qs/stringify.mjs
+var has = Object.prototype.hasOwnProperty;
+var array_prefix_generators = {
+  brackets(prefix) {
+    return String(prefix) + "[]";
+  },
+  comma: "comma",
+  indices(prefix, key) {
+    return String(prefix) + "[" + key + "]";
+  },
+  repeat(prefix) {
+    return String(prefix);
+  }
+};
+var is_array2 = Array.isArray;
+var push = Array.prototype.push;
+var push_to_array = function(arr2, value_or_array) {
+  push.apply(arr2, is_array2(value_or_array) ? value_or_array : [value_or_array]);
+};
+var to_ISO = Date.prototype.toISOString;
+var defaults = {
+  addQueryPrefix: false,
+  allowDots: false,
+  allowEmptyArrays: false,
+  arrayFormat: "indices",
+  charset: "utf-8",
+  charsetSentinel: false,
+  delimiter: "&",
+  encode: true,
+  encodeDotInKeys: false,
+  encoder: encode,
+  encodeValuesOnly: false,
+  format: default_format,
+  formatter: formatters[default_format],
+  /** @deprecated */
+  indices: false,
+  serializeDate(date2) {
+    return to_ISO.call(date2);
+  },
+  skipNulls: false,
+  strictNullHandling: false
+};
+function is_non_nullish_primitive(v) {
+  return typeof v === "string" || typeof v === "number" || typeof v === "boolean" || typeof v === "symbol" || typeof v === "bigint";
+}
+var sentinel = {};
+function inner_stringify(object, prefix, generateArrayPrefix, commaRoundTrip, allowEmptyArrays, strictNullHandling, skipNulls, encodeDotInKeys, encoder, filter, sort, allowDots, serializeDate, format, formatter, encodeValuesOnly, charset, sideChannel) {
+  let obj = object;
+  let tmp_sc = sideChannel;
+  let step = 0;
+  let find_flag = false;
+  while ((tmp_sc = tmp_sc.get(sentinel)) !== void 0 && !find_flag) {
+    const pos = tmp_sc.get(object);
+    step += 1;
+    if (typeof pos !== "undefined") {
+      if (pos === step) {
+        throw new RangeError("Cyclic object value");
+      } else {
+        find_flag = true;
+      }
+    }
+    if (typeof tmp_sc.get(sentinel) === "undefined") {
+      step = 0;
+    }
+  }
+  if (typeof filter === "function") {
+    obj = filter(prefix, obj);
+  } else if (obj instanceof Date) {
+    obj = serializeDate == null ? void 0 : serializeDate(obj);
+  } else if (generateArrayPrefix === "comma" && is_array2(obj)) {
+    obj = maybe_map(obj, function(value) {
+      if (value instanceof Date) {
+        return serializeDate == null ? void 0 : serializeDate(value);
+      }
+      return value;
+    });
+  }
+  if (obj === null) {
+    if (strictNullHandling) {
+      return encoder && !encodeValuesOnly ? (
+        // @ts-expect-error
+        encoder(prefix, defaults.encoder, charset, "key", format)
+      ) : prefix;
+    }
+    obj = "";
+  }
+  if (is_non_nullish_primitive(obj) || is_buffer(obj)) {
+    if (encoder) {
+      const key_value = encodeValuesOnly ? prefix : encoder(prefix, defaults.encoder, charset, "key", format);
+      return [
+        (formatter == null ? void 0 : formatter(key_value)) + "=" + // @ts-expect-error
+        (formatter == null ? void 0 : formatter(encoder(obj, defaults.encoder, charset, "value", format)))
+      ];
+    }
+    return [(formatter == null ? void 0 : formatter(prefix)) + "=" + (formatter == null ? void 0 : formatter(String(obj)))];
+  }
+  const values = [];
+  if (typeof obj === "undefined") {
+    return values;
+  }
+  let obj_keys;
+  if (generateArrayPrefix === "comma" && is_array2(obj)) {
+    if (encodeValuesOnly && encoder) {
+      obj = maybe_map(obj, encoder);
+    }
+    obj_keys = [{ value: obj.length > 0 ? obj.join(",") || null : void 0 }];
+  } else if (is_array2(filter)) {
+    obj_keys = filter;
+  } else {
+    const keys = Object.keys(obj);
+    obj_keys = sort ? keys.sort(sort) : keys;
+  }
+  const encoded_prefix = encodeDotInKeys ? String(prefix).replace(/\./g, "%2E") : String(prefix);
+  const adjusted_prefix = commaRoundTrip && is_array2(obj) && obj.length === 1 ? encoded_prefix + "[]" : encoded_prefix;
+  if (allowEmptyArrays && is_array2(obj) && obj.length === 0) {
+    return adjusted_prefix + "[]";
+  }
+  for (let j = 0; j < obj_keys.length; ++j) {
+    const key = obj_keys[j];
+    const value = (
+      // @ts-ignore
+      typeof key === "object" && typeof key.value !== "undefined" ? key.value : obj[key]
+    );
+    if (skipNulls && value === null) {
+      continue;
+    }
+    const encoded_key = allowDots && encodeDotInKeys ? key.replace(/\./g, "%2E") : key;
+    const key_prefix = is_array2(obj) ? typeof generateArrayPrefix === "function" ? generateArrayPrefix(adjusted_prefix, encoded_key) : adjusted_prefix : adjusted_prefix + (allowDots ? "." + encoded_key : "[" + encoded_key + "]");
+    sideChannel.set(object, step);
+    const valueSideChannel = /* @__PURE__ */ new WeakMap();
+    valueSideChannel.set(sentinel, sideChannel);
+    push_to_array(values, inner_stringify(
+      value,
+      key_prefix,
+      generateArrayPrefix,
+      commaRoundTrip,
+      allowEmptyArrays,
+      strictNullHandling,
+      skipNulls,
+      encodeDotInKeys,
+      // @ts-ignore
+      generateArrayPrefix === "comma" && encodeValuesOnly && is_array2(obj) ? null : encoder,
+      filter,
+      sort,
+      allowDots,
+      serializeDate,
+      format,
+      formatter,
+      encodeValuesOnly,
+      charset,
+      valueSideChannel
+    ));
+  }
+  return values;
+}
+function normalize_stringify_options(opts = defaults) {
+  if (typeof opts.allowEmptyArrays !== "undefined" && typeof opts.allowEmptyArrays !== "boolean") {
+    throw new TypeError("`allowEmptyArrays` option can only be `true` or `false`, when provided");
+  }
+  if (typeof opts.encodeDotInKeys !== "undefined" && typeof opts.encodeDotInKeys !== "boolean") {
+    throw new TypeError("`encodeDotInKeys` option can only be `true` or `false`, when provided");
+  }
+  if (opts.encoder !== null && typeof opts.encoder !== "undefined" && typeof opts.encoder !== "function") {
+    throw new TypeError("Encoder has to be a function.");
+  }
+  const charset = opts.charset || defaults.charset;
+  if (typeof opts.charset !== "undefined" && opts.charset !== "utf-8" && opts.charset !== "iso-8859-1") {
+    throw new TypeError("The charset option must be either utf-8, iso-8859-1, or undefined");
+  }
+  let format = default_format;
+  if (typeof opts.format !== "undefined") {
+    if (!has.call(formatters, opts.format)) {
+      throw new TypeError("Unknown format option provided.");
+    }
+    format = opts.format;
+  }
+  const formatter = formatters[format];
+  let filter = defaults.filter;
+  if (typeof opts.filter === "function" || is_array2(opts.filter)) {
+    filter = opts.filter;
+  }
+  let arrayFormat;
+  if (opts.arrayFormat && opts.arrayFormat in array_prefix_generators) {
+    arrayFormat = opts.arrayFormat;
+  } else if ("indices" in opts) {
+    arrayFormat = opts.indices ? "indices" : "repeat";
+  } else {
+    arrayFormat = defaults.arrayFormat;
+  }
+  if ("commaRoundTrip" in opts && typeof opts.commaRoundTrip !== "boolean") {
+    throw new TypeError("`commaRoundTrip` must be a boolean, or absent");
+  }
+  const allowDots = typeof opts.allowDots === "undefined" ? !!opts.encodeDotInKeys === true ? true : defaults.allowDots : !!opts.allowDots;
+  return {
+    addQueryPrefix: typeof opts.addQueryPrefix === "boolean" ? opts.addQueryPrefix : defaults.addQueryPrefix,
+    // @ts-ignore
+    allowDots,
+    allowEmptyArrays: typeof opts.allowEmptyArrays === "boolean" ? !!opts.allowEmptyArrays : defaults.allowEmptyArrays,
+    arrayFormat,
+    charset,
+    charsetSentinel: typeof opts.charsetSentinel === "boolean" ? opts.charsetSentinel : defaults.charsetSentinel,
+    commaRoundTrip: !!opts.commaRoundTrip,
+    delimiter: typeof opts.delimiter === "undefined" ? defaults.delimiter : opts.delimiter,
+    encode: typeof opts.encode === "boolean" ? opts.encode : defaults.encode,
+    encodeDotInKeys: typeof opts.encodeDotInKeys === "boolean" ? opts.encodeDotInKeys : defaults.encodeDotInKeys,
+    encoder: typeof opts.encoder === "function" ? opts.encoder : defaults.encoder,
+    encodeValuesOnly: typeof opts.encodeValuesOnly === "boolean" ? opts.encodeValuesOnly : defaults.encodeValuesOnly,
+    filter,
+    format,
+    formatter,
+    serializeDate: typeof opts.serializeDate === "function" ? opts.serializeDate : defaults.serializeDate,
+    skipNulls: typeof opts.skipNulls === "boolean" ? opts.skipNulls : defaults.skipNulls,
+    // @ts-ignore
+    sort: typeof opts.sort === "function" ? opts.sort : null,
+    strictNullHandling: typeof opts.strictNullHandling === "boolean" ? opts.strictNullHandling : defaults.strictNullHandling
+  };
+}
+function stringify(object, opts = {}) {
+  let obj = object;
+  const options = normalize_stringify_options(opts);
+  let obj_keys;
+  let filter;
+  if (typeof options.filter === "function") {
+    filter = options.filter;
+    obj = filter("", obj);
+  } else if (is_array2(options.filter)) {
+    filter = options.filter;
+    obj_keys = filter;
+  }
+  const keys = [];
+  if (typeof obj !== "object" || obj === null) {
+    return "";
+  }
+  const generateArrayPrefix = array_prefix_generators[options.arrayFormat];
+  const commaRoundTrip = generateArrayPrefix === "comma" && options.commaRoundTrip;
+  if (!obj_keys) {
+    obj_keys = Object.keys(obj);
+  }
+  if (options.sort) {
+    obj_keys.sort(options.sort);
+  }
+  const sideChannel = /* @__PURE__ */ new WeakMap();
+  for (let i = 0; i < obj_keys.length; ++i) {
+    const key = obj_keys[i];
+    if (options.skipNulls && obj[key] === null) {
+      continue;
+    }
+    push_to_array(keys, inner_stringify(
+      obj[key],
+      key,
+      // @ts-expect-error
+      generateArrayPrefix,
+      commaRoundTrip,
+      options.allowEmptyArrays,
+      options.strictNullHandling,
+      options.skipNulls,
+      options.encodeDotInKeys,
+      options.encode ? options.encoder : null,
+      options.filter,
+      options.sort,
+      options.allowDots,
+      options.serializeDate,
+      options.format,
+      options.formatter,
+      options.encodeValuesOnly,
+      options.charset,
+      sideChannel
+    ));
+  }
+  const joined = keys.join(options.delimiter);
+  let prefix = options.addQueryPrefix === true ? "?" : "";
+  if (options.charsetSentinel) {
+    if (options.charset === "iso-8859-1") {
+      prefix += "utf8=%26%2310003%3B&";
+    } else {
+      prefix += "utf8=%E2%9C%93&";
+    }
+  }
+  return joined.length > 0 ? prefix + joined : "";
+}
+
+// node_modules/openai/version.mjs
+var VERSION = "4.73.0";
+
+// node_modules/openai/_shims/registry.mjs
+var auto = false;
+var kind = void 0;
+var fetch2 = void 0;
+var Request2 = void 0;
+var Response2 = void 0;
+var Headers2 = void 0;
+var FormData2 = void 0;
+var Blob2 = void 0;
+var File2 = void 0;
+var ReadableStream2 = void 0;
+var getMultipartRequestOptions = void 0;
+var getDefaultAgent = void 0;
+var fileFromPath = void 0;
+var isFsReadStream = void 0;
+function setShims(shims, options = { auto: false }) {
+  if (auto) {
+    throw new Error(`you must \`import 'openai/shims/${shims.kind}'\` before importing anything else from openai`);
+  }
+  if (kind) {
+    throw new Error(`can't \`import 'openai/shims/${shims.kind}'\` after \`import 'openai/shims/${kind}'\``);
+  }
+  auto = options.auto;
+  kind = shims.kind;
+  fetch2 = shims.fetch;
+  Request2 = shims.Request;
+  Response2 = shims.Response;
+  Headers2 = shims.Headers;
+  FormData2 = shims.FormData;
+  Blob2 = shims.Blob;
+  File2 = shims.File;
+  ReadableStream2 = shims.ReadableStream;
+  getMultipartRequestOptions = shims.getMultipartRequestOptions;
+  getDefaultAgent = shims.getDefaultAgent;
+  fileFromPath = shims.fileFromPath;
+  isFsReadStream = shims.isFsReadStream;
+}
+
+// node_modules/openai/_shims/MultipartBody.mjs
+var MultipartBody = class {
+  constructor(body) {
+    this.body = body;
+  }
+  get [Symbol.toStringTag]() {
+    return "MultipartBody";
+  }
+};
+
+// node_modules/openai/_shims/web-runtime.mjs
+function getRuntime({ manuallyImported } = {}) {
+  const recommendation = manuallyImported ? `You may need to use polyfills` : `Add one of these imports before your first \`import \u2026 from 'openai'\`:
+- \`import 'openai/shims/node'\` (if you're running on Node)
+- \`import 'openai/shims/web'\` (otherwise)
+`;
+  let _fetch, _Request, _Response, _Headers;
+  try {
+    _fetch = fetch;
+    _Request = Request;
+    _Response = Response;
+    _Headers = Headers;
+  } catch (error) {
+    throw new Error(`this environment is missing the following Web Fetch API type: ${error.message}. ${recommendation}`);
+  }
+  return {
+    kind: "web",
+    fetch: _fetch,
+    Request: _Request,
+    Response: _Response,
+    Headers: _Headers,
+    FormData: (
+      // @ts-ignore
+      typeof FormData !== "undefined" ? FormData : class FormData {
+        // @ts-ignore
+        constructor() {
+          throw new Error(`file uploads aren't supported in this environment yet as 'FormData' is undefined. ${recommendation}`);
+        }
+      }
+    ),
+    Blob: typeof Blob !== "undefined" ? Blob : class Blob {
+      constructor() {
+        throw new Error(`file uploads aren't supported in this environment yet as 'Blob' is undefined. ${recommendation}`);
+      }
+    },
+    File: (
+      // @ts-ignore
+      typeof File !== "undefined" ? File : class File {
+        // @ts-ignore
+        constructor() {
+          throw new Error(`file uploads aren't supported in this environment yet as 'File' is undefined. ${recommendation}`);
+        }
+      }
+    ),
+    ReadableStream: (
+      // @ts-ignore
+      typeof ReadableStream !== "undefined" ? ReadableStream : class ReadableStream {
+        // @ts-ignore
+        constructor() {
+          throw new Error(`streaming isn't supported in this environment yet as 'ReadableStream' is undefined. ${recommendation}`);
+        }
+      }
+    ),
+    getMultipartRequestOptions: async (form, opts) => ({
+      ...opts,
+      body: new MultipartBody(form)
+    }),
+    getDefaultAgent: (url) => void 0,
+    fileFromPath: () => {
+      throw new Error("The `fileFromPath` function is only supported in Node. See the README for more details: https://www.github.com/openai/openai-node#file-uploads");
+    },
+    isFsReadStream: (value) => false
+  };
+}
+
+// node_modules/openai/_shims/index.mjs
+if (!kind) setShims(getRuntime(), { auto: true });
+
+// node_modules/openai/error.mjs
+var OpenAIError = class extends Error {
+};
+var APIError = class _APIError extends OpenAIError {
+  constructor(status, error, message, headers) {
+    super(`${_APIError.makeMessage(status, error, message)}`);
+    this.status = status;
+    this.headers = headers;
+    this.request_id = headers == null ? void 0 : headers["x-request-id"];
+    const data = error;
+    this.error = data;
+    this.code = data == null ? void 0 : data["code"];
+    this.param = data == null ? void 0 : data["param"];
+    this.type = data == null ? void 0 : data["type"];
+  }
+  static makeMessage(status, error, message) {
+    const msg = (error == null ? void 0 : error.message) ? typeof error.message === "string" ? error.message : JSON.stringify(error.message) : error ? JSON.stringify(error) : message;
+    if (status && msg) {
+      return `${status} ${msg}`;
+    }
+    if (status) {
+      return `${status} status code (no body)`;
+    }
+    if (msg) {
+      return msg;
+    }
+    return "(no status code or body)";
+  }
+  static generate(status, errorResponse, message, headers) {
+    if (!status) {
+      return new APIConnectionError({ message, cause: castToError(errorResponse) });
+    }
+    const error = errorResponse == null ? void 0 : errorResponse["error"];
+    if (status === 400) {
+      return new BadRequestError(status, error, message, headers);
+    }
+    if (status === 401) {
+      return new AuthenticationError(status, error, message, headers);
+    }
+    if (status === 403) {
+      return new PermissionDeniedError(status, error, message, headers);
+    }
+    if (status === 404) {
+      return new NotFoundError(status, error, message, headers);
+    }
+    if (status === 409) {
+      return new ConflictError(status, error, message, headers);
+    }
+    if (status === 422) {
+      return new UnprocessableEntityError(status, error, message, headers);
+    }
+    if (status === 429) {
+      return new RateLimitError(status, error, message, headers);
+    }
+    if (status >= 500) {
+      return new InternalServerError(status, error, message, headers);
+    }
+    return new _APIError(status, error, message, headers);
+  }
+};
+var APIUserAbortError = class extends APIError {
+  constructor({ message } = {}) {
+    super(void 0, void 0, message || "Request was aborted.", void 0);
+    this.status = void 0;
+  }
+};
+var APIConnectionError = class extends APIError {
+  constructor({ message, cause }) {
+    super(void 0, void 0, message || "Connection error.", void 0);
+    this.status = void 0;
+    if (cause)
+      this.cause = cause;
+  }
+};
+var APIConnectionTimeoutError = class extends APIConnectionError {
+  constructor({ message } = {}) {
+    super({ message: message != null ? message : "Request timed out." });
+  }
+};
+var BadRequestError = class extends APIError {
+  constructor() {
+    super(...arguments);
+    this.status = 400;
+  }
+};
+var AuthenticationError = class extends APIError {
+  constructor() {
+    super(...arguments);
+    this.status = 401;
+  }
+};
+var PermissionDeniedError = class extends APIError {
+  constructor() {
+    super(...arguments);
+    this.status = 403;
+  }
+};
+var NotFoundError = class extends APIError {
+  constructor() {
+    super(...arguments);
+    this.status = 404;
+  }
+};
+var ConflictError = class extends APIError {
+  constructor() {
+    super(...arguments);
+    this.status = 409;
+  }
+};
+var UnprocessableEntityError = class extends APIError {
+  constructor() {
+    super(...arguments);
+    this.status = 422;
+  }
+};
+var RateLimitError = class extends APIError {
+  constructor() {
+    super(...arguments);
+    this.status = 429;
+  }
+};
+var InternalServerError = class extends APIError {
+};
+var LengthFinishReasonError = class extends OpenAIError {
+  constructor() {
+    super(`Could not parse response content as the length limit was reached`);
+  }
+};
+var ContentFilterFinishReasonError = class extends OpenAIError {
+  constructor() {
+    super(`Could not parse response content as the request was rejected by the content filter`);
+  }
+};
+
+// node_modules/openai/internal/decoders/line.mjs
+var LineDecoder = class _LineDecoder {
+  constructor() {
+    this.buffer = [];
+    this.trailingCR = false;
+  }
+  decode(chunk) {
+    let text = this.decodeText(chunk);
+    if (this.trailingCR) {
+      text = "\r" + text;
+      this.trailingCR = false;
+    }
+    if (text.endsWith("\r")) {
+      this.trailingCR = true;
+      text = text.slice(0, -1);
+    }
+    if (!text) {
+      return [];
+    }
+    const trailingNewline = _LineDecoder.NEWLINE_CHARS.has(text[text.length - 1] || "");
+    let lines = text.split(_LineDecoder.NEWLINE_REGEXP);
+    if (trailingNewline) {
+      lines.pop();
+    }
+    if (lines.length === 1 && !trailingNewline) {
+      this.buffer.push(lines[0]);
+      return [];
+    }
+    if (this.buffer.length > 0) {
+      lines = [this.buffer.join("") + lines[0], ...lines.slice(1)];
+      this.buffer = [];
+    }
+    if (!trailingNewline) {
+      this.buffer = [lines.pop() || ""];
+    }
+    return lines;
+  }
+  decodeText(bytes) {
+    var _a2;
+    if (bytes == null)
+      return "";
+    if (typeof bytes === "string")
+      return bytes;
+    if (typeof Buffer !== "undefined") {
+      if (bytes instanceof Buffer) {
+        return bytes.toString();
+      }
+      if (bytes instanceof Uint8Array) {
+        return Buffer.from(bytes).toString();
+      }
+      throw new OpenAIError(`Unexpected: received non-Uint8Array (${bytes.constructor.name}) stream chunk in an environment with a global "Buffer" defined, which this library assumes to be Node. Please report this error.`);
+    }
+    if (typeof TextDecoder !== "undefined") {
+      if (bytes instanceof Uint8Array || bytes instanceof ArrayBuffer) {
+        (_a2 = this.textDecoder) != null ? _a2 : this.textDecoder = new TextDecoder("utf8");
+        return this.textDecoder.decode(bytes);
+      }
+      throw new OpenAIError(`Unexpected: received non-Uint8Array/ArrayBuffer (${bytes.constructor.name}) in a web platform. Please report this error.`);
+    }
+    throw new OpenAIError(`Unexpected: neither Buffer nor TextDecoder are available as globals. Please report this error.`);
+  }
+  flush() {
+    if (!this.buffer.length && !this.trailingCR) {
+      return [];
+    }
+    const lines = [this.buffer.join("")];
+    this.buffer = [];
+    this.trailingCR = false;
+    return lines;
+  }
+};
+LineDecoder.NEWLINE_CHARS = /* @__PURE__ */ new Set(["\n", "\r"]);
+LineDecoder.NEWLINE_REGEXP = /\r\n|[\n\r]/g;
+
+// node_modules/openai/streaming.mjs
+var Stream = class _Stream {
+  constructor(iterator, controller) {
+    this.iterator = iterator;
+    this.controller = controller;
+  }
+  static fromSSEResponse(response, controller) {
+    let consumed2 = false;
+    async function* iterator() {
+      if (consumed2) {
+        throw new Error("Cannot iterate over a consumed stream, use `.tee()` to split the stream.");
+      }
+      consumed2 = true;
+      let done = false;
+      try {
+        for await (const sse of _iterSSEMessages(response, controller)) {
+          if (done)
+            continue;
+          if (sse.data.startsWith("[DONE]")) {
+            done = true;
+            continue;
+          }
+          if (sse.event === null) {
+            let data;
+            try {
+              data = JSON.parse(sse.data);
+            } catch (e) {
+              console.error(`Could not parse message into JSON:`, sse.data);
+              console.error(`From chunk:`, sse.raw);
+              throw e;
+            }
+            if (data && data.error) {
+              throw new APIError(void 0, data.error, void 0, void 0);
+            }
+            yield data;
+          } else {
+            let data;
+            try {
+              data = JSON.parse(sse.data);
+            } catch (e) {
+              console.error(`Could not parse message into JSON:`, sse.data);
+              console.error(`From chunk:`, sse.raw);
+              throw e;
+            }
+            if (sse.event == "error") {
+              throw new APIError(void 0, data.error, data.message, void 0);
+            }
+            yield { event: sse.event, data };
+          }
+        }
+        done = true;
+      } catch (e) {
+        if (e instanceof Error && e.name === "AbortError")
+          return;
+        throw e;
+      } finally {
+        if (!done)
+          controller.abort();
+      }
+    }
+    return new _Stream(iterator, controller);
+  }
+  /**
+   * Generates a Stream from a newline-separated ReadableStream
+   * where each item is a JSON value.
+   */
+  static fromReadableStream(readableStream, controller) {
+    let consumed2 = false;
+    async function* iterLines() {
+      const lineDecoder = new LineDecoder();
+      const iter = readableStreamAsyncIterable(readableStream);
+      for await (const chunk of iter) {
+        for (const line of lineDecoder.decode(chunk)) {
+          yield line;
+        }
+      }
+      for (const line of lineDecoder.flush()) {
+        yield line;
+      }
+    }
+    async function* iterator() {
+      if (consumed2) {
+        throw new Error("Cannot iterate over a consumed stream, use `.tee()` to split the stream.");
+      }
+      consumed2 = true;
+      let done = false;
+      try {
+        for await (const line of iterLines()) {
+          if (done)
+            continue;
+          if (line)
+            yield JSON.parse(line);
+        }
+        done = true;
+      } catch (e) {
+        if (e instanceof Error && e.name === "AbortError")
+          return;
+        throw e;
+      } finally {
+        if (!done)
+          controller.abort();
+      }
+    }
+    return new _Stream(iterator, controller);
+  }
+  [Symbol.asyncIterator]() {
+    return this.iterator();
+  }
+  /**
+   * Splits the stream into two streams which can be
+   * independently read from at different speeds.
+   */
+  tee() {
+    const left = [];
+    const right = [];
+    const iterator = this.iterator();
+    const teeIterator = (queue2) => {
+      return {
+        next: () => {
+          if (queue2.length === 0) {
+            const result = iterator.next();
+            left.push(result);
+            right.push(result);
+          }
+          return queue2.shift();
+        }
+      };
+    };
+    return [
+      new _Stream(() => teeIterator(left), this.controller),
+      new _Stream(() => teeIterator(right), this.controller)
+    ];
+  }
+  /**
+   * Converts this stream to a newline-separated ReadableStream of
+   * JSON stringified values in the stream
+   * which can be turned back into a Stream with `Stream.fromReadableStream()`.
+   */
+  toReadableStream() {
+    const self2 = this;
+    let iter;
+    const encoder = new TextEncoder();
+    return new ReadableStream2({
+      async start() {
+        iter = self2[Symbol.asyncIterator]();
+      },
+      async pull(ctrl) {
+        try {
+          const { value, done } = await iter.next();
+          if (done)
+            return ctrl.close();
+          const bytes = encoder.encode(JSON.stringify(value) + "\n");
+          ctrl.enqueue(bytes);
+        } catch (err) {
+          ctrl.error(err);
+        }
+      },
+      async cancel() {
+        var _a2;
+        await ((_a2 = iter.return) == null ? void 0 : _a2.call(iter));
+      }
+    });
+  }
+};
+async function* _iterSSEMessages(response, controller) {
+  if (!response.body) {
+    controller.abort();
+    throw new OpenAIError(`Attempted to iterate over a response with no body`);
+  }
+  const sseDecoder = new SSEDecoder();
+  const lineDecoder = new LineDecoder();
+  const iter = readableStreamAsyncIterable(response.body);
+  for await (const sseChunk of iterSSEChunks(iter)) {
+    for (const line of lineDecoder.decode(sseChunk)) {
+      const sse = sseDecoder.decode(line);
+      if (sse)
+        yield sse;
+    }
+  }
+  for (const line of lineDecoder.flush()) {
+    const sse = sseDecoder.decode(line);
+    if (sse)
+      yield sse;
+  }
+}
+async function* iterSSEChunks(iterator) {
+  let data = new Uint8Array();
+  for await (const chunk of iterator) {
+    if (chunk == null) {
+      continue;
+    }
+    const binaryChunk = chunk instanceof ArrayBuffer ? new Uint8Array(chunk) : typeof chunk === "string" ? new TextEncoder().encode(chunk) : chunk;
+    let newData = new Uint8Array(data.length + binaryChunk.length);
+    newData.set(data);
+    newData.set(binaryChunk, data.length);
+    data = newData;
+    let patternIndex;
+    while ((patternIndex = findDoubleNewlineIndex(data)) !== -1) {
+      yield data.slice(0, patternIndex);
+      data = data.slice(patternIndex);
+    }
+  }
+  if (data.length > 0) {
+    yield data;
+  }
+}
+function findDoubleNewlineIndex(buffer) {
+  const newline = 10;
+  const carriage = 13;
+  for (let i = 0; i < buffer.length - 2; i++) {
+    if (buffer[i] === newline && buffer[i + 1] === newline) {
+      return i + 2;
+    }
+    if (buffer[i] === carriage && buffer[i + 1] === carriage) {
+      return i + 2;
+    }
+    if (buffer[i] === carriage && buffer[i + 1] === newline && i + 3 < buffer.length && buffer[i + 2] === carriage && buffer[i + 3] === newline) {
+      return i + 4;
+    }
+  }
+  return -1;
+}
+var SSEDecoder = class {
+  constructor() {
+    this.event = null;
+    this.data = [];
+    this.chunks = [];
+  }
+  decode(line) {
+    if (line.endsWith("\r")) {
+      line = line.substring(0, line.length - 1);
+    }
+    if (!line) {
+      if (!this.event && !this.data.length)
+        return null;
+      const sse = {
+        event: this.event,
+        data: this.data.join("\n"),
+        raw: this.chunks
+      };
+      this.event = null;
+      this.data = [];
+      this.chunks = [];
+      return sse;
+    }
+    this.chunks.push(line);
+    if (line.startsWith(":")) {
+      return null;
+    }
+    let [fieldname, _, value] = partition(line, ":");
+    if (value.startsWith(" ")) {
+      value = value.substring(1);
+    }
+    if (fieldname === "event") {
+      this.event = value;
+    } else if (fieldname === "data") {
+      this.data.push(value);
+    }
+    return null;
+  }
+};
+function partition(str2, delimiter) {
+  const index = str2.indexOf(delimiter);
+  if (index !== -1) {
+    return [str2.substring(0, index), delimiter, str2.substring(index + delimiter.length)];
+  }
+  return [str2, "", ""];
+}
+function readableStreamAsyncIterable(stream) {
+  if (stream[Symbol.asyncIterator])
+    return stream;
+  const reader = stream.getReader();
+  return {
+    async next() {
+      try {
+        const result = await reader.read();
+        if (result == null ? void 0 : result.done)
+          reader.releaseLock();
+        return result;
+      } catch (e) {
+        reader.releaseLock();
+        throw e;
+      }
+    },
+    async return() {
+      const cancelPromise = reader.cancel();
+      reader.releaseLock();
+      await cancelPromise;
+      return { done: true, value: void 0 };
+    },
+    [Symbol.asyncIterator]() {
+      return this;
+    }
+  };
+}
+
+// node_modules/openai/uploads.mjs
+var isResponseLike = (value) => value != null && typeof value === "object" && typeof value.url === "string" && typeof value.blob === "function";
+var isFileLike = (value) => value != null && typeof value === "object" && typeof value.name === "string" && typeof value.lastModified === "number" && isBlobLike(value);
+var isBlobLike = (value) => value != null && typeof value === "object" && typeof value.size === "number" && typeof value.type === "string" && typeof value.text === "function" && typeof value.slice === "function" && typeof value.arrayBuffer === "function";
+var isUploadable = (value) => {
+  return isFileLike(value) || isResponseLike(value) || isFsReadStream(value);
+};
+async function toFile(value, name, options) {
+  var _a2, _b, _c;
+  value = await value;
+  if (isFileLike(value)) {
+    return value;
+  }
+  if (isResponseLike(value)) {
+    const blob = await value.blob();
+    name || (name = (_a2 = new URL(value.url).pathname.split(/[\\/]/).pop()) != null ? _a2 : "unknown_file");
+    const data = isBlobLike(blob) ? [await blob.arrayBuffer()] : [blob];
+    return new File2(data, name, options);
+  }
+  const bits = await getBytes(value);
+  name || (name = (_b = getName(value)) != null ? _b : "unknown_file");
+  if (!(options == null ? void 0 : options.type)) {
+    const type = (_c = bits[0]) == null ? void 0 : _c.type;
+    if (typeof type === "string") {
+      options = { ...options, type };
+    }
+  }
+  return new File2(bits, name, options);
+}
+async function getBytes(value) {
+  var _a2;
+  let parts = [];
+  if (typeof value === "string" || ArrayBuffer.isView(value) || // includes Uint8Array, Buffer, etc.
+  value instanceof ArrayBuffer) {
+    parts.push(value);
+  } else if (isBlobLike(value)) {
+    parts.push(await value.arrayBuffer());
+  } else if (isAsyncIterableIterator(value)) {
+    for await (const chunk of value) {
+      parts.push(chunk);
+    }
+  } else {
+    throw new Error(`Unexpected data type: ${typeof value}; constructor: ${(_a2 = value == null ? void 0 : value.constructor) == null ? void 0 : _a2.name}; props: ${propsForError(value)}`);
+  }
+  return parts;
+}
+function propsForError(value) {
+  const props = Object.getOwnPropertyNames(value);
+  return `[${props.map((p) => `"${p}"`).join(", ")}]`;
+}
+function getName(value) {
+  var _a2;
+  return getStringFromMaybeBuffer(value.name) || getStringFromMaybeBuffer(value.filename) || // For fs.ReadStream
+  ((_a2 = getStringFromMaybeBuffer(value.path)) == null ? void 0 : _a2.split(/[\\/]/).pop());
+}
+var getStringFromMaybeBuffer = (x) => {
+  if (typeof x === "string")
+    return x;
+  if (typeof Buffer !== "undefined" && x instanceof Buffer)
+    return String(x);
+  return void 0;
+};
+var isAsyncIterableIterator = (value) => value != null && typeof value === "object" && typeof value[Symbol.asyncIterator] === "function";
+var isMultipartBody = (body) => body && typeof body === "object" && body.body && body[Symbol.toStringTag] === "MultipartBody";
+var multipartFormRequestOptions = async (opts) => {
+  const form = await createForm(opts.body);
+  return getMultipartRequestOptions(form, opts);
+};
+var createForm = async (body) => {
+  const form = new FormData2();
+  await Promise.all(Object.entries(body || {}).map(([key, value]) => addFormValue(form, key, value)));
+  return form;
+};
+var addFormValue = async (form, key, value) => {
+  if (value === void 0)
+    return;
+  if (value == null) {
+    throw new TypeError(`Received null for "${key}"; to pass null in FormData, you must use the string 'null'`);
+  }
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+    form.append(key, String(value));
+  } else if (isUploadable(value)) {
+    const file = await toFile(value);
+    form.append(key, file);
+  } else if (Array.isArray(value)) {
+    await Promise.all(value.map((entry) => addFormValue(form, key + "[]", entry)));
+  } else if (typeof value === "object") {
+    await Promise.all(Object.entries(value).map(([name, prop]) => addFormValue(form, `${key}[${name}]`, prop)));
+  } else {
+    throw new TypeError(`Invalid value given to form, expected a string, number, boolean, object, Array, File or Blob but got ${value} instead`);
+  }
+};
+
+// node_modules/openai/core.mjs
+var __classPrivateFieldSet = function(receiver, state, value, kind2, f) {
+  if (kind2 === "m") throw new TypeError("Private method is not writable");
+  if (kind2 === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+  if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+  return kind2 === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value), value;
+};
+var __classPrivateFieldGet = function(receiver, state, kind2, f) {
+  if (kind2 === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+  if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+  return kind2 === "m" ? f : kind2 === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+};
+var _AbstractPage_client;
+async function defaultParseResponse(props) {
+  const { response } = props;
+  if (props.options.stream) {
+    debug("response", response.status, response.url, response.headers, response.body);
+    if (props.options.__streamClass) {
+      return props.options.__streamClass.fromSSEResponse(response, props.controller);
+    }
+    return Stream.fromSSEResponse(response, props.controller);
+  }
+  if (response.status === 204) {
+    return null;
+  }
+  if (props.options.__binaryResponse) {
+    return response;
+  }
+  const contentType = response.headers.get("content-type");
+  const isJSON = (contentType == null ? void 0 : contentType.includes("application/json")) || (contentType == null ? void 0 : contentType.includes("application/vnd.api+json"));
+  if (isJSON) {
+    const json = await response.json();
+    debug("response", response.status, response.url, response.headers, json);
+    return _addRequestID(json, response);
+  }
+  const text = await response.text();
+  debug("response", response.status, response.url, response.headers, text);
+  return text;
+}
+function _addRequestID(value, response) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return value;
+  }
+  return Object.defineProperty(value, "_request_id", {
+    value: response.headers.get("x-request-id"),
+    enumerable: false
+  });
+}
+var APIPromise = class _APIPromise extends Promise {
+  constructor(responsePromise, parseResponse = defaultParseResponse) {
+    super((resolve) => {
+      resolve(null);
+    });
+    this.responsePromise = responsePromise;
+    this.parseResponse = parseResponse;
+  }
+  _thenUnwrap(transform) {
+    return new _APIPromise(this.responsePromise, async (props) => _addRequestID(transform(await this.parseResponse(props), props), props.response));
+  }
+  /**
+   * Gets the raw `Response` instance instead of parsing the response
+   * data.
+   *
+   * If you want to parse the response body but still get the `Response`
+   * instance, you can use {@link withResponse()}.
+   *
+   * 👋 Getting the wrong TypeScript type for `Response`?
+   * Try setting `"moduleResolution": "NodeNext"` if you can,
+   * or add one of these imports before your first `import … from 'openai'`:
+   * - `import 'openai/shims/node'` (if you're running on Node)
+   * - `import 'openai/shims/web'` (otherwise)
+   */
+  asResponse() {
+    return this.responsePromise.then((p) => p.response);
+  }
+  /**
+   * Gets the parsed response data, the raw `Response` instance and the ID of the request,
+   * returned via the X-Request-ID header which is useful for debugging requests and reporting
+   * issues to OpenAI.
+   *
+   * If you just want to get the raw `Response` instance without parsing it,
+   * you can use {@link asResponse()}.
+   *
+   *
+   * 👋 Getting the wrong TypeScript type for `Response`?
+   * Try setting `"moduleResolution": "NodeNext"` if you can,
+   * or add one of these imports before your first `import … from 'openai'`:
+   * - `import 'openai/shims/node'` (if you're running on Node)
+   * - `import 'openai/shims/web'` (otherwise)
+   */
+  async withResponse() {
+    const [data, response] = await Promise.all([this.parse(), this.asResponse()]);
+    return { data, response, request_id: response.headers.get("x-request-id") };
+  }
+  parse() {
+    if (!this.parsedPromise) {
+      this.parsedPromise = this.responsePromise.then(this.parseResponse);
+    }
+    return this.parsedPromise;
+  }
+  then(onfulfilled, onrejected) {
+    return this.parse().then(onfulfilled, onrejected);
+  }
+  catch(onrejected) {
+    return this.parse().catch(onrejected);
+  }
+  finally(onfinally) {
+    return this.parse().finally(onfinally);
+  }
+};
+var APIClient = class {
+  constructor({
+    baseURL,
+    maxRetries = 2,
+    timeout = 6e5,
+    // 10 minutes
+    httpAgent,
+    fetch: overridenFetch
+  }) {
+    this.baseURL = baseURL;
+    this.maxRetries = validatePositiveInteger("maxRetries", maxRetries);
+    this.timeout = validatePositiveInteger("timeout", timeout);
+    this.httpAgent = httpAgent;
+    this.fetch = overridenFetch != null ? overridenFetch : fetch2;
+  }
+  authHeaders(opts) {
+    return {};
+  }
+  /**
+   * Override this to add your own default headers, for example:
+   *
+   *  {
+   *    ...super.defaultHeaders(),
+   *    Authorization: 'Bearer 123',
+   *  }
+   */
+  defaultHeaders(opts) {
+    return {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "User-Agent": this.getUserAgent(),
+      ...getPlatformHeaders(),
+      ...this.authHeaders(opts)
+    };
+  }
+  /**
+   * Override this to add your own headers validation:
+   */
+  validateHeaders(headers, customHeaders) {
+  }
+  defaultIdempotencyKey() {
+    return `stainless-node-retry-${uuid4()}`;
+  }
+  get(path, opts) {
+    return this.methodRequest("get", path, opts);
+  }
+  post(path, opts) {
+    return this.methodRequest("post", path, opts);
+  }
+  patch(path, opts) {
+    return this.methodRequest("patch", path, opts);
+  }
+  put(path, opts) {
+    return this.methodRequest("put", path, opts);
+  }
+  delete(path, opts) {
+    return this.methodRequest("delete", path, opts);
+  }
+  methodRequest(method, path, opts) {
+    return this.request(Promise.resolve(opts).then(async (opts2) => {
+      const body = opts2 && isBlobLike(opts2 == null ? void 0 : opts2.body) ? new DataView(await opts2.body.arrayBuffer()) : (opts2 == null ? void 0 : opts2.body) instanceof DataView ? opts2.body : (opts2 == null ? void 0 : opts2.body) instanceof ArrayBuffer ? new DataView(opts2.body) : opts2 && ArrayBuffer.isView(opts2 == null ? void 0 : opts2.body) ? new DataView(opts2.body.buffer) : opts2 == null ? void 0 : opts2.body;
+      return { method, path, ...opts2, body };
+    }));
+  }
+  getAPIList(path, Page2, opts) {
+    return this.requestAPIList(Page2, { method: "get", path, ...opts });
+  }
+  calculateContentLength(body) {
+    if (typeof body === "string") {
+      if (typeof Buffer !== "undefined") {
+        return Buffer.byteLength(body, "utf8").toString();
+      }
+      if (typeof TextEncoder !== "undefined") {
+        const encoder = new TextEncoder();
+        const encoded = encoder.encode(body);
+        return encoded.length.toString();
+      }
+    } else if (ArrayBuffer.isView(body)) {
+      return body.byteLength.toString();
+    }
+    return null;
+  }
+  buildRequest(options, { retryCount = 0 } = {}) {
+    var _a2, _b, _c, _d, _e, _f;
+    const { method, path, query, headers = {} } = options;
+    const body = ArrayBuffer.isView(options.body) || options.__binaryRequest && typeof options.body === "string" ? options.body : isMultipartBody(options.body) ? options.body.body : options.body ? JSON.stringify(options.body, null, 2) : null;
+    const contentLength = this.calculateContentLength(body);
+    const url = this.buildURL(path, query);
+    if ("timeout" in options)
+      validatePositiveInteger("timeout", options.timeout);
+    const timeout = (_a2 = options.timeout) != null ? _a2 : this.timeout;
+    const httpAgent = (_c = (_b = options.httpAgent) != null ? _b : this.httpAgent) != null ? _c : getDefaultAgent(url);
+    const minAgentTimeout = timeout + 1e3;
+    if (typeof ((_d = httpAgent == null ? void 0 : httpAgent.options) == null ? void 0 : _d.timeout) === "number" && minAgentTimeout > ((_e = httpAgent.options.timeout) != null ? _e : 0)) {
+      httpAgent.options.timeout = minAgentTimeout;
+    }
+    if (this.idempotencyHeader && method !== "get") {
+      if (!options.idempotencyKey)
+        options.idempotencyKey = this.defaultIdempotencyKey();
+      headers[this.idempotencyHeader] = options.idempotencyKey;
+    }
+    const reqHeaders = this.buildHeaders({ options, headers, contentLength, retryCount });
+    const req = {
+      method,
+      ...body && { body },
+      headers: reqHeaders,
+      ...httpAgent && { agent: httpAgent },
+      // @ts-ignore node-fetch uses a custom AbortSignal type that is
+      // not compatible with standard web types
+      signal: (_f = options.signal) != null ? _f : null
+    };
+    return { req, url, timeout };
+  }
+  buildHeaders({ options, headers, contentLength, retryCount }) {
+    const reqHeaders = {};
+    if (contentLength) {
+      reqHeaders["content-length"] = contentLength;
+    }
+    const defaultHeaders = this.defaultHeaders(options);
+    applyHeadersMut(reqHeaders, defaultHeaders);
+    applyHeadersMut(reqHeaders, headers);
+    if (isMultipartBody(options.body) && kind !== "node") {
+      delete reqHeaders["content-type"];
+    }
+    if (getHeader(defaultHeaders, "x-stainless-retry-count") === void 0 && getHeader(headers, "x-stainless-retry-count") === void 0) {
+      reqHeaders["x-stainless-retry-count"] = String(retryCount);
+    }
+    this.validateHeaders(reqHeaders, headers);
+    return reqHeaders;
+  }
+  /**
+   * Used as a callback for mutating the given `FinalRequestOptions` object.
+   */
+  async prepareOptions(options) {
+  }
+  /**
+   * Used as a callback for mutating the given `RequestInit` object.
+   *
+   * This is useful for cases where you want to add certain headers based off of
+   * the request properties, e.g. `method` or `url`.
+   */
+  async prepareRequest(request, { url, options }) {
+  }
+  parseHeaders(headers) {
+    return !headers ? {} : Symbol.iterator in headers ? Object.fromEntries(Array.from(headers).map((header) => [...header])) : { ...headers };
+  }
+  makeStatusError(status, error, message, headers) {
+    return APIError.generate(status, error, message, headers);
+  }
+  request(options, remainingRetries = null) {
+    return new APIPromise(this.makeRequest(options, remainingRetries));
+  }
+  async makeRequest(optionsInput, retriesRemaining) {
+    var _a2, _b, _c;
+    const options = await optionsInput;
+    const maxRetries = (_a2 = options.maxRetries) != null ? _a2 : this.maxRetries;
+    if (retriesRemaining == null) {
+      retriesRemaining = maxRetries;
+    }
+    await this.prepareOptions(options);
+    const { req, url, timeout } = this.buildRequest(options, { retryCount: maxRetries - retriesRemaining });
+    await this.prepareRequest(req, { url, options });
+    debug("request", url, options, req.headers);
+    if ((_b = options.signal) == null ? void 0 : _b.aborted) {
+      throw new APIUserAbortError();
+    }
+    const controller = new AbortController();
+    const response = await this.fetchWithTimeout(url, req, timeout, controller).catch(castToError);
+    if (response instanceof Error) {
+      if ((_c = options.signal) == null ? void 0 : _c.aborted) {
+        throw new APIUserAbortError();
+      }
+      if (retriesRemaining) {
+        return this.retryRequest(options, retriesRemaining);
+      }
+      if (response.name === "AbortError") {
+        throw new APIConnectionTimeoutError();
+      }
+      throw new APIConnectionError({ cause: response });
+    }
+    const responseHeaders = createResponseHeaders(response.headers);
+    if (!response.ok) {
+      if (retriesRemaining && this.shouldRetry(response)) {
+        const retryMessage2 = `retrying, ${retriesRemaining} attempts remaining`;
+        debug(`response (error; ${retryMessage2})`, response.status, url, responseHeaders);
+        return this.retryRequest(options, retriesRemaining, responseHeaders);
+      }
+      const errText = await response.text().catch((e) => castToError(e).message);
+      const errJSON = safeJSON(errText);
+      const errMessage = errJSON ? void 0 : errText;
+      const retryMessage = retriesRemaining ? `(error; no more retries left)` : `(error; not retryable)`;
+      debug(`response (error; ${retryMessage})`, response.status, url, responseHeaders, errMessage);
+      const err = this.makeStatusError(response.status, errJSON, errMessage, responseHeaders);
+      throw err;
+    }
+    return { response, options, controller };
+  }
+  requestAPIList(Page2, options) {
+    const request = this.makeRequest(options, null);
+    return new PagePromise(this, request, Page2);
+  }
+  buildURL(path, query) {
+    const url = isAbsoluteURL(path) ? new URL(path) : new URL(this.baseURL + (this.baseURL.endsWith("/") && path.startsWith("/") ? path.slice(1) : path));
+    const defaultQuery = this.defaultQuery();
+    if (!isEmptyObj(defaultQuery)) {
+      query = { ...defaultQuery, ...query };
+    }
+    if (typeof query === "object" && query && !Array.isArray(query)) {
+      url.search = this.stringifyQuery(query);
+    }
+    return url.toString();
+  }
+  stringifyQuery(query) {
+    return Object.entries(query).filter(([_, value]) => typeof value !== "undefined").map(([key, value]) => {
+      if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+        return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+      }
+      if (value === null) {
+        return `${encodeURIComponent(key)}=`;
+      }
+      throw new OpenAIError(`Cannot stringify type ${typeof value}; Expected string, number, boolean, or null. If you need to pass nested query parameters, you can manually encode them, e.g. { query: { 'foo[key1]': value1, 'foo[key2]': value2 } }, and please open a GitHub issue requesting better support for your use case.`);
+    }).join("&");
+  }
+  async fetchWithTimeout(url, init, ms, controller) {
+    const { signal, ...options } = init || {};
+    if (signal)
+      signal.addEventListener("abort", () => controller.abort());
+    const timeout = setTimeout(() => controller.abort(), ms);
+    return this.getRequestClient().fetch.call(void 0, url, { signal: controller.signal, ...options }).finally(() => {
+      clearTimeout(timeout);
+    });
+  }
+  getRequestClient() {
+    return { fetch: this.fetch };
+  }
+  shouldRetry(response) {
+    const shouldRetryHeader = response.headers.get("x-should-retry");
+    if (shouldRetryHeader === "true")
+      return true;
+    if (shouldRetryHeader === "false")
+      return false;
+    if (response.status === 408)
+      return true;
+    if (response.status === 409)
+      return true;
+    if (response.status === 429)
+      return true;
+    if (response.status >= 500)
+      return true;
+    return false;
+  }
+  async retryRequest(options, retriesRemaining, responseHeaders) {
+    var _a2;
+    let timeoutMillis;
+    const retryAfterMillisHeader = responseHeaders == null ? void 0 : responseHeaders["retry-after-ms"];
+    if (retryAfterMillisHeader) {
+      const timeoutMs = parseFloat(retryAfterMillisHeader);
+      if (!Number.isNaN(timeoutMs)) {
+        timeoutMillis = timeoutMs;
+      }
+    }
+    const retryAfterHeader = responseHeaders == null ? void 0 : responseHeaders["retry-after"];
+    if (retryAfterHeader && !timeoutMillis) {
+      const timeoutSeconds = parseFloat(retryAfterHeader);
+      if (!Number.isNaN(timeoutSeconds)) {
+        timeoutMillis = timeoutSeconds * 1e3;
+      } else {
+        timeoutMillis = Date.parse(retryAfterHeader) - Date.now();
+      }
+    }
+    if (!(timeoutMillis && 0 <= timeoutMillis && timeoutMillis < 60 * 1e3)) {
+      const maxRetries = (_a2 = options.maxRetries) != null ? _a2 : this.maxRetries;
+      timeoutMillis = this.calculateDefaultRetryTimeoutMillis(retriesRemaining, maxRetries);
+    }
+    await sleep(timeoutMillis);
+    return this.makeRequest(options, retriesRemaining - 1);
+  }
+  calculateDefaultRetryTimeoutMillis(retriesRemaining, maxRetries) {
+    const initialRetryDelay = 0.5;
+    const maxRetryDelay = 8;
+    const numRetries = maxRetries - retriesRemaining;
+    const sleepSeconds = Math.min(initialRetryDelay * Math.pow(2, numRetries), maxRetryDelay);
+    const jitter = 1 - Math.random() * 0.25;
+    return sleepSeconds * jitter * 1e3;
+  }
+  getUserAgent() {
+    return `${this.constructor.name}/JS ${VERSION}`;
+  }
+};
+var AbstractPage = class {
+  constructor(client2, response, body, options) {
+    _AbstractPage_client.set(this, void 0);
+    __classPrivateFieldSet(this, _AbstractPage_client, client2, "f");
+    this.options = options;
+    this.response = response;
+    this.body = body;
+  }
+  hasNextPage() {
+    const items = this.getPaginatedItems();
+    if (!items.length)
+      return false;
+    return this.nextPageInfo() != null;
+  }
+  async getNextPage() {
+    const nextInfo = this.nextPageInfo();
+    if (!nextInfo) {
+      throw new OpenAIError("No next page expected; please check `.hasNextPage()` before calling `.getNextPage()`.");
+    }
+    const nextOptions = { ...this.options };
+    if ("params" in nextInfo && typeof nextOptions.query === "object") {
+      nextOptions.query = { ...nextOptions.query, ...nextInfo.params };
+    } else if ("url" in nextInfo) {
+      const params = [...Object.entries(nextOptions.query || {}), ...nextInfo.url.searchParams.entries()];
+      for (const [key, value] of params) {
+        nextInfo.url.searchParams.set(key, value);
+      }
+      nextOptions.query = void 0;
+      nextOptions.path = nextInfo.url.toString();
+    }
+    return await __classPrivateFieldGet(this, _AbstractPage_client, "f").requestAPIList(this.constructor, nextOptions);
+  }
+  async *iterPages() {
+    let page = this;
+    yield page;
+    while (page.hasNextPage()) {
+      page = await page.getNextPage();
+      yield page;
+    }
+  }
+  async *[(_AbstractPage_client = /* @__PURE__ */ new WeakMap(), Symbol.asyncIterator)]() {
+    for await (const page of this.iterPages()) {
+      for (const item of page.getPaginatedItems()) {
+        yield item;
+      }
+    }
+  }
+};
+var PagePromise = class extends APIPromise {
+  constructor(client2, request, Page2) {
+    super(request, async (props) => new Page2(client2, props.response, await defaultParseResponse(props), props.options));
+  }
+  /**
+   * Allow auto-paginating iteration on an unawaited list call, eg:
+   *
+   *    for await (const item of client.items.list()) {
+   *      console.log(item)
+   *    }
+   */
+  async *[Symbol.asyncIterator]() {
+    const page = await this;
+    for await (const item of page) {
+      yield item;
+    }
+  }
+};
+var createResponseHeaders = (headers) => {
+  return new Proxy(Object.fromEntries(
+    // @ts-ignore
+    headers.entries()
+  ), {
+    get(target, name) {
+      const key = name.toString();
+      return target[key.toLowerCase()] || target[key];
+    }
+  });
+};
+var requestOptionsKeys = {
+  method: true,
+  path: true,
+  query: true,
+  body: true,
+  headers: true,
+  maxRetries: true,
+  stream: true,
+  timeout: true,
+  httpAgent: true,
+  signal: true,
+  idempotencyKey: true,
+  __binaryRequest: true,
+  __binaryResponse: true,
+  __streamClass: true
+};
+var isRequestOptions = (obj) => {
+  return typeof obj === "object" && obj !== null && !isEmptyObj(obj) && Object.keys(obj).every((k) => hasOwn(requestOptionsKeys, k));
+};
+var getPlatformProperties = () => {
+  var _a2, _b;
+  if (typeof Deno !== "undefined" && Deno.build != null) {
+    return {
+      "X-Stainless-Lang": "js",
+      "X-Stainless-Package-Version": VERSION,
+      "X-Stainless-OS": normalizePlatform(Deno.build.os),
+      "X-Stainless-Arch": normalizeArch(Deno.build.arch),
+      "X-Stainless-Runtime": "deno",
+      "X-Stainless-Runtime-Version": typeof Deno.version === "string" ? Deno.version : (_b = (_a2 = Deno.version) == null ? void 0 : _a2.deno) != null ? _b : "unknown"
+    };
+  }
+  if (typeof EdgeRuntime !== "undefined") {
+    return {
+      "X-Stainless-Lang": "js",
+      "X-Stainless-Package-Version": VERSION,
+      "X-Stainless-OS": "Unknown",
+      "X-Stainless-Arch": `other:${EdgeRuntime}`,
+      "X-Stainless-Runtime": "edge",
+      "X-Stainless-Runtime-Version": process.version
+    };
+  }
+  if (Object.prototype.toString.call(typeof process !== "undefined" ? process : 0) === "[object process]") {
+    return {
+      "X-Stainless-Lang": "js",
+      "X-Stainless-Package-Version": VERSION,
+      "X-Stainless-OS": normalizePlatform(process.platform),
+      "X-Stainless-Arch": normalizeArch(process.arch),
+      "X-Stainless-Runtime": "node",
+      "X-Stainless-Runtime-Version": process.version
+    };
+  }
+  const browserInfo = getBrowserInfo();
+  if (browserInfo) {
+    return {
+      "X-Stainless-Lang": "js",
+      "X-Stainless-Package-Version": VERSION,
+      "X-Stainless-OS": "Unknown",
+      "X-Stainless-Arch": "unknown",
+      "X-Stainless-Runtime": `browser:${browserInfo.browser}`,
+      "X-Stainless-Runtime-Version": browserInfo.version
+    };
+  }
+  return {
+    "X-Stainless-Lang": "js",
+    "X-Stainless-Package-Version": VERSION,
+    "X-Stainless-OS": "Unknown",
+    "X-Stainless-Arch": "unknown",
+    "X-Stainless-Runtime": "unknown",
+    "X-Stainless-Runtime-Version": "unknown"
+  };
+};
+function getBrowserInfo() {
+  if (typeof navigator === "undefined" || !navigator) {
+    return null;
+  }
+  const browserPatterns = [
+    { key: "edge", pattern: /Edge(?:\W+(\d+)\.(\d+)(?:\.(\d+))?)?/ },
+    { key: "ie", pattern: /MSIE(?:\W+(\d+)\.(\d+)(?:\.(\d+))?)?/ },
+    { key: "ie", pattern: /Trident(?:.*rv\:(\d+)\.(\d+)(?:\.(\d+))?)?/ },
+    { key: "chrome", pattern: /Chrome(?:\W+(\d+)\.(\d+)(?:\.(\d+))?)?/ },
+    { key: "firefox", pattern: /Firefox(?:\W+(\d+)\.(\d+)(?:\.(\d+))?)?/ },
+    { key: "safari", pattern: /(?:Version\W+(\d+)\.(\d+)(?:\.(\d+))?)?(?:\W+Mobile\S*)?\W+Safari/ }
+  ];
+  for (const { key, pattern } of browserPatterns) {
+    const match = pattern.exec(navigator.userAgent);
+    if (match) {
+      const major = match[1] || 0;
+      const minor = match[2] || 0;
+      const patch = match[3] || 0;
+      return { browser: key, version: `${major}.${minor}.${patch}` };
+    }
+  }
+  return null;
+}
+var normalizeArch = (arch) => {
+  if (arch === "x32")
+    return "x32";
+  if (arch === "x86_64" || arch === "x64")
+    return "x64";
+  if (arch === "arm")
+    return "arm";
+  if (arch === "aarch64" || arch === "arm64")
+    return "arm64";
+  if (arch)
+    return `other:${arch}`;
+  return "unknown";
+};
+var normalizePlatform = (platform) => {
+  platform = platform.toLowerCase();
+  if (platform.includes("ios"))
+    return "iOS";
+  if (platform === "android")
+    return "Android";
+  if (platform === "darwin")
+    return "MacOS";
+  if (platform === "win32")
+    return "Windows";
+  if (platform === "freebsd")
+    return "FreeBSD";
+  if (platform === "openbsd")
+    return "OpenBSD";
+  if (platform === "linux")
+    return "Linux";
+  if (platform)
+    return `Other:${platform}`;
+  return "Unknown";
+};
+var _platformHeaders;
+var getPlatformHeaders = () => {
+  return _platformHeaders != null ? _platformHeaders : _platformHeaders = getPlatformProperties();
+};
+var safeJSON = (text) => {
+  try {
+    return JSON.parse(text);
+  } catch (err) {
+    return void 0;
+  }
+};
+var startsWithSchemeRegexp = new RegExp("^(?:[a-z]+:)?//", "i");
+var isAbsoluteURL = (url) => {
+  return startsWithSchemeRegexp.test(url);
+};
+var sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+var validatePositiveInteger = (name, n) => {
+  if (typeof n !== "number" || !Number.isInteger(n)) {
+    throw new OpenAIError(`${name} must be an integer`);
+  }
+  if (n < 0) {
+    throw new OpenAIError(`${name} must be a positive integer`);
+  }
+  return n;
+};
+var castToError = (err) => {
+  if (err instanceof Error)
+    return err;
+  if (typeof err === "object" && err !== null) {
+    try {
+      return new Error(JSON.stringify(err));
+    } catch (e) {
+    }
+  }
+  return new Error(err);
+};
+var readEnv = (env) => {
+  var _a2, _b, _c, _d, _e, _f;
+  if (typeof process !== "undefined") {
+    return (_c = (_b = (_a2 = process.env) == null ? void 0 : _a2[env]) == null ? void 0 : _b.trim()) != null ? _c : void 0;
+  }
+  if (typeof Deno !== "undefined") {
+    return (_f = (_e = (_d = Deno.env) == null ? void 0 : _d.get) == null ? void 0 : _e.call(_d, env)) == null ? void 0 : _f.trim();
+  }
+  return void 0;
+};
+function isEmptyObj(obj) {
+  if (!obj)
+    return true;
+  for (const _k in obj)
+    return false;
+  return true;
+}
+function hasOwn(obj, key) {
+  return Object.prototype.hasOwnProperty.call(obj, key);
+}
+function applyHeadersMut(targetHeaders, newHeaders) {
+  for (const k in newHeaders) {
+    if (!hasOwn(newHeaders, k))
+      continue;
+    const lowerKey = k.toLowerCase();
+    if (!lowerKey)
+      continue;
+    const val = newHeaders[k];
+    if (val === null) {
+      delete targetHeaders[lowerKey];
+    } else if (val !== void 0) {
+      targetHeaders[lowerKey] = val;
+    }
+  }
+}
+function debug(action, ...args) {
+  var _a2;
+  if (typeof process !== "undefined" && ((_a2 = process == null ? void 0 : process.env) == null ? void 0 : _a2["DEBUG"]) === "true") {
+    console.log(`OpenAI:DEBUG:${action}`, ...args);
+  }
+}
+var uuid4 = () => {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = Math.random() * 16 | 0;
+    const v = c === "x" ? r : r & 3 | 8;
+    return v.toString(16);
+  });
+};
+var isRunningInBrowser = () => {
+  return (
+    // @ts-ignore
+    typeof window !== "undefined" && // @ts-ignore
+    typeof window.document !== "undefined" && // @ts-ignore
+    typeof navigator !== "undefined"
+  );
+};
+var isHeadersProtocol = (headers) => {
+  return typeof (headers == null ? void 0 : headers.get) === "function";
+};
+var getHeader = (headers, header) => {
+  var _a2;
+  const lowerCasedHeader = header.toLowerCase();
+  if (isHeadersProtocol(headers)) {
+    const intercapsHeader = ((_a2 = header[0]) == null ? void 0 : _a2.toUpperCase()) + header.substring(1).replace(/([^\w])(\w)/g, (_m, g1, g2) => g1 + g2.toUpperCase());
+    for (const key of [header, lowerCasedHeader, header.toUpperCase(), intercapsHeader]) {
+      const value = headers.get(key);
+      if (value) {
+        return value;
+      }
+    }
+  }
+  for (const [key, value] of Object.entries(headers)) {
+    if (key.toLowerCase() === lowerCasedHeader) {
+      if (Array.isArray(value)) {
+        if (value.length <= 1)
+          return value[0];
+        console.warn(`Received ${value.length} entries for the ${header} header, using the first entry.`);
+        return value[0];
+      }
+      return value;
+    }
+  }
+  return void 0;
+};
+function isObj(obj) {
+  return obj != null && typeof obj === "object" && !Array.isArray(obj);
+}
+
+// node_modules/openai/pagination.mjs
+var Page = class extends AbstractPage {
+  constructor(client2, response, body, options) {
+    super(client2, response, body, options);
+    this.data = body.data || [];
+    this.object = body.object;
+  }
+  getPaginatedItems() {
+    var _a2;
+    return (_a2 = this.data) != null ? _a2 : [];
+  }
+  // @deprecated Please use `nextPageInfo()` instead
+  /**
+   * This page represents a response that isn't actually paginated at the API level
+   * so there will never be any next page params.
+   */
+  nextPageParams() {
+    return null;
+  }
+  nextPageInfo() {
+    return null;
+  }
+};
+var CursorPage = class extends AbstractPage {
+  constructor(client2, response, body, options) {
+    super(client2, response, body, options);
+    this.data = body.data || [];
+  }
+  getPaginatedItems() {
+    var _a2;
+    return (_a2 = this.data) != null ? _a2 : [];
+  }
+  // @deprecated Please use `nextPageInfo()` instead
+  nextPageParams() {
+    const info = this.nextPageInfo();
+    if (!info)
+      return null;
+    if ("params" in info)
+      return info.params;
+    const params = Object.fromEntries(info.url.searchParams);
+    if (!Object.keys(params).length)
+      return null;
+    return params;
+  }
+  nextPageInfo() {
+    var _a2;
+    const data = this.getPaginatedItems();
+    if (!data.length) {
+      return null;
+    }
+    const id = (_a2 = data[data.length - 1]) == null ? void 0 : _a2.id;
+    if (!id) {
+      return null;
+    }
+    return { params: { after: id } };
+  }
+};
+
+// node_modules/openai/resource.mjs
+var APIResource = class {
+  constructor(client2) {
+    this._client = client2;
+  }
+};
+
+// node_modules/openai/resources/chat/completions.mjs
+var Completions = class extends APIResource {
+  create(body, options) {
+    var _a2;
+    return this._client.post("/chat/completions", { body, ...options, stream: (_a2 = body.stream) != null ? _a2 : false });
+  }
+};
+
+// node_modules/openai/resources/chat/chat.mjs
+var Chat = class extends APIResource {
+  constructor() {
+    super(...arguments);
+    this.completions = new Completions(this._client);
+  }
+};
+Chat.Completions = Completions;
+
+// node_modules/openai/resources/audio/speech.mjs
+var Speech = class extends APIResource {
+  /**
+   * Generates audio from the input text.
+   */
+  create(body, options) {
+    return this._client.post("/audio/speech", { body, ...options, __binaryResponse: true });
+  }
+};
+
+// node_modules/openai/resources/audio/transcriptions.mjs
+var Transcriptions = class extends APIResource {
+  create(body, options) {
+    return this._client.post("/audio/transcriptions", multipartFormRequestOptions({ body, ...options }));
+  }
+};
+
+// node_modules/openai/resources/audio/translations.mjs
+var Translations = class extends APIResource {
+  create(body, options) {
+    return this._client.post("/audio/translations", multipartFormRequestOptions({ body, ...options }));
+  }
+};
+
+// node_modules/openai/resources/audio/audio.mjs
+var Audio = class extends APIResource {
+  constructor() {
+    super(...arguments);
+    this.transcriptions = new Transcriptions(this._client);
+    this.translations = new Translations(this._client);
+    this.speech = new Speech(this._client);
+  }
+};
+Audio.Transcriptions = Transcriptions;
+Audio.Translations = Translations;
+Audio.Speech = Speech;
+
+// node_modules/openai/resources/batches.mjs
+var Batches = class extends APIResource {
+  /**
+   * Creates and executes a batch from an uploaded file of requests
+   */
+  create(body, options) {
+    return this._client.post("/batches", { body, ...options });
+  }
+  /**
+   * Retrieves a batch.
+   */
+  retrieve(batchId, options) {
+    return this._client.get(`/batches/${batchId}`, options);
+  }
+  list(query = {}, options) {
+    if (isRequestOptions(query)) {
+      return this.list({}, query);
+    }
+    return this._client.getAPIList("/batches", BatchesPage, { query, ...options });
+  }
+  /**
+   * Cancels an in-progress batch. The batch will be in status `cancelling` for up to
+   * 10 minutes, before changing to `cancelled`, where it will have partial results
+   * (if any) available in the output file.
+   */
+  cancel(batchId, options) {
+    return this._client.post(`/batches/${batchId}/cancel`, options);
+  }
+};
+var BatchesPage = class extends CursorPage {
+};
+Batches.BatchesPage = BatchesPage;
+
+// node_modules/openai/resources/beta/assistants.mjs
+var Assistants = class extends APIResource {
+  /**
+   * Create an assistant with a model and instructions.
+   */
+  create(body, options) {
+    return this._client.post("/assistants", {
+      body,
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  /**
+   * Retrieves an assistant.
+   */
+  retrieve(assistantId, options) {
+    return this._client.get(`/assistants/${assistantId}`, {
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  /**
+   * Modifies an assistant.
+   */
+  update(assistantId, body, options) {
+    return this._client.post(`/assistants/${assistantId}`, {
+      body,
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  list(query = {}, options) {
+    if (isRequestOptions(query)) {
+      return this.list({}, query);
+    }
+    return this._client.getAPIList("/assistants", AssistantsPage, {
+      query,
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  /**
+   * Delete an assistant.
+   */
+  del(assistantId, options) {
+    return this._client.delete(`/assistants/${assistantId}`, {
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+};
+var AssistantsPage = class extends CursorPage {
+};
+Assistants.AssistantsPage = AssistantsPage;
+
+// node_modules/openai/lib/RunnableFunction.mjs
+function isRunnableFunctionWithParse(fn) {
+  return typeof fn.parse === "function";
+}
+
+// node_modules/openai/lib/chatCompletionUtils.mjs
+var isAssistantMessage = (message) => {
+  return (message == null ? void 0 : message.role) === "assistant";
+};
+var isFunctionMessage = (message) => {
+  return (message == null ? void 0 : message.role) === "function";
+};
+var isToolMessage = (message) => {
+  return (message == null ? void 0 : message.role) === "tool";
+};
+
+// node_modules/openai/lib/EventStream.mjs
+var __classPrivateFieldSet2 = function(receiver, state, value, kind2, f) {
+  if (kind2 === "m") throw new TypeError("Private method is not writable");
+  if (kind2 === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+  if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+  return kind2 === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value), value;
+};
+var __classPrivateFieldGet2 = function(receiver, state, kind2, f) {
+  if (kind2 === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+  if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+  return kind2 === "m" ? f : kind2 === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+};
+var _EventStream_instances;
+var _EventStream_connectedPromise;
+var _EventStream_resolveConnectedPromise;
+var _EventStream_rejectConnectedPromise;
+var _EventStream_endPromise;
+var _EventStream_resolveEndPromise;
+var _EventStream_rejectEndPromise;
+var _EventStream_listeners;
+var _EventStream_ended;
+var _EventStream_errored;
+var _EventStream_aborted;
+var _EventStream_catchingPromiseCreated;
+var _EventStream_handleError;
+var EventStream = class {
+  constructor() {
+    _EventStream_instances.add(this);
+    this.controller = new AbortController();
+    _EventStream_connectedPromise.set(this, void 0);
+    _EventStream_resolveConnectedPromise.set(this, () => {
+    });
+    _EventStream_rejectConnectedPromise.set(this, () => {
+    });
+    _EventStream_endPromise.set(this, void 0);
+    _EventStream_resolveEndPromise.set(this, () => {
+    });
+    _EventStream_rejectEndPromise.set(this, () => {
+    });
+    _EventStream_listeners.set(this, {});
+    _EventStream_ended.set(this, false);
+    _EventStream_errored.set(this, false);
+    _EventStream_aborted.set(this, false);
+    _EventStream_catchingPromiseCreated.set(this, false);
+    __classPrivateFieldSet2(this, _EventStream_connectedPromise, new Promise((resolve, reject) => {
+      __classPrivateFieldSet2(this, _EventStream_resolveConnectedPromise, resolve, "f");
+      __classPrivateFieldSet2(this, _EventStream_rejectConnectedPromise, reject, "f");
+    }), "f");
+    __classPrivateFieldSet2(this, _EventStream_endPromise, new Promise((resolve, reject) => {
+      __classPrivateFieldSet2(this, _EventStream_resolveEndPromise, resolve, "f");
+      __classPrivateFieldSet2(this, _EventStream_rejectEndPromise, reject, "f");
+    }), "f");
+    __classPrivateFieldGet2(this, _EventStream_connectedPromise, "f").catch(() => {
+    });
+    __classPrivateFieldGet2(this, _EventStream_endPromise, "f").catch(() => {
+    });
+  }
+  _run(executor) {
+    setTimeout(() => {
+      executor().then(() => {
+        this._emitFinal();
+        this._emit("end");
+      }, __classPrivateFieldGet2(this, _EventStream_instances, "m", _EventStream_handleError).bind(this));
+    }, 0);
+  }
+  _connected() {
+    if (this.ended)
+      return;
+    __classPrivateFieldGet2(this, _EventStream_resolveConnectedPromise, "f").call(this);
+    this._emit("connect");
+  }
+  get ended() {
+    return __classPrivateFieldGet2(this, _EventStream_ended, "f");
+  }
+  get errored() {
+    return __classPrivateFieldGet2(this, _EventStream_errored, "f");
+  }
+  get aborted() {
+    return __classPrivateFieldGet2(this, _EventStream_aborted, "f");
+  }
+  abort() {
+    this.controller.abort();
+  }
+  /**
+   * Adds the listener function to the end of the listeners array for the event.
+   * No checks are made to see if the listener has already been added. Multiple calls passing
+   * the same combination of event and listener will result in the listener being added, and
+   * called, multiple times.
+   * @returns this ChatCompletionStream, so that calls can be chained
+   */
+  on(event, listener) {
+    const listeners = __classPrivateFieldGet2(this, _EventStream_listeners, "f")[event] || (__classPrivateFieldGet2(this, _EventStream_listeners, "f")[event] = []);
+    listeners.push({ listener });
+    return this;
+  }
+  /**
+   * Removes the specified listener from the listener array for the event.
+   * off() will remove, at most, one instance of a listener from the listener array. If any single
+   * listener has been added multiple times to the listener array for the specified event, then
+   * off() must be called multiple times to remove each instance.
+   * @returns this ChatCompletionStream, so that calls can be chained
+   */
+  off(event, listener) {
+    const listeners = __classPrivateFieldGet2(this, _EventStream_listeners, "f")[event];
+    if (!listeners)
+      return this;
+    const index = listeners.findIndex((l) => l.listener === listener);
+    if (index >= 0)
+      listeners.splice(index, 1);
+    return this;
+  }
+  /**
+   * Adds a one-time listener function for the event. The next time the event is triggered,
+   * this listener is removed and then invoked.
+   * @returns this ChatCompletionStream, so that calls can be chained
+   */
+  once(event, listener) {
+    const listeners = __classPrivateFieldGet2(this, _EventStream_listeners, "f")[event] || (__classPrivateFieldGet2(this, _EventStream_listeners, "f")[event] = []);
+    listeners.push({ listener, once: true });
+    return this;
+  }
+  /**
+   * This is similar to `.once()`, but returns a Promise that resolves the next time
+   * the event is triggered, instead of calling a listener callback.
+   * @returns a Promise that resolves the next time given event is triggered,
+   * or rejects if an error is emitted.  (If you request the 'error' event,
+   * returns a promise that resolves with the error).
+   *
+   * Example:
+   *
+   *   const message = await stream.emitted('message') // rejects if the stream errors
+   */
+  emitted(event) {
+    return new Promise((resolve, reject) => {
+      __classPrivateFieldSet2(this, _EventStream_catchingPromiseCreated, true, "f");
+      if (event !== "error")
+        this.once("error", reject);
+      this.once(event, resolve);
+    });
+  }
+  async done() {
+    __classPrivateFieldSet2(this, _EventStream_catchingPromiseCreated, true, "f");
+    await __classPrivateFieldGet2(this, _EventStream_endPromise, "f");
+  }
+  _emit(event, ...args) {
+    if (__classPrivateFieldGet2(this, _EventStream_ended, "f")) {
+      return;
+    }
+    if (event === "end") {
+      __classPrivateFieldSet2(this, _EventStream_ended, true, "f");
+      __classPrivateFieldGet2(this, _EventStream_resolveEndPromise, "f").call(this);
+    }
+    const listeners = __classPrivateFieldGet2(this, _EventStream_listeners, "f")[event];
+    if (listeners) {
+      __classPrivateFieldGet2(this, _EventStream_listeners, "f")[event] = listeners.filter((l) => !l.once);
+      listeners.forEach(({ listener }) => listener(...args));
+    }
+    if (event === "abort") {
+      const error = args[0];
+      if (!__classPrivateFieldGet2(this, _EventStream_catchingPromiseCreated, "f") && !(listeners == null ? void 0 : listeners.length)) {
+        Promise.reject(error);
+      }
+      __classPrivateFieldGet2(this, _EventStream_rejectConnectedPromise, "f").call(this, error);
+      __classPrivateFieldGet2(this, _EventStream_rejectEndPromise, "f").call(this, error);
+      this._emit("end");
+      return;
+    }
+    if (event === "error") {
+      const error = args[0];
+      if (!__classPrivateFieldGet2(this, _EventStream_catchingPromiseCreated, "f") && !(listeners == null ? void 0 : listeners.length)) {
+        Promise.reject(error);
+      }
+      __classPrivateFieldGet2(this, _EventStream_rejectConnectedPromise, "f").call(this, error);
+      __classPrivateFieldGet2(this, _EventStream_rejectEndPromise, "f").call(this, error);
+      this._emit("end");
+    }
+  }
+  _emitFinal() {
+  }
+};
+_EventStream_connectedPromise = /* @__PURE__ */ new WeakMap(), _EventStream_resolveConnectedPromise = /* @__PURE__ */ new WeakMap(), _EventStream_rejectConnectedPromise = /* @__PURE__ */ new WeakMap(), _EventStream_endPromise = /* @__PURE__ */ new WeakMap(), _EventStream_resolveEndPromise = /* @__PURE__ */ new WeakMap(), _EventStream_rejectEndPromise = /* @__PURE__ */ new WeakMap(), _EventStream_listeners = /* @__PURE__ */ new WeakMap(), _EventStream_ended = /* @__PURE__ */ new WeakMap(), _EventStream_errored = /* @__PURE__ */ new WeakMap(), _EventStream_aborted = /* @__PURE__ */ new WeakMap(), _EventStream_catchingPromiseCreated = /* @__PURE__ */ new WeakMap(), _EventStream_instances = /* @__PURE__ */ new WeakSet(), _EventStream_handleError = function _EventStream_handleError2(error) {
+  __classPrivateFieldSet2(this, _EventStream_errored, true, "f");
+  if (error instanceof Error && error.name === "AbortError") {
+    error = new APIUserAbortError();
+  }
+  if (error instanceof APIUserAbortError) {
+    __classPrivateFieldSet2(this, _EventStream_aborted, true, "f");
+    return this._emit("abort", error);
+  }
+  if (error instanceof OpenAIError) {
+    return this._emit("error", error);
+  }
+  if (error instanceof Error) {
+    const openAIError = new OpenAIError(error.message);
+    openAIError.cause = error;
+    return this._emit("error", openAIError);
+  }
+  return this._emit("error", new OpenAIError(String(error)));
+};
+
+// node_modules/openai/lib/parser.mjs
+function isAutoParsableResponseFormat(response_format) {
+  return (response_format == null ? void 0 : response_format["$brand"]) === "auto-parseable-response-format";
+}
+function isAutoParsableTool(tool) {
+  return (tool == null ? void 0 : tool["$brand"]) === "auto-parseable-tool";
+}
+function maybeParseChatCompletion(completion, params) {
+  if (!params || !hasAutoParseableInput(params)) {
+    return {
+      ...completion,
+      choices: completion.choices.map((choice) => {
+        var _a2;
+        return {
+          ...choice,
+          message: { ...choice.message, parsed: null, tool_calls: (_a2 = choice.message.tool_calls) != null ? _a2 : [] }
+        };
+      })
+    };
+  }
+  return parseChatCompletion(completion, params);
+}
+function parseChatCompletion(completion, params) {
+  const choices = completion.choices.map((choice) => {
+    var _a2, _b;
+    if (choice.finish_reason === "length") {
+      throw new LengthFinishReasonError();
+    }
+    if (choice.finish_reason === "content_filter") {
+      throw new ContentFilterFinishReasonError();
+    }
+    return {
+      ...choice,
+      message: {
+        ...choice.message,
+        tool_calls: (_b = (_a2 = choice.message.tool_calls) == null ? void 0 : _a2.map((toolCall) => parseToolCall(params, toolCall))) != null ? _b : [],
+        parsed: choice.message.content && !choice.message.refusal ? parseResponseFormat(params, choice.message.content) : null
+      }
+    };
+  });
+  return { ...completion, choices };
+}
+function parseResponseFormat(params, content) {
+  var _a2, _b;
+  if (((_a2 = params.response_format) == null ? void 0 : _a2.type) !== "json_schema") {
+    return null;
+  }
+  if (((_b = params.response_format) == null ? void 0 : _b.type) === "json_schema") {
+    if ("$parseRaw" in params.response_format) {
+      const response_format = params.response_format;
+      return response_format.$parseRaw(content);
+    }
+    return JSON.parse(content);
+  }
+  return null;
+}
+function parseToolCall(params, toolCall) {
+  var _a2;
+  const inputTool = (_a2 = params.tools) == null ? void 0 : _a2.find((inputTool2) => {
+    var _a3;
+    return ((_a3 = inputTool2.function) == null ? void 0 : _a3.name) === toolCall.function.name;
+  });
+  return {
+    ...toolCall,
+    function: {
+      ...toolCall.function,
+      parsed_arguments: isAutoParsableTool(inputTool) ? inputTool.$parseRaw(toolCall.function.arguments) : (inputTool == null ? void 0 : inputTool.function.strict) ? JSON.parse(toolCall.function.arguments) : null
+    }
+  };
+}
+function shouldParseToolCall(params, toolCall) {
+  var _a2;
+  if (!params) {
+    return false;
+  }
+  const inputTool = (_a2 = params.tools) == null ? void 0 : _a2.find((inputTool2) => {
+    var _a3;
+    return ((_a3 = inputTool2.function) == null ? void 0 : _a3.name) === toolCall.function.name;
+  });
+  return isAutoParsableTool(inputTool) || (inputTool == null ? void 0 : inputTool.function.strict) || false;
+}
+function hasAutoParseableInput(params) {
+  var _a2, _b;
+  if (isAutoParsableResponseFormat(params.response_format)) {
+    return true;
+  }
+  return (_b = (_a2 = params.tools) == null ? void 0 : _a2.some((t) => isAutoParsableTool(t) || t.type === "function" && t.function.strict === true)) != null ? _b : false;
+}
+function validateInputTools(tools) {
+  for (const tool of tools != null ? tools : []) {
+    if (tool.type !== "function") {
+      throw new OpenAIError(`Currently only \`function\` tool types support auto-parsing; Received \`${tool.type}\``);
+    }
+    if (tool.function.strict !== true) {
+      throw new OpenAIError(`The \`${tool.function.name}\` tool is not marked with \`strict: true\`. Only strict function tools can be auto-parsed`);
+    }
+  }
+}
+
+// node_modules/openai/lib/AbstractChatCompletionRunner.mjs
+var __classPrivateFieldGet3 = function(receiver, state, kind2, f) {
+  if (kind2 === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+  if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+  return kind2 === "m" ? f : kind2 === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+};
+var _AbstractChatCompletionRunner_instances;
+var _AbstractChatCompletionRunner_getFinalContent;
+var _AbstractChatCompletionRunner_getFinalMessage;
+var _AbstractChatCompletionRunner_getFinalFunctionCall;
+var _AbstractChatCompletionRunner_getFinalFunctionCallResult;
+var _AbstractChatCompletionRunner_calculateTotalUsage;
+var _AbstractChatCompletionRunner_validateParams;
+var _AbstractChatCompletionRunner_stringifyFunctionCallResult;
+var DEFAULT_MAX_CHAT_COMPLETIONS = 10;
+var AbstractChatCompletionRunner = class extends EventStream {
+  constructor() {
+    super(...arguments);
+    _AbstractChatCompletionRunner_instances.add(this);
+    this._chatCompletions = [];
+    this.messages = [];
+  }
+  _addChatCompletion(chatCompletion) {
+    var _a2;
+    this._chatCompletions.push(chatCompletion);
+    this._emit("chatCompletion", chatCompletion);
+    const message = (_a2 = chatCompletion.choices[0]) == null ? void 0 : _a2.message;
+    if (message)
+      this._addMessage(message);
+    return chatCompletion;
+  }
+  _addMessage(message, emit = true) {
+    if (!("content" in message))
+      message.content = null;
+    this.messages.push(message);
+    if (emit) {
+      this._emit("message", message);
+      if ((isFunctionMessage(message) || isToolMessage(message)) && message.content) {
+        this._emit("functionCallResult", message.content);
+      } else if (isAssistantMessage(message) && message.function_call) {
+        this._emit("functionCall", message.function_call);
+      } else if (isAssistantMessage(message) && message.tool_calls) {
+        for (const tool_call of message.tool_calls) {
+          if (tool_call.type === "function") {
+            this._emit("functionCall", tool_call.function);
+          }
+        }
+      }
+    }
+  }
+  /**
+   * @returns a promise that resolves with the final ChatCompletion, or rejects
+   * if an error occurred or the stream ended prematurely without producing a ChatCompletion.
+   */
+  async finalChatCompletion() {
+    await this.done();
+    const completion = this._chatCompletions[this._chatCompletions.length - 1];
+    if (!completion)
+      throw new OpenAIError("stream ended without producing a ChatCompletion");
+    return completion;
+  }
+  /**
+   * @returns a promise that resolves with the content of the final ChatCompletionMessage, or rejects
+   * if an error occurred or the stream ended prematurely without producing a ChatCompletionMessage.
+   */
+  async finalContent() {
+    await this.done();
+    return __classPrivateFieldGet3(this, _AbstractChatCompletionRunner_instances, "m", _AbstractChatCompletionRunner_getFinalContent).call(this);
+  }
+  /**
+   * @returns a promise that resolves with the the final assistant ChatCompletionMessage response,
+   * or rejects if an error occurred or the stream ended prematurely without producing a ChatCompletionMessage.
+   */
+  async finalMessage() {
+    await this.done();
+    return __classPrivateFieldGet3(this, _AbstractChatCompletionRunner_instances, "m", _AbstractChatCompletionRunner_getFinalMessage).call(this);
+  }
+  /**
+   * @returns a promise that resolves with the content of the final FunctionCall, or rejects
+   * if an error occurred or the stream ended prematurely without producing a ChatCompletionMessage.
+   */
+  async finalFunctionCall() {
+    await this.done();
+    return __classPrivateFieldGet3(this, _AbstractChatCompletionRunner_instances, "m", _AbstractChatCompletionRunner_getFinalFunctionCall).call(this);
+  }
+  async finalFunctionCallResult() {
+    await this.done();
+    return __classPrivateFieldGet3(this, _AbstractChatCompletionRunner_instances, "m", _AbstractChatCompletionRunner_getFinalFunctionCallResult).call(this);
+  }
+  async totalUsage() {
+    await this.done();
+    return __classPrivateFieldGet3(this, _AbstractChatCompletionRunner_instances, "m", _AbstractChatCompletionRunner_calculateTotalUsage).call(this);
+  }
+  allChatCompletions() {
+    return [...this._chatCompletions];
+  }
+  _emitFinal() {
+    const completion = this._chatCompletions[this._chatCompletions.length - 1];
+    if (completion)
+      this._emit("finalChatCompletion", completion);
+    const finalMessage = __classPrivateFieldGet3(this, _AbstractChatCompletionRunner_instances, "m", _AbstractChatCompletionRunner_getFinalMessage).call(this);
+    if (finalMessage)
+      this._emit("finalMessage", finalMessage);
+    const finalContent = __classPrivateFieldGet3(this, _AbstractChatCompletionRunner_instances, "m", _AbstractChatCompletionRunner_getFinalContent).call(this);
+    if (finalContent)
+      this._emit("finalContent", finalContent);
+    const finalFunctionCall = __classPrivateFieldGet3(this, _AbstractChatCompletionRunner_instances, "m", _AbstractChatCompletionRunner_getFinalFunctionCall).call(this);
+    if (finalFunctionCall)
+      this._emit("finalFunctionCall", finalFunctionCall);
+    const finalFunctionCallResult = __classPrivateFieldGet3(this, _AbstractChatCompletionRunner_instances, "m", _AbstractChatCompletionRunner_getFinalFunctionCallResult).call(this);
+    if (finalFunctionCallResult != null)
+      this._emit("finalFunctionCallResult", finalFunctionCallResult);
+    if (this._chatCompletions.some((c) => c.usage)) {
+      this._emit("totalUsage", __classPrivateFieldGet3(this, _AbstractChatCompletionRunner_instances, "m", _AbstractChatCompletionRunner_calculateTotalUsage).call(this));
+    }
+  }
+  async _createChatCompletion(client2, params, options) {
+    const signal = options == null ? void 0 : options.signal;
+    if (signal) {
+      if (signal.aborted)
+        this.controller.abort();
+      signal.addEventListener("abort", () => this.controller.abort());
+    }
+    __classPrivateFieldGet3(this, _AbstractChatCompletionRunner_instances, "m", _AbstractChatCompletionRunner_validateParams).call(this, params);
+    const chatCompletion = await client2.chat.completions.create({ ...params, stream: false }, { ...options, signal: this.controller.signal });
+    this._connected();
+    return this._addChatCompletion(parseChatCompletion(chatCompletion, params));
+  }
+  async _runChatCompletion(client2, params, options) {
+    for (const message of params.messages) {
+      this._addMessage(message, false);
+    }
+    return await this._createChatCompletion(client2, params, options);
+  }
+  async _runFunctions(client2, params, options) {
+    var _a2;
+    const role = "function";
+    const { function_call = "auto", stream, ...restParams } = params;
+    const singleFunctionToCall = typeof function_call !== "string" && (function_call == null ? void 0 : function_call.name);
+    const { maxChatCompletions = DEFAULT_MAX_CHAT_COMPLETIONS } = options || {};
+    const functionsByName = {};
+    for (const f of params.functions) {
+      functionsByName[f.name || f.function.name] = f;
+    }
+    const functions = params.functions.map((f) => ({
+      name: f.name || f.function.name,
+      parameters: f.parameters,
+      description: f.description
+    }));
+    for (const message of params.messages) {
+      this._addMessage(message, false);
+    }
+    for (let i = 0; i < maxChatCompletions; ++i) {
+      const chatCompletion = await this._createChatCompletion(client2, {
+        ...restParams,
+        function_call,
+        functions,
+        messages: [...this.messages]
+      }, options);
+      const message = (_a2 = chatCompletion.choices[0]) == null ? void 0 : _a2.message;
+      if (!message) {
+        throw new OpenAIError(`missing message in ChatCompletion response`);
+      }
+      if (!message.function_call)
+        return;
+      const { name, arguments: args } = message.function_call;
+      const fn = functionsByName[name];
+      if (!fn) {
+        const content2 = `Invalid function_call: ${JSON.stringify(name)}. Available options are: ${functions.map((f) => JSON.stringify(f.name)).join(", ")}. Please try again`;
+        this._addMessage({ role, name, content: content2 });
+        continue;
+      } else if (singleFunctionToCall && singleFunctionToCall !== name) {
+        const content2 = `Invalid function_call: ${JSON.stringify(name)}. ${JSON.stringify(singleFunctionToCall)} requested. Please try again`;
+        this._addMessage({ role, name, content: content2 });
+        continue;
+      }
+      let parsed;
+      try {
+        parsed = isRunnableFunctionWithParse(fn) ? await fn.parse(args) : args;
+      } catch (error) {
+        this._addMessage({
+          role,
+          name,
+          content: error instanceof Error ? error.message : String(error)
+        });
+        continue;
+      }
+      const rawContent = await fn.function(parsed, this);
+      const content = __classPrivateFieldGet3(this, _AbstractChatCompletionRunner_instances, "m", _AbstractChatCompletionRunner_stringifyFunctionCallResult).call(this, rawContent);
+      this._addMessage({ role, name, content });
+      if (singleFunctionToCall)
+        return;
+    }
+  }
+  async _runTools(client2, params, options) {
+    var _a2, _b, _c;
+    const role = "tool";
+    const { tool_choice = "auto", stream, ...restParams } = params;
+    const singleFunctionToCall = typeof tool_choice !== "string" && ((_a2 = tool_choice == null ? void 0 : tool_choice.function) == null ? void 0 : _a2.name);
+    const { maxChatCompletions = DEFAULT_MAX_CHAT_COMPLETIONS } = options || {};
+    const inputTools = params.tools.map((tool) => {
+      if (isAutoParsableTool(tool)) {
+        if (!tool.$callback) {
+          throw new OpenAIError("Tool given to `.runTools()` that does not have an associated function");
+        }
+        return {
+          type: "function",
+          function: {
+            function: tool.$callback,
+            name: tool.function.name,
+            description: tool.function.description || "",
+            parameters: tool.function.parameters,
+            parse: tool.$parseRaw,
+            strict: true
+          }
+        };
+      }
+      return tool;
+    });
+    const functionsByName = {};
+    for (const f of inputTools) {
+      if (f.type === "function") {
+        functionsByName[f.function.name || f.function.function.name] = f.function;
+      }
+    }
+    const tools = "tools" in params ? inputTools.map((t) => t.type === "function" ? {
+      type: "function",
+      function: {
+        name: t.function.name || t.function.function.name,
+        parameters: t.function.parameters,
+        description: t.function.description,
+        strict: t.function.strict
+      }
+    } : t) : void 0;
+    for (const message of params.messages) {
+      this._addMessage(message, false);
+    }
+    for (let i = 0; i < maxChatCompletions; ++i) {
+      const chatCompletion = await this._createChatCompletion(client2, {
+        ...restParams,
+        tool_choice,
+        tools,
+        messages: [...this.messages]
+      }, options);
+      const message = (_b = chatCompletion.choices[0]) == null ? void 0 : _b.message;
+      if (!message) {
+        throw new OpenAIError(`missing message in ChatCompletion response`);
+      }
+      if (!((_c = message.tool_calls) == null ? void 0 : _c.length)) {
+        return;
+      }
+      for (const tool_call of message.tool_calls) {
+        if (tool_call.type !== "function")
+          continue;
+        const tool_call_id = tool_call.id;
+        const { name, arguments: args } = tool_call.function;
+        const fn = functionsByName[name];
+        if (!fn) {
+          const content2 = `Invalid tool_call: ${JSON.stringify(name)}. Available options are: ${Object.keys(functionsByName).map((name2) => JSON.stringify(name2)).join(", ")}. Please try again`;
+          this._addMessage({ role, tool_call_id, content: content2 });
+          continue;
+        } else if (singleFunctionToCall && singleFunctionToCall !== name) {
+          const content2 = `Invalid tool_call: ${JSON.stringify(name)}. ${JSON.stringify(singleFunctionToCall)} requested. Please try again`;
+          this._addMessage({ role, tool_call_id, content: content2 });
+          continue;
+        }
+        let parsed;
+        try {
+          parsed = isRunnableFunctionWithParse(fn) ? await fn.parse(args) : args;
+        } catch (error) {
+          const content2 = error instanceof Error ? error.message : String(error);
+          this._addMessage({ role, tool_call_id, content: content2 });
+          continue;
+        }
+        const rawContent = await fn.function(parsed, this);
+        const content = __classPrivateFieldGet3(this, _AbstractChatCompletionRunner_instances, "m", _AbstractChatCompletionRunner_stringifyFunctionCallResult).call(this, rawContent);
+        this._addMessage({ role, tool_call_id, content });
+        if (singleFunctionToCall) {
+          return;
+        }
+      }
+    }
+    return;
+  }
+};
+_AbstractChatCompletionRunner_instances = /* @__PURE__ */ new WeakSet(), _AbstractChatCompletionRunner_getFinalContent = function _AbstractChatCompletionRunner_getFinalContent2() {
+  var _a2;
+  return (_a2 = __classPrivateFieldGet3(this, _AbstractChatCompletionRunner_instances, "m", _AbstractChatCompletionRunner_getFinalMessage).call(this).content) != null ? _a2 : null;
+}, _AbstractChatCompletionRunner_getFinalMessage = function _AbstractChatCompletionRunner_getFinalMessage2() {
+  var _a2, _b;
+  let i = this.messages.length;
+  while (i-- > 0) {
+    const message = this.messages[i];
+    if (isAssistantMessage(message)) {
+      const { function_call, ...rest } = message;
+      const ret = {
+        ...rest,
+        content: (_a2 = message.content) != null ? _a2 : null,
+        refusal: (_b = message.refusal) != null ? _b : null
+      };
+      if (function_call) {
+        ret.function_call = function_call;
+      }
+      return ret;
+    }
+  }
+  throw new OpenAIError("stream ended without producing a ChatCompletionMessage with role=assistant");
+}, _AbstractChatCompletionRunner_getFinalFunctionCall = function _AbstractChatCompletionRunner_getFinalFunctionCall2() {
+  var _a2, _b;
+  for (let i = this.messages.length - 1; i >= 0; i--) {
+    const message = this.messages[i];
+    if (isAssistantMessage(message) && (message == null ? void 0 : message.function_call)) {
+      return message.function_call;
+    }
+    if (isAssistantMessage(message) && ((_a2 = message == null ? void 0 : message.tool_calls) == null ? void 0 : _a2.length)) {
+      return (_b = message.tool_calls.at(-1)) == null ? void 0 : _b.function;
+    }
+  }
+  return;
+}, _AbstractChatCompletionRunner_getFinalFunctionCallResult = function _AbstractChatCompletionRunner_getFinalFunctionCallResult2() {
+  for (let i = this.messages.length - 1; i >= 0; i--) {
+    const message = this.messages[i];
+    if (isFunctionMessage(message) && message.content != null) {
+      return message.content;
+    }
+    if (isToolMessage(message) && message.content != null && typeof message.content === "string" && this.messages.some((x) => {
+      var _a2;
+      return x.role === "assistant" && ((_a2 = x.tool_calls) == null ? void 0 : _a2.some((y) => y.type === "function" && y.id === message.tool_call_id));
+    })) {
+      return message.content;
+    }
+  }
+  return;
+}, _AbstractChatCompletionRunner_calculateTotalUsage = function _AbstractChatCompletionRunner_calculateTotalUsage2() {
+  const total = {
+    completion_tokens: 0,
+    prompt_tokens: 0,
+    total_tokens: 0
+  };
+  for (const { usage } of this._chatCompletions) {
+    if (usage) {
+      total.completion_tokens += usage.completion_tokens;
+      total.prompt_tokens += usage.prompt_tokens;
+      total.total_tokens += usage.total_tokens;
+    }
+  }
+  return total;
+}, _AbstractChatCompletionRunner_validateParams = function _AbstractChatCompletionRunner_validateParams2(params) {
+  if (params.n != null && params.n > 1) {
+    throw new OpenAIError("ChatCompletion convenience helpers only support n=1 at this time. To use n>1, please use chat.completions.create() directly.");
+  }
+}, _AbstractChatCompletionRunner_stringifyFunctionCallResult = function _AbstractChatCompletionRunner_stringifyFunctionCallResult2(rawContent) {
+  return typeof rawContent === "string" ? rawContent : rawContent === void 0 ? "undefined" : JSON.stringify(rawContent);
+};
+
+// node_modules/openai/lib/ChatCompletionRunner.mjs
+var ChatCompletionRunner = class _ChatCompletionRunner extends AbstractChatCompletionRunner {
+  /** @deprecated - please use `runTools` instead. */
+  static runFunctions(client2, params, options) {
+    const runner = new _ChatCompletionRunner();
+    const opts = {
+      ...options,
+      headers: { ...options == null ? void 0 : options.headers, "X-Stainless-Helper-Method": "runFunctions" }
+    };
+    runner._run(() => runner._runFunctions(client2, params, opts));
+    return runner;
+  }
+  static runTools(client2, params, options) {
+    const runner = new _ChatCompletionRunner();
+    const opts = {
+      ...options,
+      headers: { ...options == null ? void 0 : options.headers, "X-Stainless-Helper-Method": "runTools" }
+    };
+    runner._run(() => runner._runTools(client2, params, opts));
+    return runner;
+  }
+  _addMessage(message, emit = true) {
+    super._addMessage(message, emit);
+    if (isAssistantMessage(message) && message.content) {
+      this._emit("content", message.content);
+    }
+  }
+};
+
+// node_modules/openai/_vendor/partial-json-parser/parser.mjs
+var STR = 1;
+var NUM = 2;
+var ARR = 4;
+var OBJ = 8;
+var NULL = 16;
+var BOOL = 32;
+var NAN = 64;
+var INFINITY = 128;
+var MINUS_INFINITY = 256;
+var INF = INFINITY | MINUS_INFINITY;
+var SPECIAL = NULL | BOOL | INF | NAN;
+var ATOM = STR | NUM | SPECIAL;
+var COLLECTION = ARR | OBJ;
+var ALL = ATOM | COLLECTION;
+var Allow = {
+  STR,
+  NUM,
+  ARR,
+  OBJ,
+  NULL,
+  BOOL,
+  NAN,
+  INFINITY,
+  MINUS_INFINITY,
+  INF,
+  SPECIAL,
+  ATOM,
+  COLLECTION,
+  ALL
+};
+var PartialJSON = class extends Error {
+};
+var MalformedJSON = class extends Error {
+};
+function parseJSON(jsonString, allowPartial = Allow.ALL) {
+  if (typeof jsonString !== "string") {
+    throw new TypeError(`expecting str, got ${typeof jsonString}`);
+  }
+  if (!jsonString.trim()) {
+    throw new Error(`${jsonString} is empty`);
+  }
+  return _parseJSON(jsonString.trim(), allowPartial);
+}
+var _parseJSON = (jsonString, allow) => {
+  const length = jsonString.length;
+  let index = 0;
+  const markPartialJSON = (msg) => {
+    throw new PartialJSON(`${msg} at position ${index}`);
+  };
+  const throwMalformedError = (msg) => {
+    throw new MalformedJSON(`${msg} at position ${index}`);
+  };
+  const parseAny = () => {
+    skipBlank();
+    if (index >= length)
+      markPartialJSON("Unexpected end of input");
+    if (jsonString[index] === '"')
+      return parseStr();
+    if (jsonString[index] === "{")
+      return parseObj();
+    if (jsonString[index] === "[")
+      return parseArr();
+    if (jsonString.substring(index, index + 4) === "null" || Allow.NULL & allow && length - index < 4 && "null".startsWith(jsonString.substring(index))) {
+      index += 4;
+      return null;
+    }
+    if (jsonString.substring(index, index + 4) === "true" || Allow.BOOL & allow && length - index < 4 && "true".startsWith(jsonString.substring(index))) {
+      index += 4;
+      return true;
+    }
+    if (jsonString.substring(index, index + 5) === "false" || Allow.BOOL & allow && length - index < 5 && "false".startsWith(jsonString.substring(index))) {
+      index += 5;
+      return false;
+    }
+    if (jsonString.substring(index, index + 8) === "Infinity" || Allow.INFINITY & allow && length - index < 8 && "Infinity".startsWith(jsonString.substring(index))) {
+      index += 8;
+      return Infinity;
+    }
+    if (jsonString.substring(index, index + 9) === "-Infinity" || Allow.MINUS_INFINITY & allow && 1 < length - index && length - index < 9 && "-Infinity".startsWith(jsonString.substring(index))) {
+      index += 9;
+      return -Infinity;
+    }
+    if (jsonString.substring(index, index + 3) === "NaN" || Allow.NAN & allow && length - index < 3 && "NaN".startsWith(jsonString.substring(index))) {
+      index += 3;
+      return NaN;
+    }
+    return parseNum();
+  };
+  const parseStr = () => {
+    const start = index;
+    let escape2 = false;
+    index++;
+    while (index < length && (jsonString[index] !== '"' || escape2 && jsonString[index - 1] === "\\")) {
+      escape2 = jsonString[index] === "\\" ? !escape2 : false;
+      index++;
+    }
+    if (jsonString.charAt(index) == '"') {
+      try {
+        return JSON.parse(jsonString.substring(start, ++index - Number(escape2)));
+      } catch (e) {
+        throwMalformedError(String(e));
+      }
+    } else if (Allow.STR & allow) {
+      try {
+        return JSON.parse(jsonString.substring(start, index - Number(escape2)) + '"');
+      } catch (e) {
+        return JSON.parse(jsonString.substring(start, jsonString.lastIndexOf("\\")) + '"');
+      }
+    }
+    markPartialJSON("Unterminated string literal");
+  };
+  const parseObj = () => {
+    index++;
+    skipBlank();
+    const obj = {};
+    try {
+      while (jsonString[index] !== "}") {
+        skipBlank();
+        if (index >= length && Allow.OBJ & allow)
+          return obj;
+        const key = parseStr();
+        skipBlank();
+        index++;
+        try {
+          const value = parseAny();
+          Object.defineProperty(obj, key, { value, writable: true, enumerable: true, configurable: true });
+        } catch (e) {
+          if (Allow.OBJ & allow)
+            return obj;
+          else
+            throw e;
+        }
+        skipBlank();
+        if (jsonString[index] === ",")
+          index++;
+      }
+    } catch (e) {
+      if (Allow.OBJ & allow)
+        return obj;
+      else
+        markPartialJSON("Expected '}' at end of object");
+    }
+    index++;
+    return obj;
+  };
+  const parseArr = () => {
+    index++;
+    const arr2 = [];
+    try {
+      while (jsonString[index] !== "]") {
+        arr2.push(parseAny());
+        skipBlank();
+        if (jsonString[index] === ",") {
+          index++;
+        }
+      }
+    } catch (e) {
+      if (Allow.ARR & allow) {
+        return arr2;
+      }
+      markPartialJSON("Expected ']' at end of array");
+    }
+    index++;
+    return arr2;
+  };
+  const parseNum = () => {
+    if (index === 0) {
+      if (jsonString === "-" && Allow.NUM & allow)
+        markPartialJSON("Not sure what '-' is");
+      try {
+        return JSON.parse(jsonString);
+      } catch (e) {
+        if (Allow.NUM & allow) {
+          try {
+            if ("." === jsonString[jsonString.length - 1])
+              return JSON.parse(jsonString.substring(0, jsonString.lastIndexOf(".")));
+            return JSON.parse(jsonString.substring(0, jsonString.lastIndexOf("e")));
+          } catch (e2) {
+          }
+        }
+        throwMalformedError(String(e));
+      }
+    }
+    const start = index;
+    if (jsonString[index] === "-")
+      index++;
+    while (jsonString[index] && !",]}".includes(jsonString[index]))
+      index++;
+    if (index == length && !(Allow.NUM & allow))
+      markPartialJSON("Unterminated number literal");
+    try {
+      return JSON.parse(jsonString.substring(start, index));
+    } catch (e) {
+      if (jsonString.substring(start, index) === "-" && Allow.NUM & allow)
+        markPartialJSON("Not sure what '-' is");
+      try {
+        return JSON.parse(jsonString.substring(start, jsonString.lastIndexOf("e")));
+      } catch (e2) {
+        throwMalformedError(String(e2));
+      }
+    }
+  };
+  const skipBlank = () => {
+    while (index < length && " \n\r	".includes(jsonString[index])) {
+      index++;
+    }
+  };
+  return parseAny();
+};
+var partialParse = (input) => parseJSON(input, Allow.ALL ^ Allow.NUM);
+
+// node_modules/openai/lib/ChatCompletionStream.mjs
+var __classPrivateFieldSet3 = function(receiver, state, value, kind2, f) {
+  if (kind2 === "m") throw new TypeError("Private method is not writable");
+  if (kind2 === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+  if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+  return kind2 === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value), value;
+};
+var __classPrivateFieldGet4 = function(receiver, state, kind2, f) {
+  if (kind2 === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+  if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+  return kind2 === "m" ? f : kind2 === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+};
+var _ChatCompletionStream_instances;
+var _ChatCompletionStream_params;
+var _ChatCompletionStream_choiceEventStates;
+var _ChatCompletionStream_currentChatCompletionSnapshot;
+var _ChatCompletionStream_beginRequest;
+var _ChatCompletionStream_getChoiceEventState;
+var _ChatCompletionStream_addChunk;
+var _ChatCompletionStream_emitToolCallDoneEvent;
+var _ChatCompletionStream_emitContentDoneEvents;
+var _ChatCompletionStream_endRequest;
+var _ChatCompletionStream_getAutoParseableResponseFormat;
+var _ChatCompletionStream_accumulateChatCompletion;
+var ChatCompletionStream = class _ChatCompletionStream extends AbstractChatCompletionRunner {
+  constructor(params) {
+    super();
+    _ChatCompletionStream_instances.add(this);
+    _ChatCompletionStream_params.set(this, void 0);
+    _ChatCompletionStream_choiceEventStates.set(this, void 0);
+    _ChatCompletionStream_currentChatCompletionSnapshot.set(this, void 0);
+    __classPrivateFieldSet3(this, _ChatCompletionStream_params, params, "f");
+    __classPrivateFieldSet3(this, _ChatCompletionStream_choiceEventStates, [], "f");
+  }
+  get currentChatCompletionSnapshot() {
+    return __classPrivateFieldGet4(this, _ChatCompletionStream_currentChatCompletionSnapshot, "f");
+  }
+  /**
+   * Intended for use on the frontend, consuming a stream produced with
+   * `.toReadableStream()` on the backend.
+   *
+   * Note that messages sent to the model do not appear in `.on('message')`
+   * in this context.
+   */
+  static fromReadableStream(stream) {
+    const runner = new _ChatCompletionStream(null);
+    runner._run(() => runner._fromReadableStream(stream));
+    return runner;
+  }
+  static createChatCompletion(client2, params, options) {
+    const runner = new _ChatCompletionStream(params);
+    runner._run(() => runner._runChatCompletion(client2, { ...params, stream: true }, { ...options, headers: { ...options == null ? void 0 : options.headers, "X-Stainless-Helper-Method": "stream" } }));
+    return runner;
+  }
+  async _createChatCompletion(client2, params, options) {
+    var _a2;
+    super._createChatCompletion;
+    const signal = options == null ? void 0 : options.signal;
+    if (signal) {
+      if (signal.aborted)
+        this.controller.abort();
+      signal.addEventListener("abort", () => this.controller.abort());
+    }
+    __classPrivateFieldGet4(this, _ChatCompletionStream_instances, "m", _ChatCompletionStream_beginRequest).call(this);
+    const stream = await client2.chat.completions.create({ ...params, stream: true }, { ...options, signal: this.controller.signal });
+    this._connected();
+    for await (const chunk of stream) {
+      __classPrivateFieldGet4(this, _ChatCompletionStream_instances, "m", _ChatCompletionStream_addChunk).call(this, chunk);
+    }
+    if ((_a2 = stream.controller.signal) == null ? void 0 : _a2.aborted) {
+      throw new APIUserAbortError();
+    }
+    return this._addChatCompletion(__classPrivateFieldGet4(this, _ChatCompletionStream_instances, "m", _ChatCompletionStream_endRequest).call(this));
+  }
+  async _fromReadableStream(readableStream, options) {
+    var _a2;
+    const signal = options == null ? void 0 : options.signal;
+    if (signal) {
+      if (signal.aborted)
+        this.controller.abort();
+      signal.addEventListener("abort", () => this.controller.abort());
+    }
+    __classPrivateFieldGet4(this, _ChatCompletionStream_instances, "m", _ChatCompletionStream_beginRequest).call(this);
+    this._connected();
+    const stream = Stream.fromReadableStream(readableStream, this.controller);
+    let chatId;
+    for await (const chunk of stream) {
+      if (chatId && chatId !== chunk.id) {
+        this._addChatCompletion(__classPrivateFieldGet4(this, _ChatCompletionStream_instances, "m", _ChatCompletionStream_endRequest).call(this));
+      }
+      __classPrivateFieldGet4(this, _ChatCompletionStream_instances, "m", _ChatCompletionStream_addChunk).call(this, chunk);
+      chatId = chunk.id;
+    }
+    if ((_a2 = stream.controller.signal) == null ? void 0 : _a2.aborted) {
+      throw new APIUserAbortError();
+    }
+    return this._addChatCompletion(__classPrivateFieldGet4(this, _ChatCompletionStream_instances, "m", _ChatCompletionStream_endRequest).call(this));
+  }
+  [(_ChatCompletionStream_params = /* @__PURE__ */ new WeakMap(), _ChatCompletionStream_choiceEventStates = /* @__PURE__ */ new WeakMap(), _ChatCompletionStream_currentChatCompletionSnapshot = /* @__PURE__ */ new WeakMap(), _ChatCompletionStream_instances = /* @__PURE__ */ new WeakSet(), _ChatCompletionStream_beginRequest = function _ChatCompletionStream_beginRequest2() {
+    if (this.ended)
+      return;
+    __classPrivateFieldSet3(this, _ChatCompletionStream_currentChatCompletionSnapshot, void 0, "f");
+  }, _ChatCompletionStream_getChoiceEventState = function _ChatCompletionStream_getChoiceEventState2(choice) {
+    let state = __classPrivateFieldGet4(this, _ChatCompletionStream_choiceEventStates, "f")[choice.index];
+    if (state) {
+      return state;
+    }
+    state = {
+      content_done: false,
+      refusal_done: false,
+      logprobs_content_done: false,
+      logprobs_refusal_done: false,
+      done_tool_calls: /* @__PURE__ */ new Set(),
+      current_tool_call_index: null
+    };
+    __classPrivateFieldGet4(this, _ChatCompletionStream_choiceEventStates, "f")[choice.index] = state;
+    return state;
+  }, _ChatCompletionStream_addChunk = function _ChatCompletionStream_addChunk2(chunk) {
+    var _a2, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t;
+    if (this.ended)
+      return;
+    const completion = __classPrivateFieldGet4(this, _ChatCompletionStream_instances, "m", _ChatCompletionStream_accumulateChatCompletion).call(this, chunk);
+    this._emit("chunk", chunk, completion);
+    for (const choice of chunk.choices) {
+      const choiceSnapshot = completion.choices[choice.index];
+      if (choice.delta.content != null && ((_a2 = choiceSnapshot.message) == null ? void 0 : _a2.role) === "assistant" && ((_b = choiceSnapshot.message) == null ? void 0 : _b.content)) {
+        this._emit("content", choice.delta.content, choiceSnapshot.message.content);
+        this._emit("content.delta", {
+          delta: choice.delta.content,
+          snapshot: choiceSnapshot.message.content,
+          parsed: choiceSnapshot.message.parsed
+        });
+      }
+      if (choice.delta.refusal != null && ((_c = choiceSnapshot.message) == null ? void 0 : _c.role) === "assistant" && ((_d = choiceSnapshot.message) == null ? void 0 : _d.refusal)) {
+        this._emit("refusal.delta", {
+          delta: choice.delta.refusal,
+          snapshot: choiceSnapshot.message.refusal
+        });
+      }
+      if (((_e = choice.logprobs) == null ? void 0 : _e.content) != null && ((_f = choiceSnapshot.message) == null ? void 0 : _f.role) === "assistant") {
+        this._emit("logprobs.content.delta", {
+          content: (_g = choice.logprobs) == null ? void 0 : _g.content,
+          snapshot: (_i = (_h = choiceSnapshot.logprobs) == null ? void 0 : _h.content) != null ? _i : []
+        });
+      }
+      if (((_j = choice.logprobs) == null ? void 0 : _j.refusal) != null && ((_k = choiceSnapshot.message) == null ? void 0 : _k.role) === "assistant") {
+        this._emit("logprobs.refusal.delta", {
+          refusal: (_l = choice.logprobs) == null ? void 0 : _l.refusal,
+          snapshot: (_n = (_m = choiceSnapshot.logprobs) == null ? void 0 : _m.refusal) != null ? _n : []
+        });
+      }
+      const state = __classPrivateFieldGet4(this, _ChatCompletionStream_instances, "m", _ChatCompletionStream_getChoiceEventState).call(this, choiceSnapshot);
+      if (choiceSnapshot.finish_reason) {
+        __classPrivateFieldGet4(this, _ChatCompletionStream_instances, "m", _ChatCompletionStream_emitContentDoneEvents).call(this, choiceSnapshot);
+        if (state.current_tool_call_index != null) {
+          __classPrivateFieldGet4(this, _ChatCompletionStream_instances, "m", _ChatCompletionStream_emitToolCallDoneEvent).call(this, choiceSnapshot, state.current_tool_call_index);
+        }
+      }
+      for (const toolCall of (_o = choice.delta.tool_calls) != null ? _o : []) {
+        if (state.current_tool_call_index !== toolCall.index) {
+          __classPrivateFieldGet4(this, _ChatCompletionStream_instances, "m", _ChatCompletionStream_emitContentDoneEvents).call(this, choiceSnapshot);
+          if (state.current_tool_call_index != null) {
+            __classPrivateFieldGet4(this, _ChatCompletionStream_instances, "m", _ChatCompletionStream_emitToolCallDoneEvent).call(this, choiceSnapshot, state.current_tool_call_index);
+          }
+        }
+        state.current_tool_call_index = toolCall.index;
+      }
+      for (const toolCallDelta of (_p = choice.delta.tool_calls) != null ? _p : []) {
+        const toolCallSnapshot = (_q = choiceSnapshot.message.tool_calls) == null ? void 0 : _q[toolCallDelta.index];
+        if (!(toolCallSnapshot == null ? void 0 : toolCallSnapshot.type)) {
+          continue;
+        }
+        if ((toolCallSnapshot == null ? void 0 : toolCallSnapshot.type) === "function") {
+          this._emit("tool_calls.function.arguments.delta", {
+            name: (_r = toolCallSnapshot.function) == null ? void 0 : _r.name,
+            index: toolCallDelta.index,
+            arguments: toolCallSnapshot.function.arguments,
+            parsed_arguments: toolCallSnapshot.function.parsed_arguments,
+            arguments_delta: (_t = (_s = toolCallDelta.function) == null ? void 0 : _s.arguments) != null ? _t : ""
+          });
+        } else {
+          assertNever(toolCallSnapshot == null ? void 0 : toolCallSnapshot.type);
+        }
+      }
+    }
+  }, _ChatCompletionStream_emitToolCallDoneEvent = function _ChatCompletionStream_emitToolCallDoneEvent2(choiceSnapshot, toolCallIndex) {
+    var _a2, _b, _c;
+    const state = __classPrivateFieldGet4(this, _ChatCompletionStream_instances, "m", _ChatCompletionStream_getChoiceEventState).call(this, choiceSnapshot);
+    if (state.done_tool_calls.has(toolCallIndex)) {
+      return;
+    }
+    const toolCallSnapshot = (_a2 = choiceSnapshot.message.tool_calls) == null ? void 0 : _a2[toolCallIndex];
+    if (!toolCallSnapshot) {
+      throw new Error("no tool call snapshot");
+    }
+    if (!toolCallSnapshot.type) {
+      throw new Error("tool call snapshot missing `type`");
+    }
+    if (toolCallSnapshot.type === "function") {
+      const inputTool = (_c = (_b = __classPrivateFieldGet4(this, _ChatCompletionStream_params, "f")) == null ? void 0 : _b.tools) == null ? void 0 : _c.find((tool) => tool.type === "function" && tool.function.name === toolCallSnapshot.function.name);
+      this._emit("tool_calls.function.arguments.done", {
+        name: toolCallSnapshot.function.name,
+        index: toolCallIndex,
+        arguments: toolCallSnapshot.function.arguments,
+        parsed_arguments: isAutoParsableTool(inputTool) ? inputTool.$parseRaw(toolCallSnapshot.function.arguments) : (inputTool == null ? void 0 : inputTool.function.strict) ? JSON.parse(toolCallSnapshot.function.arguments) : null
+      });
+    } else {
+      assertNever(toolCallSnapshot.type);
+    }
+  }, _ChatCompletionStream_emitContentDoneEvents = function _ChatCompletionStream_emitContentDoneEvents2(choiceSnapshot) {
+    var _a2, _b;
+    const state = __classPrivateFieldGet4(this, _ChatCompletionStream_instances, "m", _ChatCompletionStream_getChoiceEventState).call(this, choiceSnapshot);
+    if (choiceSnapshot.message.content && !state.content_done) {
+      state.content_done = true;
+      const responseFormat = __classPrivateFieldGet4(this, _ChatCompletionStream_instances, "m", _ChatCompletionStream_getAutoParseableResponseFormat).call(this);
+      this._emit("content.done", {
+        content: choiceSnapshot.message.content,
+        parsed: responseFormat ? responseFormat.$parseRaw(choiceSnapshot.message.content) : null
+      });
+    }
+    if (choiceSnapshot.message.refusal && !state.refusal_done) {
+      state.refusal_done = true;
+      this._emit("refusal.done", { refusal: choiceSnapshot.message.refusal });
+    }
+    if (((_a2 = choiceSnapshot.logprobs) == null ? void 0 : _a2.content) && !state.logprobs_content_done) {
+      state.logprobs_content_done = true;
+      this._emit("logprobs.content.done", { content: choiceSnapshot.logprobs.content });
+    }
+    if (((_b = choiceSnapshot.logprobs) == null ? void 0 : _b.refusal) && !state.logprobs_refusal_done) {
+      state.logprobs_refusal_done = true;
+      this._emit("logprobs.refusal.done", { refusal: choiceSnapshot.logprobs.refusal });
+    }
+  }, _ChatCompletionStream_endRequest = function _ChatCompletionStream_endRequest2() {
+    if (this.ended) {
+      throw new OpenAIError(`stream has ended, this shouldn't happen`);
+    }
+    const snapshot = __classPrivateFieldGet4(this, _ChatCompletionStream_currentChatCompletionSnapshot, "f");
+    if (!snapshot) {
+      throw new OpenAIError(`request ended without sending any chunks`);
+    }
+    __classPrivateFieldSet3(this, _ChatCompletionStream_currentChatCompletionSnapshot, void 0, "f");
+    __classPrivateFieldSet3(this, _ChatCompletionStream_choiceEventStates, [], "f");
+    return finalizeChatCompletion(snapshot, __classPrivateFieldGet4(this, _ChatCompletionStream_params, "f"));
+  }, _ChatCompletionStream_getAutoParseableResponseFormat = function _ChatCompletionStream_getAutoParseableResponseFormat2() {
+    var _a2;
+    const responseFormat = (_a2 = __classPrivateFieldGet4(this, _ChatCompletionStream_params, "f")) == null ? void 0 : _a2.response_format;
+    if (isAutoParsableResponseFormat(responseFormat)) {
+      return responseFormat;
+    }
+    return null;
+  }, _ChatCompletionStream_accumulateChatCompletion = function _ChatCompletionStream_accumulateChatCompletion2(chunk) {
+    var _a3, _b2, _c2, _d2, _e, _f;
+    var _a2, _b, _c, _d;
+    let snapshot = __classPrivateFieldGet4(this, _ChatCompletionStream_currentChatCompletionSnapshot, "f");
+    const { choices, ...rest } = chunk;
+    if (!snapshot) {
+      snapshot = __classPrivateFieldSet3(this, _ChatCompletionStream_currentChatCompletionSnapshot, {
+        ...rest,
+        choices: []
+      }, "f");
+    } else {
+      Object.assign(snapshot, rest);
+    }
+    for (const { delta, finish_reason, index, logprobs = null, ...other } of chunk.choices) {
+      let choice = snapshot.choices[index];
+      if (!choice) {
+        choice = snapshot.choices[index] = { finish_reason, index, message: {}, logprobs, ...other };
+      }
+      if (logprobs) {
+        if (!choice.logprobs) {
+          choice.logprobs = Object.assign({}, logprobs);
+        } else {
+          const { content: content2, refusal: refusal2, ...rest3 } = logprobs;
+          assertIsEmpty(rest3);
+          Object.assign(choice.logprobs, rest3);
+          if (content2) {
+            (_a3 = (_a2 = choice.logprobs).content) != null ? _a3 : _a2.content = [];
+            choice.logprobs.content.push(...content2);
+          }
+          if (refusal2) {
+            (_b2 = (_b = choice.logprobs).refusal) != null ? _b2 : _b.refusal = [];
+            choice.logprobs.refusal.push(...refusal2);
+          }
+        }
+      }
+      if (finish_reason) {
+        choice.finish_reason = finish_reason;
+        if (__classPrivateFieldGet4(this, _ChatCompletionStream_params, "f") && hasAutoParseableInput(__classPrivateFieldGet4(this, _ChatCompletionStream_params, "f"))) {
+          if (finish_reason === "length") {
+            throw new LengthFinishReasonError();
+          }
+          if (finish_reason === "content_filter") {
+            throw new ContentFilterFinishReasonError();
+          }
+        }
+      }
+      Object.assign(choice, other);
+      if (!delta)
+        continue;
+      const { content, refusal, function_call, role, tool_calls, ...rest2 } = delta;
+      assertIsEmpty(rest2);
+      Object.assign(choice.message, rest2);
+      if (refusal) {
+        choice.message.refusal = (choice.message.refusal || "") + refusal;
+      }
+      if (role)
+        choice.message.role = role;
+      if (function_call) {
+        if (!choice.message.function_call) {
+          choice.message.function_call = function_call;
+        } else {
+          if (function_call.name)
+            choice.message.function_call.name = function_call.name;
+          if (function_call.arguments) {
+            (_c2 = (_c = choice.message.function_call).arguments) != null ? _c2 : _c.arguments = "";
+            choice.message.function_call.arguments += function_call.arguments;
+          }
+        }
+      }
+      if (content) {
+        choice.message.content = (choice.message.content || "") + content;
+        if (!choice.message.refusal && __classPrivateFieldGet4(this, _ChatCompletionStream_instances, "m", _ChatCompletionStream_getAutoParseableResponseFormat).call(this)) {
+          choice.message.parsed = partialParse(choice.message.content);
+        }
+      }
+      if (tool_calls) {
+        if (!choice.message.tool_calls)
+          choice.message.tool_calls = [];
+        for (const { index: index2, id, type, function: fn, ...rest3 } of tool_calls) {
+          const tool_call = (_d2 = (_d = choice.message.tool_calls)[index2]) != null ? _d2 : _d[index2] = {};
+          Object.assign(tool_call, rest3);
+          if (id)
+            tool_call.id = id;
+          if (type)
+            tool_call.type = type;
+          if (fn)
+            (_f = tool_call.function) != null ? _f : tool_call.function = { name: (_e = fn.name) != null ? _e : "", arguments: "" };
+          if (fn == null ? void 0 : fn.name)
+            tool_call.function.name = fn.name;
+          if (fn == null ? void 0 : fn.arguments) {
+            tool_call.function.arguments += fn.arguments;
+            if (shouldParseToolCall(__classPrivateFieldGet4(this, _ChatCompletionStream_params, "f"), tool_call)) {
+              tool_call.function.parsed_arguments = partialParse(tool_call.function.arguments);
+            }
+          }
+        }
+      }
+    }
+    return snapshot;
+  }, Symbol.asyncIterator)]() {
+    const pushQueue = [];
+    const readQueue = [];
+    let done = false;
+    this.on("chunk", (chunk) => {
+      const reader = readQueue.shift();
+      if (reader) {
+        reader.resolve(chunk);
+      } else {
+        pushQueue.push(chunk);
+      }
+    });
+    this.on("end", () => {
+      done = true;
+      for (const reader of readQueue) {
+        reader.resolve(void 0);
+      }
+      readQueue.length = 0;
+    });
+    this.on("abort", (err) => {
+      done = true;
+      for (const reader of readQueue) {
+        reader.reject(err);
+      }
+      readQueue.length = 0;
+    });
+    this.on("error", (err) => {
+      done = true;
+      for (const reader of readQueue) {
+        reader.reject(err);
+      }
+      readQueue.length = 0;
+    });
+    return {
+      next: async () => {
+        if (!pushQueue.length) {
+          if (done) {
+            return { value: void 0, done: true };
+          }
+          return new Promise((resolve, reject) => readQueue.push({ resolve, reject })).then((chunk2) => chunk2 ? { value: chunk2, done: false } : { value: void 0, done: true });
+        }
+        const chunk = pushQueue.shift();
+        return { value: chunk, done: false };
+      },
+      return: async () => {
+        this.abort();
+        return { value: void 0, done: true };
+      }
+    };
+  }
+  toReadableStream() {
+    const stream = new Stream(this[Symbol.asyncIterator].bind(this), this.controller);
+    return stream.toReadableStream();
+  }
+};
+function finalizeChatCompletion(snapshot, params) {
+  const { id, choices, created, model, system_fingerprint, ...rest } = snapshot;
+  const completion = {
+    ...rest,
+    id,
+    choices: choices.map(({ message, finish_reason, index, logprobs, ...choiceRest }) => {
+      var _a2, _b, _c;
+      if (!finish_reason) {
+        throw new OpenAIError(`missing finish_reason for choice ${index}`);
+      }
+      const { content = null, function_call, tool_calls, ...messageRest } = message;
+      const role = message.role;
+      if (!role) {
+        throw new OpenAIError(`missing role for choice ${index}`);
+      }
+      if (function_call) {
+        const { arguments: args, name } = function_call;
+        if (args == null) {
+          throw new OpenAIError(`missing function_call.arguments for choice ${index}`);
+        }
+        if (!name) {
+          throw new OpenAIError(`missing function_call.name for choice ${index}`);
+        }
+        return {
+          ...choiceRest,
+          message: {
+            content,
+            function_call: { arguments: args, name },
+            role,
+            refusal: (_a2 = message.refusal) != null ? _a2 : null
+          },
+          finish_reason,
+          index,
+          logprobs
+        };
+      }
+      if (tool_calls) {
+        return {
+          ...choiceRest,
+          index,
+          finish_reason,
+          logprobs,
+          message: {
+            ...messageRest,
+            role,
+            content,
+            refusal: (_b = message.refusal) != null ? _b : null,
+            tool_calls: tool_calls.map((tool_call, i) => {
+              const { function: fn, type, id: id2, ...toolRest } = tool_call;
+              const { arguments: args, name, ...fnRest } = fn || {};
+              if (id2 == null) {
+                throw new OpenAIError(`missing choices[${index}].tool_calls[${i}].id
+${str(snapshot)}`);
+              }
+              if (type == null) {
+                throw new OpenAIError(`missing choices[${index}].tool_calls[${i}].type
+${str(snapshot)}`);
+              }
+              if (name == null) {
+                throw new OpenAIError(`missing choices[${index}].tool_calls[${i}].function.name
+${str(snapshot)}`);
+              }
+              if (args == null) {
+                throw new OpenAIError(`missing choices[${index}].tool_calls[${i}].function.arguments
+${str(snapshot)}`);
+              }
+              return { ...toolRest, id: id2, type, function: { ...fnRest, name, arguments: args } };
+            })
+          }
+        };
+      }
+      return {
+        ...choiceRest,
+        message: { ...messageRest, content, role, refusal: (_c = message.refusal) != null ? _c : null },
+        finish_reason,
+        index,
+        logprobs
+      };
+    }),
+    created,
+    model,
+    object: "chat.completion",
+    ...system_fingerprint ? { system_fingerprint } : {}
+  };
+  return maybeParseChatCompletion(completion, params);
+}
+function str(x) {
+  return JSON.stringify(x);
+}
+function assertIsEmpty(obj) {
+  return;
+}
+function assertNever(_x) {
+}
+
+// node_modules/openai/lib/ChatCompletionStreamingRunner.mjs
+var ChatCompletionStreamingRunner = class _ChatCompletionStreamingRunner extends ChatCompletionStream {
+  static fromReadableStream(stream) {
+    const runner = new _ChatCompletionStreamingRunner(null);
+    runner._run(() => runner._fromReadableStream(stream));
+    return runner;
+  }
+  /** @deprecated - please use `runTools` instead. */
+  static runFunctions(client2, params, options) {
+    const runner = new _ChatCompletionStreamingRunner(null);
+    const opts = {
+      ...options,
+      headers: { ...options == null ? void 0 : options.headers, "X-Stainless-Helper-Method": "runFunctions" }
+    };
+    runner._run(() => runner._runFunctions(client2, params, opts));
+    return runner;
+  }
+  static runTools(client2, params, options) {
+    const runner = new _ChatCompletionStreamingRunner(
+      // @ts-expect-error TODO these types are incompatible
+      params
+    );
+    const opts = {
+      ...options,
+      headers: { ...options == null ? void 0 : options.headers, "X-Stainless-Helper-Method": "runTools" }
+    };
+    runner._run(() => runner._runTools(client2, params, opts));
+    return runner;
+  }
+};
+
+// node_modules/openai/resources/beta/chat/completions.mjs
+var Completions2 = class extends APIResource {
+  parse(body, options) {
+    validateInputTools(body.tools);
+    return this._client.chat.completions.create(body, {
+      ...options,
+      headers: {
+        ...options == null ? void 0 : options.headers,
+        "X-Stainless-Helper-Method": "beta.chat.completions.parse"
+      }
+    })._thenUnwrap((completion) => parseChatCompletion(completion, body));
+  }
+  runFunctions(body, options) {
+    if (body.stream) {
+      return ChatCompletionStreamingRunner.runFunctions(this._client, body, options);
+    }
+    return ChatCompletionRunner.runFunctions(this._client, body, options);
+  }
+  runTools(body, options) {
+    if (body.stream) {
+      return ChatCompletionStreamingRunner.runTools(this._client, body, options);
+    }
+    return ChatCompletionRunner.runTools(this._client, body, options);
+  }
+  /**
+   * Creates a chat completion stream
+   */
+  stream(body, options) {
+    return ChatCompletionStream.createChatCompletion(this._client, body, options);
+  }
+};
+
+// node_modules/openai/resources/beta/chat/chat.mjs
+var Chat2 = class extends APIResource {
+  constructor() {
+    super(...arguments);
+    this.completions = new Completions2(this._client);
+  }
+};
+(function(Chat3) {
+  Chat3.Completions = Completions2;
+})(Chat2 || (Chat2 = {}));
+
+// node_modules/openai/lib/AssistantStream.mjs
+var __classPrivateFieldGet5 = function(receiver, state, kind2, f) {
+  if (kind2 === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+  if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+  return kind2 === "m" ? f : kind2 === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+};
+var __classPrivateFieldSet4 = function(receiver, state, value, kind2, f) {
+  if (kind2 === "m") throw new TypeError("Private method is not writable");
+  if (kind2 === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+  if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+  return kind2 === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value), value;
+};
+var _AssistantStream_instances;
+var _AssistantStream_events;
+var _AssistantStream_runStepSnapshots;
+var _AssistantStream_messageSnapshots;
+var _AssistantStream_messageSnapshot;
+var _AssistantStream_finalRun;
+var _AssistantStream_currentContentIndex;
+var _AssistantStream_currentContent;
+var _AssistantStream_currentToolCallIndex;
+var _AssistantStream_currentToolCall;
+var _AssistantStream_currentEvent;
+var _AssistantStream_currentRunSnapshot;
+var _AssistantStream_currentRunStepSnapshot;
+var _AssistantStream_addEvent;
+var _AssistantStream_endRequest;
+var _AssistantStream_handleMessage;
+var _AssistantStream_handleRunStep;
+var _AssistantStream_handleEvent;
+var _AssistantStream_accumulateRunStep;
+var _AssistantStream_accumulateMessage;
+var _AssistantStream_accumulateContent;
+var _AssistantStream_handleRun;
+var AssistantStream = class _AssistantStream extends EventStream {
+  constructor() {
+    super(...arguments);
+    _AssistantStream_instances.add(this);
+    _AssistantStream_events.set(this, []);
+    _AssistantStream_runStepSnapshots.set(this, {});
+    _AssistantStream_messageSnapshots.set(this, {});
+    _AssistantStream_messageSnapshot.set(this, void 0);
+    _AssistantStream_finalRun.set(this, void 0);
+    _AssistantStream_currentContentIndex.set(this, void 0);
+    _AssistantStream_currentContent.set(this, void 0);
+    _AssistantStream_currentToolCallIndex.set(this, void 0);
+    _AssistantStream_currentToolCall.set(this, void 0);
+    _AssistantStream_currentEvent.set(this, void 0);
+    _AssistantStream_currentRunSnapshot.set(this, void 0);
+    _AssistantStream_currentRunStepSnapshot.set(this, void 0);
+  }
+  [(_AssistantStream_events = /* @__PURE__ */ new WeakMap(), _AssistantStream_runStepSnapshots = /* @__PURE__ */ new WeakMap(), _AssistantStream_messageSnapshots = /* @__PURE__ */ new WeakMap(), _AssistantStream_messageSnapshot = /* @__PURE__ */ new WeakMap(), _AssistantStream_finalRun = /* @__PURE__ */ new WeakMap(), _AssistantStream_currentContentIndex = /* @__PURE__ */ new WeakMap(), _AssistantStream_currentContent = /* @__PURE__ */ new WeakMap(), _AssistantStream_currentToolCallIndex = /* @__PURE__ */ new WeakMap(), _AssistantStream_currentToolCall = /* @__PURE__ */ new WeakMap(), _AssistantStream_currentEvent = /* @__PURE__ */ new WeakMap(), _AssistantStream_currentRunSnapshot = /* @__PURE__ */ new WeakMap(), _AssistantStream_currentRunStepSnapshot = /* @__PURE__ */ new WeakMap(), _AssistantStream_instances = /* @__PURE__ */ new WeakSet(), Symbol.asyncIterator)]() {
+    const pushQueue = [];
+    const readQueue = [];
+    let done = false;
+    this.on("event", (event) => {
+      const reader = readQueue.shift();
+      if (reader) {
+        reader.resolve(event);
+      } else {
+        pushQueue.push(event);
+      }
+    });
+    this.on("end", () => {
+      done = true;
+      for (const reader of readQueue) {
+        reader.resolve(void 0);
+      }
+      readQueue.length = 0;
+    });
+    this.on("abort", (err) => {
+      done = true;
+      for (const reader of readQueue) {
+        reader.reject(err);
+      }
+      readQueue.length = 0;
+    });
+    this.on("error", (err) => {
+      done = true;
+      for (const reader of readQueue) {
+        reader.reject(err);
+      }
+      readQueue.length = 0;
+    });
+    return {
+      next: async () => {
+        if (!pushQueue.length) {
+          if (done) {
+            return { value: void 0, done: true };
+          }
+          return new Promise((resolve, reject) => readQueue.push({ resolve, reject })).then((chunk2) => chunk2 ? { value: chunk2, done: false } : { value: void 0, done: true });
+        }
+        const chunk = pushQueue.shift();
+        return { value: chunk, done: false };
+      },
+      return: async () => {
+        this.abort();
+        return { value: void 0, done: true };
+      }
+    };
+  }
+  static fromReadableStream(stream) {
+    const runner = new _AssistantStream();
+    runner._run(() => runner._fromReadableStream(stream));
+    return runner;
+  }
+  async _fromReadableStream(readableStream, options) {
+    var _a2;
+    const signal = options == null ? void 0 : options.signal;
+    if (signal) {
+      if (signal.aborted)
+        this.controller.abort();
+      signal.addEventListener("abort", () => this.controller.abort());
+    }
+    this._connected();
+    const stream = Stream.fromReadableStream(readableStream, this.controller);
+    for await (const event of stream) {
+      __classPrivateFieldGet5(this, _AssistantStream_instances, "m", _AssistantStream_addEvent).call(this, event);
+    }
+    if ((_a2 = stream.controller.signal) == null ? void 0 : _a2.aborted) {
+      throw new APIUserAbortError();
+    }
+    return this._addRun(__classPrivateFieldGet5(this, _AssistantStream_instances, "m", _AssistantStream_endRequest).call(this));
+  }
+  toReadableStream() {
+    const stream = new Stream(this[Symbol.asyncIterator].bind(this), this.controller);
+    return stream.toReadableStream();
+  }
+  static createToolAssistantStream(threadId, runId, runs, params, options) {
+    const runner = new _AssistantStream();
+    runner._run(() => runner._runToolAssistantStream(threadId, runId, runs, params, {
+      ...options,
+      headers: { ...options == null ? void 0 : options.headers, "X-Stainless-Helper-Method": "stream" }
+    }));
+    return runner;
+  }
+  async _createToolAssistantStream(run, threadId, runId, params, options) {
+    var _a2;
+    const signal = options == null ? void 0 : options.signal;
+    if (signal) {
+      if (signal.aborted)
+        this.controller.abort();
+      signal.addEventListener("abort", () => this.controller.abort());
+    }
+    const body = { ...params, stream: true };
+    const stream = await run.submitToolOutputs(threadId, runId, body, {
+      ...options,
+      signal: this.controller.signal
+    });
+    this._connected();
+    for await (const event of stream) {
+      __classPrivateFieldGet5(this, _AssistantStream_instances, "m", _AssistantStream_addEvent).call(this, event);
+    }
+    if ((_a2 = stream.controller.signal) == null ? void 0 : _a2.aborted) {
+      throw new APIUserAbortError();
+    }
+    return this._addRun(__classPrivateFieldGet5(this, _AssistantStream_instances, "m", _AssistantStream_endRequest).call(this));
+  }
+  static createThreadAssistantStream(params, thread, options) {
+    const runner = new _AssistantStream();
+    runner._run(() => runner._threadAssistantStream(params, thread, {
+      ...options,
+      headers: { ...options == null ? void 0 : options.headers, "X-Stainless-Helper-Method": "stream" }
+    }));
+    return runner;
+  }
+  static createAssistantStream(threadId, runs, params, options) {
+    const runner = new _AssistantStream();
+    runner._run(() => runner._runAssistantStream(threadId, runs, params, {
+      ...options,
+      headers: { ...options == null ? void 0 : options.headers, "X-Stainless-Helper-Method": "stream" }
+    }));
+    return runner;
+  }
+  currentEvent() {
+    return __classPrivateFieldGet5(this, _AssistantStream_currentEvent, "f");
+  }
+  currentRun() {
+    return __classPrivateFieldGet5(this, _AssistantStream_currentRunSnapshot, "f");
+  }
+  currentMessageSnapshot() {
+    return __classPrivateFieldGet5(this, _AssistantStream_messageSnapshot, "f");
+  }
+  currentRunStepSnapshot() {
+    return __classPrivateFieldGet5(this, _AssistantStream_currentRunStepSnapshot, "f");
+  }
+  async finalRunSteps() {
+    await this.done();
+    return Object.values(__classPrivateFieldGet5(this, _AssistantStream_runStepSnapshots, "f"));
+  }
+  async finalMessages() {
+    await this.done();
+    return Object.values(__classPrivateFieldGet5(this, _AssistantStream_messageSnapshots, "f"));
+  }
+  async finalRun() {
+    await this.done();
+    if (!__classPrivateFieldGet5(this, _AssistantStream_finalRun, "f"))
+      throw Error("Final run was not received.");
+    return __classPrivateFieldGet5(this, _AssistantStream_finalRun, "f");
+  }
+  async _createThreadAssistantStream(thread, params, options) {
+    var _a2;
+    const signal = options == null ? void 0 : options.signal;
+    if (signal) {
+      if (signal.aborted)
+        this.controller.abort();
+      signal.addEventListener("abort", () => this.controller.abort());
+    }
+    const body = { ...params, stream: true };
+    const stream = await thread.createAndRun(body, { ...options, signal: this.controller.signal });
+    this._connected();
+    for await (const event of stream) {
+      __classPrivateFieldGet5(this, _AssistantStream_instances, "m", _AssistantStream_addEvent).call(this, event);
+    }
+    if ((_a2 = stream.controller.signal) == null ? void 0 : _a2.aborted) {
+      throw new APIUserAbortError();
+    }
+    return this._addRun(__classPrivateFieldGet5(this, _AssistantStream_instances, "m", _AssistantStream_endRequest).call(this));
+  }
+  async _createAssistantStream(run, threadId, params, options) {
+    var _a2;
+    const signal = options == null ? void 0 : options.signal;
+    if (signal) {
+      if (signal.aborted)
+        this.controller.abort();
+      signal.addEventListener("abort", () => this.controller.abort());
+    }
+    const body = { ...params, stream: true };
+    const stream = await run.create(threadId, body, { ...options, signal: this.controller.signal });
+    this._connected();
+    for await (const event of stream) {
+      __classPrivateFieldGet5(this, _AssistantStream_instances, "m", _AssistantStream_addEvent).call(this, event);
+    }
+    if ((_a2 = stream.controller.signal) == null ? void 0 : _a2.aborted) {
+      throw new APIUserAbortError();
+    }
+    return this._addRun(__classPrivateFieldGet5(this, _AssistantStream_instances, "m", _AssistantStream_endRequest).call(this));
+  }
+  static accumulateDelta(acc, delta) {
+    for (const [key, deltaValue] of Object.entries(delta)) {
+      if (!acc.hasOwnProperty(key)) {
+        acc[key] = deltaValue;
+        continue;
+      }
+      let accValue = acc[key];
+      if (accValue === null || accValue === void 0) {
+        acc[key] = deltaValue;
+        continue;
+      }
+      if (key === "index" || key === "type") {
+        acc[key] = deltaValue;
+        continue;
+      }
+      if (typeof accValue === "string" && typeof deltaValue === "string") {
+        accValue += deltaValue;
+      } else if (typeof accValue === "number" && typeof deltaValue === "number") {
+        accValue += deltaValue;
+      } else if (isObj(accValue) && isObj(deltaValue)) {
+        accValue = this.accumulateDelta(accValue, deltaValue);
+      } else if (Array.isArray(accValue) && Array.isArray(deltaValue)) {
+        if (accValue.every((x) => typeof x === "string" || typeof x === "number")) {
+          accValue.push(...deltaValue);
+          continue;
+        }
+        for (const deltaEntry of deltaValue) {
+          if (!isObj(deltaEntry)) {
+            throw new Error(`Expected array delta entry to be an object but got: ${deltaEntry}`);
+          }
+          const index = deltaEntry["index"];
+          if (index == null) {
+            console.error(deltaEntry);
+            throw new Error("Expected array delta entry to have an `index` property");
+          }
+          if (typeof index !== "number") {
+            throw new Error(`Expected array delta entry \`index\` property to be a number but got ${index}`);
+          }
+          const accEntry = accValue[index];
+          if (accEntry == null) {
+            accValue.push(deltaEntry);
+          } else {
+            accValue[index] = this.accumulateDelta(accEntry, deltaEntry);
+          }
+        }
+        continue;
+      } else {
+        throw Error(`Unhandled record type: ${key}, deltaValue: ${deltaValue}, accValue: ${accValue}`);
+      }
+      acc[key] = accValue;
+    }
+    return acc;
+  }
+  _addRun(run) {
+    return run;
+  }
+  async _threadAssistantStream(params, thread, options) {
+    return await this._createThreadAssistantStream(thread, params, options);
+  }
+  async _runAssistantStream(threadId, runs, params, options) {
+    return await this._createAssistantStream(runs, threadId, params, options);
+  }
+  async _runToolAssistantStream(threadId, runId, runs, params, options) {
+    return await this._createToolAssistantStream(runs, threadId, runId, params, options);
+  }
+};
+_AssistantStream_addEvent = function _AssistantStream_addEvent2(event) {
+  if (this.ended)
+    return;
+  __classPrivateFieldSet4(this, _AssistantStream_currentEvent, event, "f");
+  __classPrivateFieldGet5(this, _AssistantStream_instances, "m", _AssistantStream_handleEvent).call(this, event);
+  switch (event.event) {
+    case "thread.created":
+      break;
+    case "thread.run.created":
+    case "thread.run.queued":
+    case "thread.run.in_progress":
+    case "thread.run.requires_action":
+    case "thread.run.completed":
+    case "thread.run.failed":
+    case "thread.run.cancelling":
+    case "thread.run.cancelled":
+    case "thread.run.expired":
+      __classPrivateFieldGet5(this, _AssistantStream_instances, "m", _AssistantStream_handleRun).call(this, event);
+      break;
+    case "thread.run.step.created":
+    case "thread.run.step.in_progress":
+    case "thread.run.step.delta":
+    case "thread.run.step.completed":
+    case "thread.run.step.failed":
+    case "thread.run.step.cancelled":
+    case "thread.run.step.expired":
+      __classPrivateFieldGet5(this, _AssistantStream_instances, "m", _AssistantStream_handleRunStep).call(this, event);
+      break;
+    case "thread.message.created":
+    case "thread.message.in_progress":
+    case "thread.message.delta":
+    case "thread.message.completed":
+    case "thread.message.incomplete":
+      __classPrivateFieldGet5(this, _AssistantStream_instances, "m", _AssistantStream_handleMessage).call(this, event);
+      break;
+    case "error":
+      throw new Error("Encountered an error event in event processing - errors should be processed earlier");
+  }
+}, _AssistantStream_endRequest = function _AssistantStream_endRequest2() {
+  if (this.ended) {
+    throw new OpenAIError(`stream has ended, this shouldn't happen`);
+  }
+  if (!__classPrivateFieldGet5(this, _AssistantStream_finalRun, "f"))
+    throw Error("Final run has not been received");
+  return __classPrivateFieldGet5(this, _AssistantStream_finalRun, "f");
+}, _AssistantStream_handleMessage = function _AssistantStream_handleMessage2(event) {
+  const [accumulatedMessage, newContent] = __classPrivateFieldGet5(this, _AssistantStream_instances, "m", _AssistantStream_accumulateMessage).call(this, event, __classPrivateFieldGet5(this, _AssistantStream_messageSnapshot, "f"));
+  __classPrivateFieldSet4(this, _AssistantStream_messageSnapshot, accumulatedMessage, "f");
+  __classPrivateFieldGet5(this, _AssistantStream_messageSnapshots, "f")[accumulatedMessage.id] = accumulatedMessage;
+  for (const content of newContent) {
+    const snapshotContent = accumulatedMessage.content[content.index];
+    if ((snapshotContent == null ? void 0 : snapshotContent.type) == "text") {
+      this._emit("textCreated", snapshotContent.text);
+    }
+  }
+  switch (event.event) {
+    case "thread.message.created":
+      this._emit("messageCreated", event.data);
+      break;
+    case "thread.message.in_progress":
+      break;
+    case "thread.message.delta":
+      this._emit("messageDelta", event.data.delta, accumulatedMessage);
+      if (event.data.delta.content) {
+        for (const content of event.data.delta.content) {
+          if (content.type == "text" && content.text) {
+            let textDelta = content.text;
+            let snapshot = accumulatedMessage.content[content.index];
+            if (snapshot && snapshot.type == "text") {
+              this._emit("textDelta", textDelta, snapshot.text);
+            } else {
+              throw Error("The snapshot associated with this text delta is not text or missing");
+            }
+          }
+          if (content.index != __classPrivateFieldGet5(this, _AssistantStream_currentContentIndex, "f")) {
+            if (__classPrivateFieldGet5(this, _AssistantStream_currentContent, "f")) {
+              switch (__classPrivateFieldGet5(this, _AssistantStream_currentContent, "f").type) {
+                case "text":
+                  this._emit("textDone", __classPrivateFieldGet5(this, _AssistantStream_currentContent, "f").text, __classPrivateFieldGet5(this, _AssistantStream_messageSnapshot, "f"));
+                  break;
+                case "image_file":
+                  this._emit("imageFileDone", __classPrivateFieldGet5(this, _AssistantStream_currentContent, "f").image_file, __classPrivateFieldGet5(this, _AssistantStream_messageSnapshot, "f"));
+                  break;
+              }
+            }
+            __classPrivateFieldSet4(this, _AssistantStream_currentContentIndex, content.index, "f");
+          }
+          __classPrivateFieldSet4(this, _AssistantStream_currentContent, accumulatedMessage.content[content.index], "f");
+        }
+      }
+      break;
+    case "thread.message.completed":
+    case "thread.message.incomplete":
+      if (__classPrivateFieldGet5(this, _AssistantStream_currentContentIndex, "f") !== void 0) {
+        const currentContent = event.data.content[__classPrivateFieldGet5(this, _AssistantStream_currentContentIndex, "f")];
+        if (currentContent) {
+          switch (currentContent.type) {
+            case "image_file":
+              this._emit("imageFileDone", currentContent.image_file, __classPrivateFieldGet5(this, _AssistantStream_messageSnapshot, "f"));
+              break;
+            case "text":
+              this._emit("textDone", currentContent.text, __classPrivateFieldGet5(this, _AssistantStream_messageSnapshot, "f"));
+              break;
+          }
+        }
+      }
+      if (__classPrivateFieldGet5(this, _AssistantStream_messageSnapshot, "f")) {
+        this._emit("messageDone", event.data);
+      }
+      __classPrivateFieldSet4(this, _AssistantStream_messageSnapshot, void 0, "f");
+  }
+}, _AssistantStream_handleRunStep = function _AssistantStream_handleRunStep2(event) {
+  const accumulatedRunStep = __classPrivateFieldGet5(this, _AssistantStream_instances, "m", _AssistantStream_accumulateRunStep).call(this, event);
+  __classPrivateFieldSet4(this, _AssistantStream_currentRunStepSnapshot, accumulatedRunStep, "f");
+  switch (event.event) {
+    case "thread.run.step.created":
+      this._emit("runStepCreated", event.data);
+      break;
+    case "thread.run.step.delta":
+      const delta = event.data.delta;
+      if (delta.step_details && delta.step_details.type == "tool_calls" && delta.step_details.tool_calls && accumulatedRunStep.step_details.type == "tool_calls") {
+        for (const toolCall of delta.step_details.tool_calls) {
+          if (toolCall.index == __classPrivateFieldGet5(this, _AssistantStream_currentToolCallIndex, "f")) {
+            this._emit("toolCallDelta", toolCall, accumulatedRunStep.step_details.tool_calls[toolCall.index]);
+          } else {
+            if (__classPrivateFieldGet5(this, _AssistantStream_currentToolCall, "f")) {
+              this._emit("toolCallDone", __classPrivateFieldGet5(this, _AssistantStream_currentToolCall, "f"));
+            }
+            __classPrivateFieldSet4(this, _AssistantStream_currentToolCallIndex, toolCall.index, "f");
+            __classPrivateFieldSet4(this, _AssistantStream_currentToolCall, accumulatedRunStep.step_details.tool_calls[toolCall.index], "f");
+            if (__classPrivateFieldGet5(this, _AssistantStream_currentToolCall, "f"))
+              this._emit("toolCallCreated", __classPrivateFieldGet5(this, _AssistantStream_currentToolCall, "f"));
+          }
+        }
+      }
+      this._emit("runStepDelta", event.data.delta, accumulatedRunStep);
+      break;
+    case "thread.run.step.completed":
+    case "thread.run.step.failed":
+    case "thread.run.step.cancelled":
+    case "thread.run.step.expired":
+      __classPrivateFieldSet4(this, _AssistantStream_currentRunStepSnapshot, void 0, "f");
+      const details = event.data.step_details;
+      if (details.type == "tool_calls") {
+        if (__classPrivateFieldGet5(this, _AssistantStream_currentToolCall, "f")) {
+          this._emit("toolCallDone", __classPrivateFieldGet5(this, _AssistantStream_currentToolCall, "f"));
+          __classPrivateFieldSet4(this, _AssistantStream_currentToolCall, void 0, "f");
+        }
+      }
+      this._emit("runStepDone", event.data, accumulatedRunStep);
+      break;
+    case "thread.run.step.in_progress":
+      break;
+  }
+}, _AssistantStream_handleEvent = function _AssistantStream_handleEvent2(event) {
+  __classPrivateFieldGet5(this, _AssistantStream_events, "f").push(event);
+  this._emit("event", event);
+}, _AssistantStream_accumulateRunStep = function _AssistantStream_accumulateRunStep2(event) {
+  switch (event.event) {
+    case "thread.run.step.created":
+      __classPrivateFieldGet5(this, _AssistantStream_runStepSnapshots, "f")[event.data.id] = event.data;
+      return event.data;
+    case "thread.run.step.delta":
+      let snapshot = __classPrivateFieldGet5(this, _AssistantStream_runStepSnapshots, "f")[event.data.id];
+      if (!snapshot) {
+        throw Error("Received a RunStepDelta before creation of a snapshot");
+      }
+      let data = event.data;
+      if (data.delta) {
+        const accumulated = AssistantStream.accumulateDelta(snapshot, data.delta);
+        __classPrivateFieldGet5(this, _AssistantStream_runStepSnapshots, "f")[event.data.id] = accumulated;
+      }
+      return __classPrivateFieldGet5(this, _AssistantStream_runStepSnapshots, "f")[event.data.id];
+    case "thread.run.step.completed":
+    case "thread.run.step.failed":
+    case "thread.run.step.cancelled":
+    case "thread.run.step.expired":
+    case "thread.run.step.in_progress":
+      __classPrivateFieldGet5(this, _AssistantStream_runStepSnapshots, "f")[event.data.id] = event.data;
+      break;
+  }
+  if (__classPrivateFieldGet5(this, _AssistantStream_runStepSnapshots, "f")[event.data.id])
+    return __classPrivateFieldGet5(this, _AssistantStream_runStepSnapshots, "f")[event.data.id];
+  throw new Error("No snapshot available");
+}, _AssistantStream_accumulateMessage = function _AssistantStream_accumulateMessage2(event, snapshot) {
+  let newContent = [];
+  switch (event.event) {
+    case "thread.message.created":
+      return [event.data, newContent];
+    case "thread.message.delta":
+      if (!snapshot) {
+        throw Error("Received a delta with no existing snapshot (there should be one from message creation)");
+      }
+      let data = event.data;
+      if (data.delta.content) {
+        for (const contentElement of data.delta.content) {
+          if (contentElement.index in snapshot.content) {
+            let currentContent = snapshot.content[contentElement.index];
+            snapshot.content[contentElement.index] = __classPrivateFieldGet5(this, _AssistantStream_instances, "m", _AssistantStream_accumulateContent).call(this, contentElement, currentContent);
+          } else {
+            snapshot.content[contentElement.index] = contentElement;
+            newContent.push(contentElement);
+          }
+        }
+      }
+      return [snapshot, newContent];
+    case "thread.message.in_progress":
+    case "thread.message.completed":
+    case "thread.message.incomplete":
+      if (snapshot) {
+        return [snapshot, newContent];
+      } else {
+        throw Error("Received thread message event with no existing snapshot");
+      }
+  }
+  throw Error("Tried to accumulate a non-message event");
+}, _AssistantStream_accumulateContent = function _AssistantStream_accumulateContent2(contentElement, currentContent) {
+  return AssistantStream.accumulateDelta(currentContent, contentElement);
+}, _AssistantStream_handleRun = function _AssistantStream_handleRun2(event) {
+  __classPrivateFieldSet4(this, _AssistantStream_currentRunSnapshot, event.data, "f");
+  switch (event.event) {
+    case "thread.run.created":
+      break;
+    case "thread.run.queued":
+      break;
+    case "thread.run.in_progress":
+      break;
+    case "thread.run.requires_action":
+    case "thread.run.cancelled":
+    case "thread.run.failed":
+    case "thread.run.completed":
+    case "thread.run.expired":
+      __classPrivateFieldSet4(this, _AssistantStream_finalRun, event.data, "f");
+      if (__classPrivateFieldGet5(this, _AssistantStream_currentToolCall, "f")) {
+        this._emit("toolCallDone", __classPrivateFieldGet5(this, _AssistantStream_currentToolCall, "f"));
+        __classPrivateFieldSet4(this, _AssistantStream_currentToolCall, void 0, "f");
+      }
+      break;
+    case "thread.run.cancelling":
+      break;
+  }
+};
+
+// node_modules/openai/resources/beta/threads/messages.mjs
+var Messages = class extends APIResource {
+  /**
+   * Create a message.
+   */
+  create(threadId, body, options) {
+    return this._client.post(`/threads/${threadId}/messages`, {
+      body,
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  /**
+   * Retrieve a message.
+   */
+  retrieve(threadId, messageId, options) {
+    return this._client.get(`/threads/${threadId}/messages/${messageId}`, {
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  /**
+   * Modifies a message.
+   */
+  update(threadId, messageId, body, options) {
+    return this._client.post(`/threads/${threadId}/messages/${messageId}`, {
+      body,
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  list(threadId, query = {}, options) {
+    if (isRequestOptions(query)) {
+      return this.list(threadId, {}, query);
+    }
+    return this._client.getAPIList(`/threads/${threadId}/messages`, MessagesPage, {
+      query,
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  /**
+   * Deletes a message.
+   */
+  del(threadId, messageId, options) {
+    return this._client.delete(`/threads/${threadId}/messages/${messageId}`, {
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+};
+var MessagesPage = class extends CursorPage {
+};
+Messages.MessagesPage = MessagesPage;
+
+// node_modules/openai/resources/beta/threads/runs/steps.mjs
+var Steps = class extends APIResource {
+  retrieve(threadId, runId, stepId, query = {}, options) {
+    if (isRequestOptions(query)) {
+      return this.retrieve(threadId, runId, stepId, {}, query);
+    }
+    return this._client.get(`/threads/${threadId}/runs/${runId}/steps/${stepId}`, {
+      query,
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  list(threadId, runId, query = {}, options) {
+    if (isRequestOptions(query)) {
+      return this.list(threadId, runId, {}, query);
+    }
+    return this._client.getAPIList(`/threads/${threadId}/runs/${runId}/steps`, RunStepsPage, {
+      query,
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+};
+var RunStepsPage = class extends CursorPage {
+};
+Steps.RunStepsPage = RunStepsPage;
+
+// node_modules/openai/resources/beta/threads/runs/runs.mjs
+var Runs = class extends APIResource {
+  constructor() {
+    super(...arguments);
+    this.steps = new Steps(this._client);
+  }
+  create(threadId, params, options) {
+    var _a2;
+    const { include, ...body } = params;
+    return this._client.post(`/threads/${threadId}/runs`, {
+      query: { include },
+      body,
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers },
+      stream: (_a2 = params.stream) != null ? _a2 : false
+    });
+  }
+  /**
+   * Retrieves a run.
+   */
+  retrieve(threadId, runId, options) {
+    return this._client.get(`/threads/${threadId}/runs/${runId}`, {
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  /**
+   * Modifies a run.
+   */
+  update(threadId, runId, body, options) {
+    return this._client.post(`/threads/${threadId}/runs/${runId}`, {
+      body,
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  list(threadId, query = {}, options) {
+    if (isRequestOptions(query)) {
+      return this.list(threadId, {}, query);
+    }
+    return this._client.getAPIList(`/threads/${threadId}/runs`, RunsPage, {
+      query,
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  /**
+   * Cancels a run that is `in_progress`.
+   */
+  cancel(threadId, runId, options) {
+    return this._client.post(`/threads/${threadId}/runs/${runId}/cancel`, {
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  /**
+   * A helper to create a run an poll for a terminal state. More information on Run
+   * lifecycles can be found here:
+   * https://platform.openai.com/docs/assistants/how-it-works/runs-and-run-steps
+   */
+  async createAndPoll(threadId, body, options) {
+    const run = await this.create(threadId, body, options);
+    return await this.poll(threadId, run.id, options);
+  }
+  /**
+   * Create a Run stream
+   *
+   * @deprecated use `stream` instead
+   */
+  createAndStream(threadId, body, options) {
+    return AssistantStream.createAssistantStream(threadId, this._client.beta.threads.runs, body, options);
+  }
+  /**
+   * A helper to poll a run status until it reaches a terminal state. More
+   * information on Run lifecycles can be found here:
+   * https://platform.openai.com/docs/assistants/how-it-works/runs-and-run-steps
+   */
+  async poll(threadId, runId, options) {
+    const headers = { ...options == null ? void 0 : options.headers, "X-Stainless-Poll-Helper": "true" };
+    if (options == null ? void 0 : options.pollIntervalMs) {
+      headers["X-Stainless-Custom-Poll-Interval"] = options.pollIntervalMs.toString();
+    }
+    while (true) {
+      const { data: run, response } = await this.retrieve(threadId, runId, {
+        ...options,
+        headers: { ...options == null ? void 0 : options.headers, ...headers }
+      }).withResponse();
+      switch (run.status) {
+        //If we are in any sort of intermediate state we poll
+        case "queued":
+        case "in_progress":
+        case "cancelling":
+          let sleepInterval = 5e3;
+          if (options == null ? void 0 : options.pollIntervalMs) {
+            sleepInterval = options.pollIntervalMs;
+          } else {
+            const headerInterval = response.headers.get("openai-poll-after-ms");
+            if (headerInterval) {
+              const headerIntervalMs = parseInt(headerInterval);
+              if (!isNaN(headerIntervalMs)) {
+                sleepInterval = headerIntervalMs;
+              }
+            }
+          }
+          await sleep(sleepInterval);
+          break;
+        //We return the run in any terminal state.
+        case "requires_action":
+        case "incomplete":
+        case "cancelled":
+        case "completed":
+        case "failed":
+        case "expired":
+          return run;
+      }
+    }
+  }
+  /**
+   * Create a Run stream
+   */
+  stream(threadId, body, options) {
+    return AssistantStream.createAssistantStream(threadId, this._client.beta.threads.runs, body, options);
+  }
+  submitToolOutputs(threadId, runId, body, options) {
+    var _a2;
+    return this._client.post(`/threads/${threadId}/runs/${runId}/submit_tool_outputs`, {
+      body,
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers },
+      stream: (_a2 = body.stream) != null ? _a2 : false
+    });
+  }
+  /**
+   * A helper to submit a tool output to a run and poll for a terminal run state.
+   * More information on Run lifecycles can be found here:
+   * https://platform.openai.com/docs/assistants/how-it-works/runs-and-run-steps
+   */
+  async submitToolOutputsAndPoll(threadId, runId, body, options) {
+    const run = await this.submitToolOutputs(threadId, runId, body, options);
+    return await this.poll(threadId, run.id, options);
+  }
+  /**
+   * Submit the tool outputs from a previous run and stream the run to a terminal
+   * state. More information on Run lifecycles can be found here:
+   * https://platform.openai.com/docs/assistants/how-it-works/runs-and-run-steps
+   */
+  submitToolOutputsStream(threadId, runId, body, options) {
+    return AssistantStream.createToolAssistantStream(threadId, runId, this._client.beta.threads.runs, body, options);
+  }
+};
+var RunsPage = class extends CursorPage {
+};
+Runs.RunsPage = RunsPage;
+Runs.Steps = Steps;
+Runs.RunStepsPage = RunStepsPage;
+
+// node_modules/openai/resources/beta/threads/threads.mjs
+var Threads = class extends APIResource {
+  constructor() {
+    super(...arguments);
+    this.runs = new Runs(this._client);
+    this.messages = new Messages(this._client);
+  }
+  create(body = {}, options) {
+    if (isRequestOptions(body)) {
+      return this.create({}, body);
+    }
+    return this._client.post("/threads", {
+      body,
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  /**
+   * Retrieves a thread.
+   */
+  retrieve(threadId, options) {
+    return this._client.get(`/threads/${threadId}`, {
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  /**
+   * Modifies a thread.
+   */
+  update(threadId, body, options) {
+    return this._client.post(`/threads/${threadId}`, {
+      body,
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  /**
+   * Delete a thread.
+   */
+  del(threadId, options) {
+    return this._client.delete(`/threads/${threadId}`, {
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  createAndRun(body, options) {
+    var _a2;
+    return this._client.post("/threads/runs", {
+      body,
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers },
+      stream: (_a2 = body.stream) != null ? _a2 : false
+    });
+  }
+  /**
+   * A helper to create a thread, start a run and then poll for a terminal state.
+   * More information on Run lifecycles can be found here:
+   * https://platform.openai.com/docs/assistants/how-it-works/runs-and-run-steps
+   */
+  async createAndRunPoll(body, options) {
+    const run = await this.createAndRun(body, options);
+    return await this.runs.poll(run.thread_id, run.id, options);
+  }
+  /**
+   * Create a thread and stream the run back
+   */
+  createAndRunStream(body, options) {
+    return AssistantStream.createThreadAssistantStream(body, this._client.beta.threads, options);
+  }
+};
+Threads.Runs = Runs;
+Threads.RunsPage = RunsPage;
+Threads.Messages = Messages;
+Threads.MessagesPage = MessagesPage;
+
+// node_modules/openai/lib/Util.mjs
+var allSettledWithThrow = async (promises) => {
+  const results = await Promise.allSettled(promises);
+  const rejected = results.filter((result) => result.status === "rejected");
+  if (rejected.length) {
+    for (const result of rejected) {
+      console.error(result.reason);
+    }
+    throw new Error(`${rejected.length} promise(s) failed - see the above errors`);
+  }
+  const values = [];
+  for (const result of results) {
+    if (result.status === "fulfilled") {
+      values.push(result.value);
+    }
+  }
+  return values;
+};
+
+// node_modules/openai/resources/beta/vector-stores/files.mjs
+var Files = class extends APIResource {
+  /**
+   * Create a vector store file by attaching a
+   * [File](https://platform.openai.com/docs/api-reference/files) to a
+   * [vector store](https://platform.openai.com/docs/api-reference/vector-stores/object).
+   */
+  create(vectorStoreId, body, options) {
+    return this._client.post(`/vector_stores/${vectorStoreId}/files`, {
+      body,
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  /**
+   * Retrieves a vector store file.
+   */
+  retrieve(vectorStoreId, fileId, options) {
+    return this._client.get(`/vector_stores/${vectorStoreId}/files/${fileId}`, {
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  list(vectorStoreId, query = {}, options) {
+    if (isRequestOptions(query)) {
+      return this.list(vectorStoreId, {}, query);
+    }
+    return this._client.getAPIList(`/vector_stores/${vectorStoreId}/files`, VectorStoreFilesPage, {
+      query,
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  /**
+   * Delete a vector store file. This will remove the file from the vector store but
+   * the file itself will not be deleted. To delete the file, use the
+   * [delete file](https://platform.openai.com/docs/api-reference/files/delete)
+   * endpoint.
+   */
+  del(vectorStoreId, fileId, options) {
+    return this._client.delete(`/vector_stores/${vectorStoreId}/files/${fileId}`, {
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  /**
+   * Attach a file to the given vector store and wait for it to be processed.
+   */
+  async createAndPoll(vectorStoreId, body, options) {
+    const file = await this.create(vectorStoreId, body, options);
+    return await this.poll(vectorStoreId, file.id, options);
+  }
+  /**
+   * Wait for the vector store file to finish processing.
+   *
+   * Note: this will return even if the file failed to process, you need to check
+   * file.last_error and file.status to handle these cases
+   */
+  async poll(vectorStoreId, fileId, options) {
+    const headers = { ...options == null ? void 0 : options.headers, "X-Stainless-Poll-Helper": "true" };
+    if (options == null ? void 0 : options.pollIntervalMs) {
+      headers["X-Stainless-Custom-Poll-Interval"] = options.pollIntervalMs.toString();
+    }
+    while (true) {
+      const fileResponse = await this.retrieve(vectorStoreId, fileId, {
+        ...options,
+        headers
+      }).withResponse();
+      const file = fileResponse.data;
+      switch (file.status) {
+        case "in_progress":
+          let sleepInterval = 5e3;
+          if (options == null ? void 0 : options.pollIntervalMs) {
+            sleepInterval = options.pollIntervalMs;
+          } else {
+            const headerInterval = fileResponse.response.headers.get("openai-poll-after-ms");
+            if (headerInterval) {
+              const headerIntervalMs = parseInt(headerInterval);
+              if (!isNaN(headerIntervalMs)) {
+                sleepInterval = headerIntervalMs;
+              }
+            }
+          }
+          await sleep(sleepInterval);
+          break;
+        case "failed":
+        case "completed":
+          return file;
+      }
+    }
+  }
+  /**
+   * Upload a file to the `files` API and then attach it to the given vector store.
+   *
+   * Note the file will be asynchronously processed (you can use the alternative
+   * polling helper method to wait for processing to complete).
+   */
+  async upload(vectorStoreId, file, options) {
+    const fileInfo = await this._client.files.create({ file, purpose: "assistants" }, options);
+    return this.create(vectorStoreId, { file_id: fileInfo.id }, options);
+  }
+  /**
+   * Add a file to a vector store and poll until processing is complete.
+   */
+  async uploadAndPoll(vectorStoreId, file, options) {
+    const fileInfo = await this.upload(vectorStoreId, file, options);
+    return await this.poll(vectorStoreId, fileInfo.id, options);
+  }
+};
+var VectorStoreFilesPage = class extends CursorPage {
+};
+Files.VectorStoreFilesPage = VectorStoreFilesPage;
+
+// node_modules/openai/resources/beta/vector-stores/file-batches.mjs
+var FileBatches = class extends APIResource {
+  /**
+   * Create a vector store file batch.
+   */
+  create(vectorStoreId, body, options) {
+    return this._client.post(`/vector_stores/${vectorStoreId}/file_batches`, {
+      body,
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  /**
+   * Retrieves a vector store file batch.
+   */
+  retrieve(vectorStoreId, batchId, options) {
+    return this._client.get(`/vector_stores/${vectorStoreId}/file_batches/${batchId}`, {
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  /**
+   * Cancel a vector store file batch. This attempts to cancel the processing of
+   * files in this batch as soon as possible.
+   */
+  cancel(vectorStoreId, batchId, options) {
+    return this._client.post(`/vector_stores/${vectorStoreId}/file_batches/${batchId}/cancel`, {
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  /**
+   * Create a vector store batch and poll until all files have been processed.
+   */
+  async createAndPoll(vectorStoreId, body, options) {
+    const batch = await this.create(vectorStoreId, body);
+    return await this.poll(vectorStoreId, batch.id, options);
+  }
+  listFiles(vectorStoreId, batchId, query = {}, options) {
+    if (isRequestOptions(query)) {
+      return this.listFiles(vectorStoreId, batchId, {}, query);
+    }
+    return this._client.getAPIList(`/vector_stores/${vectorStoreId}/file_batches/${batchId}/files`, VectorStoreFilesPage, { query, ...options, headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers } });
+  }
+  /**
+   * Wait for the given file batch to be processed.
+   *
+   * Note: this will return even if one of the files failed to process, you need to
+   * check batch.file_counts.failed_count to handle this case.
+   */
+  async poll(vectorStoreId, batchId, options) {
+    const headers = { ...options == null ? void 0 : options.headers, "X-Stainless-Poll-Helper": "true" };
+    if (options == null ? void 0 : options.pollIntervalMs) {
+      headers["X-Stainless-Custom-Poll-Interval"] = options.pollIntervalMs.toString();
+    }
+    while (true) {
+      const { data: batch, response } = await this.retrieve(vectorStoreId, batchId, {
+        ...options,
+        headers
+      }).withResponse();
+      switch (batch.status) {
+        case "in_progress":
+          let sleepInterval = 5e3;
+          if (options == null ? void 0 : options.pollIntervalMs) {
+            sleepInterval = options.pollIntervalMs;
+          } else {
+            const headerInterval = response.headers.get("openai-poll-after-ms");
+            if (headerInterval) {
+              const headerIntervalMs = parseInt(headerInterval);
+              if (!isNaN(headerIntervalMs)) {
+                sleepInterval = headerIntervalMs;
+              }
+            }
+          }
+          await sleep(sleepInterval);
+          break;
+        case "failed":
+        case "cancelled":
+        case "completed":
+          return batch;
+      }
+    }
+  }
+  /**
+   * Uploads the given files concurrently and then creates a vector store file batch.
+   *
+   * The concurrency limit is configurable using the `maxConcurrency` parameter.
+   */
+  async uploadAndPoll(vectorStoreId, { files, fileIds = [] }, options) {
+    var _a2;
+    if (files == null || files.length == 0) {
+      throw new Error(`No \`files\` provided to process. If you've already uploaded files you should use \`.createAndPoll()\` instead`);
+    }
+    const configuredConcurrency = (_a2 = options == null ? void 0 : options.maxConcurrency) != null ? _a2 : 5;
+    const concurrencyLimit = Math.min(configuredConcurrency, files.length);
+    const client2 = this._client;
+    const fileIterator = files.values();
+    const allFileIds = [...fileIds];
+    async function processFiles(iterator) {
+      for (let item of iterator) {
+        const fileObj = await client2.files.create({ file: item, purpose: "assistants" }, options);
+        allFileIds.push(fileObj.id);
+      }
+    }
+    const workers = Array(concurrencyLimit).fill(fileIterator).map(processFiles);
+    await allSettledWithThrow(workers);
+    return await this.createAndPoll(vectorStoreId, {
+      file_ids: allFileIds
+    });
+  }
+};
+
+// node_modules/openai/resources/beta/vector-stores/vector-stores.mjs
+var VectorStores = class extends APIResource {
+  constructor() {
+    super(...arguments);
+    this.files = new Files(this._client);
+    this.fileBatches = new FileBatches(this._client);
+  }
+  /**
+   * Create a vector store.
+   */
+  create(body, options) {
+    return this._client.post("/vector_stores", {
+      body,
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  /**
+   * Retrieves a vector store.
+   */
+  retrieve(vectorStoreId, options) {
+    return this._client.get(`/vector_stores/${vectorStoreId}`, {
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  /**
+   * Modifies a vector store.
+   */
+  update(vectorStoreId, body, options) {
+    return this._client.post(`/vector_stores/${vectorStoreId}`, {
+      body,
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  list(query = {}, options) {
+    if (isRequestOptions(query)) {
+      return this.list({}, query);
+    }
+    return this._client.getAPIList("/vector_stores", VectorStoresPage, {
+      query,
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+  /**
+   * Delete a vector store.
+   */
+  del(vectorStoreId, options) {
+    return this._client.delete(`/vector_stores/${vectorStoreId}`, {
+      ...options,
+      headers: { "OpenAI-Beta": "assistants=v2", ...options == null ? void 0 : options.headers }
+    });
+  }
+};
+var VectorStoresPage = class extends CursorPage {
+};
+VectorStores.VectorStoresPage = VectorStoresPage;
+VectorStores.Files = Files;
+VectorStores.VectorStoreFilesPage = VectorStoreFilesPage;
+VectorStores.FileBatches = FileBatches;
+
+// node_modules/openai/resources/beta/beta.mjs
+var Beta = class extends APIResource {
+  constructor() {
+    super(...arguments);
+    this.vectorStores = new VectorStores(this._client);
+    this.chat = new Chat2(this._client);
+    this.assistants = new Assistants(this._client);
+    this.threads = new Threads(this._client);
+  }
+};
+Beta.VectorStores = VectorStores;
+Beta.VectorStoresPage = VectorStoresPage;
+Beta.Assistants = Assistants;
+Beta.AssistantsPage = AssistantsPage;
+Beta.Threads = Threads;
+
+// node_modules/openai/resources/completions.mjs
+var Completions3 = class extends APIResource {
+  create(body, options) {
+    var _a2;
+    return this._client.post("/completions", { body, ...options, stream: (_a2 = body.stream) != null ? _a2 : false });
+  }
+};
+
+// node_modules/openai/resources/embeddings.mjs
+var Embeddings = class extends APIResource {
+  /**
+   * Creates an embedding vector representing the input text.
+   */
+  create(body, options) {
+    return this._client.post("/embeddings", { body, ...options });
+  }
+};
+
+// node_modules/openai/resources/files.mjs
+var Files2 = class extends APIResource {
+  /**
+   * Upload a file that can be used across various endpoints. Individual files can be
+   * up to 512 MB, and the size of all files uploaded by one organization can be up
+   * to 100 GB.
+   *
+   * The Assistants API supports files up to 2 million tokens and of specific file
+   * types. See the
+   * [Assistants Tools guide](https://platform.openai.com/docs/assistants/tools) for
+   * details.
+   *
+   * The Fine-tuning API only supports `.jsonl` files. The input also has certain
+   * required formats for fine-tuning
+   * [chat](https://platform.openai.com/docs/api-reference/fine-tuning/chat-input) or
+   * [completions](https://platform.openai.com/docs/api-reference/fine-tuning/completions-input)
+   * models.
+   *
+   * The Batch API only supports `.jsonl` files up to 200 MB in size. The input also
+   * has a specific required
+   * [format](https://platform.openai.com/docs/api-reference/batch/request-input).
+   *
+   * Please [contact us](https://help.openai.com/) if you need to increase these
+   * storage limits.
+   */
+  create(body, options) {
+    return this._client.post("/files", multipartFormRequestOptions({ body, ...options }));
+  }
+  /**
+   * Returns information about a specific file.
+   */
+  retrieve(fileId, options) {
+    return this._client.get(`/files/${fileId}`, options);
+  }
+  list(query = {}, options) {
+    if (isRequestOptions(query)) {
+      return this.list({}, query);
+    }
+    return this._client.getAPIList("/files", FileObjectsPage, { query, ...options });
+  }
+  /**
+   * Delete a file.
+   */
+  del(fileId, options) {
+    return this._client.delete(`/files/${fileId}`, options);
+  }
+  /**
+   * Returns the contents of the specified file.
+   */
+  content(fileId, options) {
+    return this._client.get(`/files/${fileId}/content`, { ...options, __binaryResponse: true });
+  }
+  /**
+   * Returns the contents of the specified file.
+   *
+   * @deprecated The `.content()` method should be used instead
+   */
+  retrieveContent(fileId, options) {
+    return this._client.get(`/files/${fileId}/content`, {
+      ...options,
+      headers: { Accept: "application/json", ...options == null ? void 0 : options.headers }
+    });
+  }
+  /**
+   * Waits for the given file to be processed, default timeout is 30 mins.
+   */
+  async waitForProcessing(id, { pollInterval = 5e3, maxWait = 30 * 60 * 1e3 } = {}) {
+    const TERMINAL_STATES = /* @__PURE__ */ new Set(["processed", "error", "deleted"]);
+    const start = Date.now();
+    let file = await this.retrieve(id);
+    while (!file.status || !TERMINAL_STATES.has(file.status)) {
+      await sleep(pollInterval);
+      file = await this.retrieve(id);
+      if (Date.now() - start > maxWait) {
+        throw new APIConnectionTimeoutError({
+          message: `Giving up on waiting for file ${id} to finish processing after ${maxWait} milliseconds.`
+        });
+      }
+    }
+    return file;
+  }
+};
+var FileObjectsPage = class extends CursorPage {
+};
+Files2.FileObjectsPage = FileObjectsPage;
+
+// node_modules/openai/resources/fine-tuning/jobs/checkpoints.mjs
+var Checkpoints = class extends APIResource {
+  list(fineTuningJobId, query = {}, options) {
+    if (isRequestOptions(query)) {
+      return this.list(fineTuningJobId, {}, query);
+    }
+    return this._client.getAPIList(`/fine_tuning/jobs/${fineTuningJobId}/checkpoints`, FineTuningJobCheckpointsPage, { query, ...options });
+  }
+};
+var FineTuningJobCheckpointsPage = class extends CursorPage {
+};
+Checkpoints.FineTuningJobCheckpointsPage = FineTuningJobCheckpointsPage;
+
+// node_modules/openai/resources/fine-tuning/jobs/jobs.mjs
+var Jobs = class extends APIResource {
+  constructor() {
+    super(...arguments);
+    this.checkpoints = new Checkpoints(this._client);
+  }
+  /**
+   * Creates a fine-tuning job which begins the process of creating a new model from
+   * a given dataset.
+   *
+   * Response includes details of the enqueued job including job status and the name
+   * of the fine-tuned models once complete.
+   *
+   * [Learn more about fine-tuning](https://platform.openai.com/docs/guides/fine-tuning)
+   */
+  create(body, options) {
+    return this._client.post("/fine_tuning/jobs", { body, ...options });
+  }
+  /**
+   * Get info about a fine-tuning job.
+   *
+   * [Learn more about fine-tuning](https://platform.openai.com/docs/guides/fine-tuning)
+   */
+  retrieve(fineTuningJobId, options) {
+    return this._client.get(`/fine_tuning/jobs/${fineTuningJobId}`, options);
+  }
+  list(query = {}, options) {
+    if (isRequestOptions(query)) {
+      return this.list({}, query);
+    }
+    return this._client.getAPIList("/fine_tuning/jobs", FineTuningJobsPage, { query, ...options });
+  }
+  /**
+   * Immediately cancel a fine-tune job.
+   */
+  cancel(fineTuningJobId, options) {
+    return this._client.post(`/fine_tuning/jobs/${fineTuningJobId}/cancel`, options);
+  }
+  listEvents(fineTuningJobId, query = {}, options) {
+    if (isRequestOptions(query)) {
+      return this.listEvents(fineTuningJobId, {}, query);
+    }
+    return this._client.getAPIList(`/fine_tuning/jobs/${fineTuningJobId}/events`, FineTuningJobEventsPage, {
+      query,
+      ...options
+    });
+  }
+};
+var FineTuningJobsPage = class extends CursorPage {
+};
+var FineTuningJobEventsPage = class extends CursorPage {
+};
+Jobs.FineTuningJobsPage = FineTuningJobsPage;
+Jobs.FineTuningJobEventsPage = FineTuningJobEventsPage;
+Jobs.Checkpoints = Checkpoints;
+Jobs.FineTuningJobCheckpointsPage = FineTuningJobCheckpointsPage;
+
+// node_modules/openai/resources/fine-tuning/fine-tuning.mjs
+var FineTuning = class extends APIResource {
+  constructor() {
+    super(...arguments);
+    this.jobs = new Jobs(this._client);
+  }
+};
+FineTuning.Jobs = Jobs;
+FineTuning.FineTuningJobsPage = FineTuningJobsPage;
+FineTuning.FineTuningJobEventsPage = FineTuningJobEventsPage;
+
+// node_modules/openai/resources/images.mjs
+var Images = class extends APIResource {
+  /**
+   * Creates a variation of a given image.
+   */
+  createVariation(body, options) {
+    return this._client.post("/images/variations", multipartFormRequestOptions({ body, ...options }));
+  }
+  /**
+   * Creates an edited or extended image given an original image and a prompt.
+   */
+  edit(body, options) {
+    return this._client.post("/images/edits", multipartFormRequestOptions({ body, ...options }));
+  }
+  /**
+   * Creates an image given a prompt.
+   */
+  generate(body, options) {
+    return this._client.post("/images/generations", { body, ...options });
+  }
+};
+
+// node_modules/openai/resources/models.mjs
+var Models = class extends APIResource {
+  /**
+   * Retrieves a model instance, providing basic information about the model such as
+   * the owner and permissioning.
+   */
+  retrieve(model, options) {
+    return this._client.get(`/models/${model}`, options);
+  }
+  /**
+   * Lists the currently available models, and provides basic information about each
+   * one such as the owner and availability.
+   */
+  list(options) {
+    return this._client.getAPIList("/models", ModelsPage, options);
+  }
+  /**
+   * Delete a fine-tuned model. You must have the Owner role in your organization to
+   * delete a model.
+   */
+  del(model, options) {
+    return this._client.delete(`/models/${model}`, options);
+  }
+};
+var ModelsPage = class extends Page {
+};
+Models.ModelsPage = ModelsPage;
+
+// node_modules/openai/resources/moderations.mjs
+var Moderations = class extends APIResource {
+  /**
+   * Classifies if text and/or image inputs are potentially harmful. Learn more in
+   * the [moderation guide](https://platform.openai.com/docs/guides/moderation).
+   */
+  create(body, options) {
+    return this._client.post("/moderations", { body, ...options });
+  }
+};
+
+// node_modules/openai/resources/uploads/parts.mjs
+var Parts = class extends APIResource {
+  /**
+   * Adds a
+   * [Part](https://platform.openai.com/docs/api-reference/uploads/part-object) to an
+   * [Upload](https://platform.openai.com/docs/api-reference/uploads/object) object.
+   * A Part represents a chunk of bytes from the file you are trying to upload.
+   *
+   * Each Part can be at most 64 MB, and you can add Parts until you hit the Upload
+   * maximum of 8 GB.
+   *
+   * It is possible to add multiple Parts in parallel. You can decide the intended
+   * order of the Parts when you
+   * [complete the Upload](https://platform.openai.com/docs/api-reference/uploads/complete).
+   */
+  create(uploadId, body, options) {
+    return this._client.post(`/uploads/${uploadId}/parts`, multipartFormRequestOptions({ body, ...options }));
+  }
+};
+
+// node_modules/openai/resources/uploads/uploads.mjs
+var Uploads = class extends APIResource {
+  constructor() {
+    super(...arguments);
+    this.parts = new Parts(this._client);
+  }
+  /**
+   * Creates an intermediate
+   * [Upload](https://platform.openai.com/docs/api-reference/uploads/object) object
+   * that you can add
+   * [Parts](https://platform.openai.com/docs/api-reference/uploads/part-object) to.
+   * Currently, an Upload can accept at most 8 GB in total and expires after an hour
+   * after you create it.
+   *
+   * Once you complete the Upload, we will create a
+   * [File](https://platform.openai.com/docs/api-reference/files/object) object that
+   * contains all the parts you uploaded. This File is usable in the rest of our
+   * platform as a regular File object.
+   *
+   * For certain `purpose`s, the correct `mime_type` must be specified. Please refer
+   * to documentation for the supported MIME types for your use case:
+   *
+   * - [Assistants](https://platform.openai.com/docs/assistants/tools/file-search#supported-files)
+   *
+   * For guidance on the proper filename extensions for each purpose, please follow
+   * the documentation on
+   * [creating a File](https://platform.openai.com/docs/api-reference/files/create).
+   */
+  create(body, options) {
+    return this._client.post("/uploads", { body, ...options });
+  }
+  /**
+   * Cancels the Upload. No Parts may be added after an Upload is cancelled.
+   */
+  cancel(uploadId, options) {
+    return this._client.post(`/uploads/${uploadId}/cancel`, options);
+  }
+  /**
+   * Completes the
+   * [Upload](https://platform.openai.com/docs/api-reference/uploads/object).
+   *
+   * Within the returned Upload object, there is a nested
+   * [File](https://platform.openai.com/docs/api-reference/files/object) object that
+   * is ready to use in the rest of the platform.
+   *
+   * You can specify the order of the Parts by passing in an ordered list of the Part
+   * IDs.
+   *
+   * The number of bytes uploaded upon completion must match the number of bytes
+   * initially specified when creating the Upload object. No Parts may be added after
+   * an Upload is completed.
+   */
+  complete(uploadId, body, options) {
+    return this._client.post(`/uploads/${uploadId}/complete`, { body, ...options });
+  }
+};
+Uploads.Parts = Parts;
+
+// node_modules/openai/index.mjs
+var _a;
+var OpenAI = class extends APIClient {
+  /**
+   * API Client for interfacing with the OpenAI API.
+   *
+   * @param {string | undefined} [opts.apiKey=process.env['OPENAI_API_KEY'] ?? undefined]
+   * @param {string | null | undefined} [opts.organization=process.env['OPENAI_ORG_ID'] ?? null]
+   * @param {string | null | undefined} [opts.project=process.env['OPENAI_PROJECT_ID'] ?? null]
+   * @param {string} [opts.baseURL=process.env['OPENAI_BASE_URL'] ?? https://api.openai.com/v1] - Override the default base URL for the API.
+   * @param {number} [opts.timeout=10 minutes] - The maximum amount of time (in milliseconds) the client will wait for a response before timing out.
+   * @param {number} [opts.httpAgent] - An HTTP agent used to manage HTTP(s) connections.
+   * @param {Core.Fetch} [opts.fetch] - Specify a custom `fetch` function implementation.
+   * @param {number} [opts.maxRetries=2] - The maximum number of times the client will retry a request.
+   * @param {Core.Headers} opts.defaultHeaders - Default headers to include with every request to the API.
+   * @param {Core.DefaultQuery} opts.defaultQuery - Default query parameters to include with every request to the API.
+   * @param {boolean} [opts.dangerouslyAllowBrowser=false] - By default, client-side use of this library is not allowed, as it risks exposing your secret API credentials to attackers.
+   */
+  constructor({ baseURL = readEnv("OPENAI_BASE_URL"), apiKey = readEnv("OPENAI_API_KEY"), organization = ((_a2) => (_a2 = readEnv("OPENAI_ORG_ID")) != null ? _a2 : null)(), project = ((_b) => (_b = readEnv("OPENAI_PROJECT_ID")) != null ? _b : null)(), ...opts } = {}) {
+    var _a3;
+    if (apiKey === void 0) {
+      throw new OpenAIError("The OPENAI_API_KEY environment variable is missing or empty; either provide it, or instantiate the OpenAI client with an apiKey option, like new OpenAI({ apiKey: 'My API Key' }).");
+    }
+    const options = {
+      apiKey,
+      organization,
+      project,
+      ...opts,
+      baseURL: baseURL || `https://api.openai.com/v1`
+    };
+    if (!options.dangerouslyAllowBrowser && isRunningInBrowser()) {
+      throw new OpenAIError("It looks like you're running in a browser-like environment.\n\nThis is disabled by default, as it risks exposing your secret API credentials to attackers.\nIf you understand the risks and have appropriate mitigations in place,\nyou can set the `dangerouslyAllowBrowser` option to `true`, e.g.,\n\nnew OpenAI({ apiKey, dangerouslyAllowBrowser: true });\n\nhttps://help.openai.com/en/articles/5112595-best-practices-for-api-key-safety\n");
+    }
+    super({
+      baseURL: options.baseURL,
+      timeout: (_a3 = options.timeout) != null ? _a3 : 6e5,
+      httpAgent: options.httpAgent,
+      maxRetries: options.maxRetries,
+      fetch: options.fetch
+    });
+    this.completions = new Completions3(this);
+    this.chat = new Chat(this);
+    this.embeddings = new Embeddings(this);
+    this.files = new Files2(this);
+    this.images = new Images(this);
+    this.audio = new Audio(this);
+    this.moderations = new Moderations(this);
+    this.models = new Models(this);
+    this.fineTuning = new FineTuning(this);
+    this.beta = new Beta(this);
+    this.batches = new Batches(this);
+    this.uploads = new Uploads(this);
+    this._options = options;
+    this.apiKey = apiKey;
+    this.organization = organization;
+    this.project = project;
+  }
+  defaultQuery() {
+    return this._options.defaultQuery;
+  }
+  defaultHeaders(opts) {
+    return {
+      ...super.defaultHeaders(opts),
+      "OpenAI-Organization": this.organization,
+      "OpenAI-Project": this.project,
+      ...this._options.defaultHeaders
+    };
+  }
+  authHeaders(opts) {
+    return { Authorization: `Bearer ${this.apiKey}` };
+  }
+  stringifyQuery(query) {
+    return stringify(query, { arrayFormat: "brackets" });
+  }
+};
+_a = OpenAI;
+OpenAI.OpenAI = _a;
+OpenAI.DEFAULT_TIMEOUT = 6e5;
+OpenAI.OpenAIError = OpenAIError;
+OpenAI.APIError = APIError;
+OpenAI.APIConnectionError = APIConnectionError;
+OpenAI.APIConnectionTimeoutError = APIConnectionTimeoutError;
+OpenAI.APIUserAbortError = APIUserAbortError;
+OpenAI.NotFoundError = NotFoundError;
+OpenAI.ConflictError = ConflictError;
+OpenAI.RateLimitError = RateLimitError;
+OpenAI.BadRequestError = BadRequestError;
+OpenAI.AuthenticationError = AuthenticationError;
+OpenAI.InternalServerError = InternalServerError;
+OpenAI.PermissionDeniedError = PermissionDeniedError;
+OpenAI.UnprocessableEntityError = UnprocessableEntityError;
+OpenAI.toFile = toFile;
+OpenAI.fileFromPath = fileFromPath;
+OpenAI.Completions = Completions3;
+OpenAI.Chat = Chat;
+OpenAI.Embeddings = Embeddings;
+OpenAI.Files = Files2;
+OpenAI.FileObjectsPage = FileObjectsPage;
+OpenAI.Images = Images;
+OpenAI.Audio = Audio;
+OpenAI.Moderations = Moderations;
+OpenAI.Models = Models;
+OpenAI.ModelsPage = ModelsPage;
+OpenAI.FineTuning = FineTuning;
+OpenAI.Beta = Beta;
+OpenAI.Batches = Batches;
+OpenAI.BatchesPage = BatchesPage;
+OpenAI.Uploads = Uploads;
 
 // node_modules/@langchain/core/messages.js
 init_messages2();
+
+// node_modules/@langchain/core/outputs.js
+init_outputs();
+
+// node_modules/@langchain/core/utils/env.js
+init_env3();
 
 // node_modules/@langchain/core/dist/language_models/chat_models.js
 init_esm();
@@ -21361,8 +26488,8 @@ var InMemoryCache = class _InMemoryCache extends BaseCache {
    * @returns The data corresponding to the prompt and LLM key, or null if not found.
    */
   lookup(prompt, llmKey) {
-    var _a;
-    return Promise.resolve((_a = this.cache.get(getCacheKey(prompt, llmKey))) != null ? _a : null);
+    var _a2;
+    return Promise.resolve((_a2 = this.cache.get(getCacheKey(prompt, llmKey))) != null ? _a2 : null);
   }
   /**
    * Updates the cache with new data using a prompt and an LLM key.
@@ -21427,8 +26554,8 @@ function bytePairEncode(piece, ranks) {
     return [ranks.get(piece.join(","))];
   return bytePairMerge(piece, ranks).map((p) => ranks.get(piece.slice(p.start, p.end).join(","))).filter((x) => x != null);
 }
-function escapeRegex(str) {
-  return str.replace(/[\\^$*+?.()|[\]{}]/g, "\\$&");
+function escapeRegex(str2) {
+  return str2.replace(/[\\^$*+?.()|[\]{}]/g, "\\$&");
 }
 var _Tiktoken = class {
   constructor(ranks, extendedSpecialTokens) {
@@ -21465,7 +26592,7 @@ var _Tiktoken = class {
     }, {});
   }
   encode(text, allowedSpecial = [], disallowedSpecial = "all") {
-    var _a;
+    var _a2;
     const regexes = new RegExp(this.patStr, "ug");
     const specialRegex = _Tiktoken.specialTokenRegex(
       Object.keys(this.specialTokens)
@@ -21501,7 +26628,7 @@ var _Tiktoken = class {
           break;
         startFind = nextSpecial.index + 1;
       }
-      const end = (_a = nextSpecial == null ? void 0 : nextSpecial.index) != null ? _a : text.length;
+      const end = (_a2 = nextSpecial == null ? void 0 : nextSpecial.index) != null ? _a2 : text.length;
       for (const match of text.substring(start, end).matchAll(regexes)) {
         const piece = this.textEncoder.encode(match[0]);
         const token2 = this.rankMap.get(piece.join(","));
@@ -21520,12 +26647,12 @@ var _Tiktoken = class {
     return ret;
   }
   decode(tokens) {
-    var _a;
+    var _a2;
     const res = [];
     let length = 0;
     for (let i2 = 0; i2 < tokens.length; ++i2) {
       const token = tokens[i2];
-      const bytes = (_a = this.textMap.get(token)) != null ? _a : this.inverseSpecialTokens[token];
+      const bytes = (_a2 = this.textMap.get(token)) != null ? _a2 : this.inverseSpecialTokens[token];
       if (bytes != null) {
         res.push(bytes);
         length += bytes.length;
@@ -21677,7 +26804,7 @@ var BaseLangChain = class extends Runnable {
     };
   }
   constructor(params) {
-    var _a, _b, _c;
+    var _a2, _b, _c;
     super(params);
     Object.defineProperty(this, "verbose", {
       enumerable: true,
@@ -21703,7 +26830,7 @@ var BaseLangChain = class extends Runnable {
       writable: true,
       value: void 0
     });
-    this.verbose = (_a = params.verbose) != null ? _a : getVerbosity();
+    this.verbose = (_a2 = params.verbose) != null ? _a2 : getVerbosity();
     this.callbacks = params.callbacks;
     this.tags = (_b = params.tags) != null ? _b : [];
     this.metadata = (_c = params.metadata) != null ? _c : {};
@@ -21834,977 +26961,314 @@ init_stream();
 init_base4();
 init_config();
 
-// node_modules/whatwg-fetch/fetch.js
-var g = typeof globalThis !== "undefined" && globalThis || typeof self !== "undefined" && self || // eslint-disable-next-line no-undef
-typeof global !== "undefined" && global || {};
-var support = {
-  searchParams: "URLSearchParams" in g,
-  iterable: "Symbol" in g && "iterator" in Symbol,
-  blob: "FileReader" in g && "Blob" in g && function() {
-    try {
-      new Blob();
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }(),
-  formData: "FormData" in g,
-  arrayBuffer: "ArrayBuffer" in g
-};
-function isDataView(obj) {
-  return obj && DataView.prototype.isPrototypeOf(obj);
-}
-if (support.arrayBuffer) {
-  viewClasses = [
-    "[object Int8Array]",
-    "[object Uint8Array]",
-    "[object Uint8ClampedArray]",
-    "[object Int16Array]",
-    "[object Uint16Array]",
-    "[object Int32Array]",
-    "[object Uint32Array]",
-    "[object Float32Array]",
-    "[object Float64Array]"
-  ];
-  isArrayBufferView = ArrayBuffer.isView || function(obj) {
-    return obj && viewClasses.indexOf(Object.prototype.toString.call(obj)) > -1;
-  };
-}
-var viewClasses;
-var isArrayBufferView;
-function normalizeName(name) {
-  if (typeof name !== "string") {
-    name = String(name);
-  }
-  if (/[^a-z0-9\-#$%&'*+.^_`|~!]/i.test(name) || name === "") {
-    throw new TypeError('Invalid character in header field name: "' + name + '"');
-  }
-  return name.toLowerCase();
-}
-function normalizeValue(value) {
-  if (typeof value !== "string") {
-    value = String(value);
-  }
-  return value;
-}
-function iteratorFor(items) {
-  var iterator = {
-    next: function() {
-      var value = items.shift();
-      return { done: value === void 0, value };
-    }
-  };
-  if (support.iterable) {
-    iterator[Symbol.iterator] = function() {
-      return iterator;
-    };
-  }
-  return iterator;
-}
-function Headers(headers) {
-  this.map = {};
-  if (headers instanceof Headers) {
-    headers.forEach(function(value, name) {
-      this.append(name, value);
-    }, this);
-  } else if (Array.isArray(headers)) {
-    headers.forEach(function(header) {
-      if (header.length != 2) {
-        throw new TypeError("Headers constructor: expected name/value pair to be length 2, found" + header.length);
-      }
-      this.append(header[0], header[1]);
-    }, this);
-  } else if (headers) {
-    Object.getOwnPropertyNames(headers).forEach(function(name) {
-      this.append(name, headers[name]);
-    }, this);
-  }
-}
-Headers.prototype.append = function(name, value) {
-  name = normalizeName(name);
-  value = normalizeValue(value);
-  var oldValue = this.map[name];
-  this.map[name] = oldValue ? oldValue + ", " + value : value;
-};
-Headers.prototype["delete"] = function(name) {
-  delete this.map[normalizeName(name)];
-};
-Headers.prototype.get = function(name) {
-  name = normalizeName(name);
-  return this.has(name) ? this.map[name] : null;
-};
-Headers.prototype.has = function(name) {
-  return this.map.hasOwnProperty(normalizeName(name));
-};
-Headers.prototype.set = function(name, value) {
-  this.map[normalizeName(name)] = normalizeValue(value);
-};
-Headers.prototype.forEach = function(callback, thisArg) {
-  for (var name in this.map) {
-    if (this.map.hasOwnProperty(name)) {
-      callback.call(thisArg, this.map[name], name, this);
-    }
-  }
-};
-Headers.prototype.keys = function() {
-  var items = [];
-  this.forEach(function(value, name) {
-    items.push(name);
-  });
-  return iteratorFor(items);
-};
-Headers.prototype.values = function() {
-  var items = [];
-  this.forEach(function(value) {
-    items.push(value);
-  });
-  return iteratorFor(items);
-};
-Headers.prototype.entries = function() {
-  var items = [];
-  this.forEach(function(value, name) {
-    items.push([name, value]);
-  });
-  return iteratorFor(items);
-};
-if (support.iterable) {
-  Headers.prototype[Symbol.iterator] = Headers.prototype.entries;
-}
-function consumed(body) {
-  if (body._noBody) return;
-  if (body.bodyUsed) {
-    return Promise.reject(new TypeError("Already read"));
-  }
-  body.bodyUsed = true;
-}
-function fileReaderReady(reader) {
-  return new Promise(function(resolve, reject) {
-    reader.onload = function() {
-      resolve(reader.result);
-    };
-    reader.onerror = function() {
-      reject(reader.error);
-    };
-  });
-}
-function readBlobAsArrayBuffer(blob) {
-  var reader = new FileReader();
-  var promise = fileReaderReady(reader);
-  reader.readAsArrayBuffer(blob);
-  return promise;
-}
-function readBlobAsText(blob) {
-  var reader = new FileReader();
-  var promise = fileReaderReady(reader);
-  var match = /charset=([A-Za-z0-9_-]+)/.exec(blob.type);
-  var encoding = match ? match[1] : "utf-8";
-  reader.readAsText(blob, encoding);
-  return promise;
-}
-function readArrayBufferAsText(buf) {
-  var view = new Uint8Array(buf);
-  var chars = new Array(view.length);
-  for (var i = 0; i < view.length; i++) {
-    chars[i] = String.fromCharCode(view[i]);
-  }
-  return chars.join("");
-}
-function bufferClone(buf) {
-  if (buf.slice) {
-    return buf.slice(0);
-  } else {
-    var view = new Uint8Array(buf.byteLength);
-    view.set(new Uint8Array(buf));
-    return view.buffer;
-  }
-}
-function Body() {
-  this.bodyUsed = false;
-  this._initBody = function(body) {
-    this.bodyUsed = this.bodyUsed;
-    this._bodyInit = body;
-    if (!body) {
-      this._noBody = true;
-      this._bodyText = "";
-    } else if (typeof body === "string") {
-      this._bodyText = body;
-    } else if (support.blob && Blob.prototype.isPrototypeOf(body)) {
-      this._bodyBlob = body;
-    } else if (support.formData && FormData.prototype.isPrototypeOf(body)) {
-      this._bodyFormData = body;
-    } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
-      this._bodyText = body.toString();
-    } else if (support.arrayBuffer && support.blob && isDataView(body)) {
-      this._bodyArrayBuffer = bufferClone(body.buffer);
-      this._bodyInit = new Blob([this._bodyArrayBuffer]);
-    } else if (support.arrayBuffer && (ArrayBuffer.prototype.isPrototypeOf(body) || isArrayBufferView(body))) {
-      this._bodyArrayBuffer = bufferClone(body);
-    } else {
-      this._bodyText = body = Object.prototype.toString.call(body);
-    }
-    if (!this.headers.get("content-type")) {
-      if (typeof body === "string") {
-        this.headers.set("content-type", "text/plain;charset=UTF-8");
-      } else if (this._bodyBlob && this._bodyBlob.type) {
-        this.headers.set("content-type", this._bodyBlob.type);
-      } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
-        this.headers.set("content-type", "application/x-www-form-urlencoded;charset=UTF-8");
-      }
-    }
-  };
-  if (support.blob) {
-    this.blob = function() {
-      var rejected = consumed(this);
-      if (rejected) {
-        return rejected;
-      }
-      if (this._bodyBlob) {
-        return Promise.resolve(this._bodyBlob);
-      } else if (this._bodyArrayBuffer) {
-        return Promise.resolve(new Blob([this._bodyArrayBuffer]));
-      } else if (this._bodyFormData) {
-        throw new Error("could not read FormData body as blob");
-      } else {
-        return Promise.resolve(new Blob([this._bodyText]));
-      }
-    };
-  }
-  this.arrayBuffer = function() {
-    if (this._bodyArrayBuffer) {
-      var isConsumed = consumed(this);
-      if (isConsumed) {
-        return isConsumed;
-      } else if (ArrayBuffer.isView(this._bodyArrayBuffer)) {
-        return Promise.resolve(
-          this._bodyArrayBuffer.buffer.slice(
-            this._bodyArrayBuffer.byteOffset,
-            this._bodyArrayBuffer.byteOffset + this._bodyArrayBuffer.byteLength
-          )
-        );
-      } else {
-        return Promise.resolve(this._bodyArrayBuffer);
-      }
-    } else if (support.blob) {
-      return this.blob().then(readBlobAsArrayBuffer);
-    } else {
-      throw new Error("could not read as ArrayBuffer");
-    }
-  };
-  this.text = function() {
-    var rejected = consumed(this);
-    if (rejected) {
-      return rejected;
-    }
-    if (this._bodyBlob) {
-      return readBlobAsText(this._bodyBlob);
-    } else if (this._bodyArrayBuffer) {
-      return Promise.resolve(readArrayBufferAsText(this._bodyArrayBuffer));
-    } else if (this._bodyFormData) {
-      throw new Error("could not read FormData body as text");
-    } else {
-      return Promise.resolve(this._bodyText);
-    }
-  };
-  if (support.formData) {
-    this.formData = function() {
-      return this.text().then(decode);
-    };
-  }
-  this.json = function() {
-    return this.text().then(JSON.parse);
-  };
-  return this;
-}
-var methods = ["CONNECT", "DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT", "TRACE"];
-function normalizeMethod(method) {
-  var upcased = method.toUpperCase();
-  return methods.indexOf(upcased) > -1 ? upcased : method;
-}
-function Request(input, options) {
-  if (!(this instanceof Request)) {
-    throw new TypeError('Please use the "new" operator, this DOM object constructor cannot be called as a function.');
-  }
-  options = options || {};
-  var body = options.body;
-  if (input instanceof Request) {
-    if (input.bodyUsed) {
-      throw new TypeError("Already read");
-    }
-    this.url = input.url;
-    this.credentials = input.credentials;
-    if (!options.headers) {
-      this.headers = new Headers(input.headers);
-    }
-    this.method = input.method;
-    this.mode = input.mode;
-    this.signal = input.signal;
-    if (!body && input._bodyInit != null) {
-      body = input._bodyInit;
-      input.bodyUsed = true;
-    }
-  } else {
-    this.url = String(input);
-  }
-  this.credentials = options.credentials || this.credentials || "same-origin";
-  if (options.headers || !this.headers) {
-    this.headers = new Headers(options.headers);
-  }
-  this.method = normalizeMethod(options.method || this.method || "GET");
-  this.mode = options.mode || this.mode || null;
-  this.signal = options.signal || this.signal || function() {
-    if ("AbortController" in g) {
-      var ctrl = new AbortController();
-      return ctrl.signal;
-    }
-  }();
-  this.referrer = null;
-  if ((this.method === "GET" || this.method === "HEAD") && body) {
-    throw new TypeError("Body not allowed for GET or HEAD requests");
-  }
-  this._initBody(body);
-  if (this.method === "GET" || this.method === "HEAD") {
-    if (options.cache === "no-store" || options.cache === "no-cache") {
-      var reParamSearch = /([?&])_=[^&]*/;
-      if (reParamSearch.test(this.url)) {
-        this.url = this.url.replace(reParamSearch, "$1_=" + (/* @__PURE__ */ new Date()).getTime());
-      } else {
-        var reQueryString = /\?/;
-        this.url += (reQueryString.test(this.url) ? "&" : "?") + "_=" + (/* @__PURE__ */ new Date()).getTime();
-      }
-    }
-  }
-}
-Request.prototype.clone = function() {
-  return new Request(this, { body: this._bodyInit });
-};
-function decode(body) {
-  var form = new FormData();
-  body.trim().split("&").forEach(function(bytes) {
-    if (bytes) {
-      var split = bytes.split("=");
-      var name = split.shift().replace(/\+/g, " ");
-      var value = split.join("=").replace(/\+/g, " ");
-      form.append(decodeURIComponent(name), decodeURIComponent(value));
-    }
-  });
-  return form;
-}
-function parseHeaders(rawHeaders) {
-  var headers = new Headers();
-  var preProcessedHeaders = rawHeaders.replace(/\r?\n[\t ]+/g, " ");
-  preProcessedHeaders.split("\r").map(function(header) {
-    return header.indexOf("\n") === 0 ? header.substr(1, header.length) : header;
-  }).forEach(function(line) {
-    var parts = line.split(":");
-    var key = parts.shift().trim();
-    if (key) {
-      var value = parts.join(":").trim();
-      try {
-        headers.append(key, value);
-      } catch (error) {
-        console.warn("Response " + error.message);
-      }
-    }
-  });
-  return headers;
-}
-Body.call(Request.prototype);
-function Response(bodyInit, options) {
-  if (!(this instanceof Response)) {
-    throw new TypeError('Please use the "new" operator, this DOM object constructor cannot be called as a function.');
-  }
-  if (!options) {
-    options = {};
-  }
-  this.type = "default";
-  this.status = options.status === void 0 ? 200 : options.status;
-  if (this.status < 200 || this.status > 599) {
-    throw new RangeError("Failed to construct 'Response': The status provided (0) is outside the range [200, 599].");
-  }
-  this.ok = this.status >= 200 && this.status < 300;
-  this.statusText = options.statusText === void 0 ? "" : "" + options.statusText;
-  this.headers = new Headers(options.headers);
-  this.url = options.url || "";
-  this._initBody(bodyInit);
-}
-Body.call(Response.prototype);
-Response.prototype.clone = function() {
-  return new Response(this._bodyInit, {
-    status: this.status,
-    statusText: this.statusText,
-    headers: new Headers(this.headers),
-    url: this.url
-  });
-};
-Response.error = function() {
-  var response = new Response(null, { status: 200, statusText: "" });
-  response.ok = false;
-  response.status = 0;
-  response.type = "error";
-  return response;
-};
-var redirectStatuses = [301, 302, 303, 307, 308];
-Response.redirect = function(url, status) {
-  if (redirectStatuses.indexOf(status) === -1) {
-    throw new RangeError("Invalid status code");
-  }
-  return new Response(null, { status, headers: { location: url } });
-};
-var DOMException = g.DOMException;
-try {
-  new DOMException();
-} catch (err) {
-  DOMException = function(message, name) {
-    this.message = message;
-    this.name = name;
-    var error = Error(message);
-    this.stack = error.stack;
-  };
-  DOMException.prototype = Object.create(Error.prototype);
-  DOMException.prototype.constructor = DOMException;
-}
-function fetch2(input, init) {
-  return new Promise(function(resolve, reject) {
-    var request = new Request(input, init);
-    if (request.signal && request.signal.aborted) {
-      return reject(new DOMException("Aborted", "AbortError"));
-    }
-    var xhr = new XMLHttpRequest();
-    function abortXhr() {
-      xhr.abort();
-    }
-    xhr.onload = function() {
-      var options = {
-        statusText: xhr.statusText,
-        headers: parseHeaders(xhr.getAllResponseHeaders() || "")
-      };
-      if (request.url.indexOf("file://") === 0 && (xhr.status < 200 || xhr.status > 599)) {
-        options.status = 200;
-      } else {
-        options.status = xhr.status;
-      }
-      options.url = "responseURL" in xhr ? xhr.responseURL : options.headers.get("X-Request-URL");
-      var body = "response" in xhr ? xhr.response : xhr.responseText;
-      setTimeout(function() {
-        resolve(new Response(body, options));
-      }, 0);
-    };
-    xhr.onerror = function() {
-      setTimeout(function() {
-        reject(new TypeError("Network request failed"));
-      }, 0);
-    };
-    xhr.ontimeout = function() {
-      setTimeout(function() {
-        reject(new TypeError("Network request timed out"));
-      }, 0);
-    };
-    xhr.onabort = function() {
-      setTimeout(function() {
-        reject(new DOMException("Aborted", "AbortError"));
-      }, 0);
-    };
-    function fixUrl(url) {
-      try {
-        return url === "" && g.location.href ? g.location.href : url;
-      } catch (e) {
-        return url;
-      }
-    }
-    xhr.open(request.method, fixUrl(request.url), true);
-    if (request.credentials === "include") {
-      xhr.withCredentials = true;
-    } else if (request.credentials === "omit") {
-      xhr.withCredentials = false;
-    }
-    if ("responseType" in xhr) {
-      if (support.blob) {
-        xhr.responseType = "blob";
-      } else if (support.arrayBuffer) {
-        xhr.responseType = "arraybuffer";
-      }
-    }
-    if (init && typeof init.headers === "object" && !(init.headers instanceof Headers || g.Headers && init.headers instanceof g.Headers)) {
-      var names = [];
-      Object.getOwnPropertyNames(init.headers).forEach(function(name) {
-        names.push(normalizeName(name));
-        xhr.setRequestHeader(name, normalizeValue(init.headers[name]));
-      });
-      request.headers.forEach(function(value, name) {
-        if (names.indexOf(name) === -1) {
-          xhr.setRequestHeader(name, value);
-        }
-      });
-    } else {
-      request.headers.forEach(function(value, name) {
-        xhr.setRequestHeader(name, value);
-      });
-    }
-    if (request.signal) {
-      request.signal.addEventListener("abort", abortXhr);
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) {
-          request.signal.removeEventListener("abort", abortXhr);
-        }
-      };
-    }
-    xhr.send(typeof request._bodyInit === "undefined" ? null : request._bodyInit);
-  });
-}
-fetch2.polyfill = true;
-if (!g.fetch) {
-  g.fetch = fetch2;
-  g.Headers = Headers;
-  g.Request = Request;
-  g.Response = Response;
-}
+// node_modules/@langchain/core/dist/runnables/index.js
+init_base4();
+init_config();
 
-// node_modules/ollama/dist/shared/ollama.06ec3df8.mjs
-var version = "0.5.10";
-var __defProp$1 = Object.defineProperty;
-var __defNormalProp$1 = (obj, key, value) => key in obj ? __defProp$1(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField$1 = (obj, key, value) => {
-  __defNormalProp$1(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
-var ResponseError = class _ResponseError extends Error {
-  constructor(error, status_code) {
-    super(error);
-    this.error = error;
-    this.status_code = status_code;
-    this.name = "ResponseError";
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, _ResponseError);
-    }
-  }
-};
-var AbortableAsyncIterator = class {
-  constructor(abortController, itr, doneCallback) {
-    __publicField$1(this, "abortController");
-    __publicField$1(this, "itr");
-    __publicField$1(this, "doneCallback");
-    this.abortController = abortController;
-    this.itr = itr;
-    this.doneCallback = doneCallback;
-  }
-  abort() {
-    this.abortController.abort();
-  }
-  async *[Symbol.asyncIterator]() {
-    for await (const message of this.itr) {
-      if ("error" in message) {
-        throw new Error(message.error);
-      }
-      yield message;
-      if (message.done || message.status === "success") {
-        this.doneCallback();
-        return;
-      }
-    }
-    throw new Error("Did not receive done or success response in stream.");
-  }
-};
-var checkOk = async (response) => {
-  var _a;
-  if (response.ok) {
-    return;
-  }
-  let message = `Error ${response.status}: ${response.statusText}`;
-  let errorData = null;
-  if ((_a = response.headers.get("content-type")) == null ? void 0 : _a.includes("application/json")) {
-    try {
-      errorData = await response.json();
-      message = errorData.error || message;
-    } catch (error) {
-      console.log("Failed to parse error response as JSON");
-    }
-  } else {
-    try {
-      console.log("Getting text from response");
-      const textResponse = await response.text();
-      message = textResponse || message;
-    } catch (error) {
-      console.log("Failed to get text from error response");
-    }
-  }
-  throw new ResponseError(message, response.status);
-};
-function getPlatform() {
-  if (typeof window !== "undefined" && window.navigator) {
-    return `${window.navigator.platform.toLowerCase()} Browser/${navigator.userAgent};`;
-  } else if (typeof process !== "undefined") {
-    return `${process.arch} ${process.platform} Node.js/${process.version}`;
-  }
-  return "";
-}
-var fetchWithHeaders = async (fetch3, url, options = {}) => {
-  const defaultHeaders = {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-    "User-Agent": `ollama-js/${version} (${getPlatform()})`
-  };
-  if (!options.headers) {
-    options.headers = {};
-  }
-  const customHeaders = Object.fromEntries(
-    Object.entries(options.headers).filter(([key]) => !Object.keys(defaultHeaders).some((defaultKey) => defaultKey.toLowerCase() === key.toLowerCase()))
-  );
-  options.headers = {
-    ...defaultHeaders,
-    ...customHeaders
-  };
-  return fetch3(url, options);
-};
-var get = async (fetch3, host, options) => {
-  const response = await fetchWithHeaders(fetch3, host, {
-    headers: options == null ? void 0 : options.headers
-  });
-  await checkOk(response);
-  return response;
-};
-var post = async (fetch3, host, data, options) => {
-  const isRecord = (input) => {
-    return input !== null && typeof input === "object" && !Array.isArray(input);
-  };
-  const formattedData = isRecord(data) ? JSON.stringify(data) : data;
-  const response = await fetchWithHeaders(fetch3, host, {
-    method: "POST",
-    body: formattedData,
-    signal: options == null ? void 0 : options.signal,
-    headers: options == null ? void 0 : options.headers
-  });
-  await checkOk(response);
-  return response;
-};
-var del = async (fetch3, host, data, options) => {
-  const response = await fetchWithHeaders(fetch3, host, {
-    method: "DELETE",
-    body: JSON.stringify(data),
-    headers: options == null ? void 0 : options.headers
-  });
-  await checkOk(response);
-  return response;
-};
-var parseJSON = async function* (itr) {
-  var _a;
-  const decoder = new TextDecoder("utf-8");
-  let buffer = "";
-  const reader = itr.getReader();
-  while (true) {
-    const { done, value: chunk } = await reader.read();
-    if (done) {
-      break;
-    }
-    buffer += decoder.decode(chunk);
-    const parts = buffer.split("\n");
-    buffer = (_a = parts.pop()) != null ? _a : "";
-    for (const part of parts) {
-      try {
-        yield JSON.parse(part);
-      } catch (error) {
-        console.warn("invalid json: ", part);
-      }
-    }
-  }
-  for (const part of buffer.split("\n").filter((p) => p !== "")) {
-    try {
-      yield JSON.parse(part);
-    } catch (error) {
-      console.warn("invalid json: ", part);
-    }
-  }
-};
-var formatHost = (host) => {
-  if (!host) {
-    return "http://127.0.0.1:11434";
-  }
-  let isExplicitProtocol = host.includes("://");
-  if (host.startsWith(":")) {
-    host = `http://127.0.0.1${host}`;
-    isExplicitProtocol = true;
-  }
-  if (!isExplicitProtocol) {
-    host = `http://${host}`;
-  }
-  const url = new URL(host);
-  let port = url.port;
-  if (!port) {
-    if (!isExplicitProtocol) {
-      port = "11434";
-    } else {
-      port = url.protocol === "https:" ? "443" : "80";
-    }
-  }
-  let formattedHost = `${url.protocol}//${url.hostname}:${port}${url.pathname}`;
-  if (formattedHost.endsWith("/")) {
-    formattedHost = formattedHost.slice(0, -1);
-  }
-  return formattedHost;
-};
-var __defProp3 = Object.defineProperty;
-var __defNormalProp3 = (obj, key, value) => key in obj ? __defProp3(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField3 = (obj, key, value) => {
-  __defNormalProp3(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
-var Ollama$1 = class Ollama {
-  constructor(config) {
-    var _a, _b;
-    __publicField3(this, "config");
-    __publicField3(this, "fetch");
-    __publicField3(this, "ongoingStreamedRequests", []);
-    this.config = {
-      host: "",
-      headers: config == null ? void 0 : config.headers
-    };
-    if (!(config == null ? void 0 : config.proxy)) {
-      this.config.host = formatHost((_a = config == null ? void 0 : config.host) != null ? _a : "http://127.0.0.1:11434");
-    }
-    this.fetch = (_b = config == null ? void 0 : config.fetch) != null ? _b : fetch;
-  }
-  // Abort any ongoing streamed requests to Ollama
-  abort() {
-    for (const request of this.ongoingStreamedRequests) {
-      request.abort();
-    }
-    this.ongoingStreamedRequests.length = 0;
-  }
-  /**
-   * Processes a request to the Ollama server. If the request is streamable, it will return a
-   * AbortableAsyncIterator that yields the response messages. Otherwise, it will return the response
-   * object.
-   * @param endpoint {string} - The endpoint to send the request to.
-   * @param request {object} - The request object to send to the endpoint.
-   * @protected {T | AbortableAsyncIterator<T>} - The response object or a AbortableAsyncIterator that yields
-   * response messages.
-   * @throws {Error} - If the response body is missing or if the response is an error.
-   * @returns {Promise<T | AbortableAsyncIterator<T>>} - The response object or a AbortableAsyncIterator that yields the streamed response.
-   */
-  async processStreamableRequest(endpoint, request) {
-    var _a;
-    request.stream = (_a = request.stream) != null ? _a : false;
-    const host = `${this.config.host}/api/${endpoint}`;
-    if (request.stream) {
-      const abortController = new AbortController();
-      const response2 = await post(this.fetch, host, request, {
-        signal: abortController.signal,
-        headers: this.config.headers
-      });
-      if (!response2.body) {
-        throw new Error("Missing body");
-      }
-      const itr = parseJSON(response2.body);
-      const abortableAsyncIterator = new AbortableAsyncIterator(
-        abortController,
-        itr,
-        () => {
-          const i = this.ongoingStreamedRequests.indexOf(abortableAsyncIterator);
-          if (i > -1) {
-            this.ongoingStreamedRequests.splice(i, 1);
-          }
-        }
-      );
-      this.ongoingStreamedRequests.push(abortableAsyncIterator);
-      return abortableAsyncIterator;
-    }
-    const response = await post(this.fetch, host, request, {
-      headers: this.config.headers
-    });
-    return await response.json();
-  }
-  /**
-  * Encodes an image to base64 if it is a Uint8Array.
-  * @param image {Uint8Array | string} - The image to encode.
-  * @returns {Promise<string>} - The base64 encoded image.
-  */
-  async encodeImage(image) {
-    if (typeof image !== "string") {
-      const uint8Array = new Uint8Array(image);
-      let byteString = "";
-      const len = uint8Array.byteLength;
-      for (let i = 0; i < len; i++) {
-        byteString += String.fromCharCode(uint8Array[i]);
-      }
-      return btoa(byteString);
-    }
-    return image;
-  }
-  /**
-   * Generates a response from a text prompt.
-   * @param request {GenerateRequest} - The request object.
-   * @returns {Promise<GenerateResponse | AbortableAsyncIterator<GenerateResponse>>} - The response object or
-   * an AbortableAsyncIterator that yields response messages.
-   */
-  async generate(request) {
-    if (request.images) {
-      request.images = await Promise.all(request.images.map(this.encodeImage.bind(this)));
-    }
-    return this.processStreamableRequest("generate", request);
-  }
-  /**
-   * Chats with the model. The request object can contain messages with images that are either
-   * Uint8Arrays or base64 encoded strings. The images will be base64 encoded before sending the
-   * request.
-   * @param request {ChatRequest} - The request object.
-   * @returns {Promise<ChatResponse | AbortableAsyncIterator<ChatResponse>>} - The response object or an
-   * AbortableAsyncIterator that yields response messages.
-   */
-  async chat(request) {
-    if (request.messages) {
-      for (const message of request.messages) {
-        if (message.images) {
-          message.images = await Promise.all(
-            message.images.map(this.encodeImage.bind(this))
-          );
-        }
-      }
-    }
-    return this.processStreamableRequest("chat", request);
-  }
-  /**
-   * Creates a new model from a stream of data.
-   * @param request {CreateRequest} - The request object.
-   * @returns {Promise<ProgressResponse | AbortableAsyncIterator<ProgressResponse>>} - The response object or a stream of progress responses.
-   */
-  async create(request) {
-    return this.processStreamableRequest("create", {
-      name: request.model,
-      stream: request.stream,
-      modelfile: request.modelfile,
-      quantize: request.quantize
-    });
-  }
-  /**
-   * Pulls a model from the Ollama registry. The request object can contain a stream flag to indicate if the
-   * response should be streamed.
-   * @param request {PullRequest} - The request object.
-   * @returns {Promise<ProgressResponse | AbortableAsyncIterator<ProgressResponse>>} - The response object or
-   * an AbortableAsyncIterator that yields response messages.
-   */
-  async pull(request) {
-    return this.processStreamableRequest("pull", {
-      name: request.model,
-      stream: request.stream,
-      insecure: request.insecure
-    });
-  }
-  /**
-   * Pushes a model to the Ollama registry. The request object can contain a stream flag to indicate if the
-   * response should be streamed.
-   * @param request {PushRequest} - The request object.
-   * @returns {Promise<ProgressResponse | AbortableAsyncIterator<ProgressResponse>>} - The response object or
-   * an AbortableAsyncIterator that yields response messages.
-   */
-  async push(request) {
-    return this.processStreamableRequest("push", {
-      name: request.model,
-      stream: request.stream,
-      insecure: request.insecure
-    });
-  }
-  /**
-   * Deletes a model from the server. The request object should contain the name of the model to
-   * delete.
-   * @param request {DeleteRequest} - The request object.
-   * @returns {Promise<StatusResponse>} - The response object.
-   */
-  async delete(request) {
-    await del(
-      this.fetch,
-      `${this.config.host}/api/delete`,
-      { name: request.model },
-      { headers: this.config.headers }
-    );
-    return { status: "success" };
-  }
-  /**
-   * Copies a model from one name to another. The request object should contain the name of the
-   * model to copy and the new name.
-   * @param request {CopyRequest} - The request object.
-   * @returns {Promise<StatusResponse>} - The response object.
-   */
-  async copy(request) {
-    await post(this.fetch, `${this.config.host}/api/copy`, { ...request }, {
-      headers: this.config.headers
-    });
-    return { status: "success" };
-  }
-  /**
-   * Lists the models on the server.
-   * @returns {Promise<ListResponse>} - The response object.
-   * @throws {Error} - If the response body is missing.
-   */
-  async list() {
-    const response = await get(this.fetch, `${this.config.host}/api/tags`, {
-      headers: this.config.headers
-    });
-    return await response.json();
-  }
-  /**
-   * Shows the metadata of a model. The request object should contain the name of the model.
-   * @param request {ShowRequest} - The request object.
-   * @returns {Promise<ShowResponse>} - The response object.
-   */
-  async show(request) {
-    const response = await post(this.fetch, `${this.config.host}/api/show`, {
-      ...request
-    }, {
-      headers: this.config.headers
-    });
-    return await response.json();
-  }
-  /**
-   * Embeds text input into vectors.
-   * @param request {EmbedRequest} - The request object.
-   * @returns {Promise<EmbedResponse>} - The response object.
-   */
-  async embed(request) {
-    const response = await post(this.fetch, `${this.config.host}/api/embed`, {
-      ...request
-    }, {
-      headers: this.config.headers
-    });
-    return await response.json();
-  }
-  /**
-   * Embeds a text prompt into a vector.
-   * @param request {EmbeddingsRequest} - The request object.
-   * @returns {Promise<EmbeddingsResponse>} - The response object.
-   */
-  async embeddings(request) {
-    const response = await post(this.fetch, `${this.config.host}/api/embeddings`, {
-      ...request
-    }, {
-      headers: this.config.headers
-    });
-    return await response.json();
-  }
-  /**
-   * Lists the running models on the server
-   * @returns {Promise<ListResponse>} - The response object.
-   * @throws {Error} - If the response body is missing.
-   */
-  async ps() {
-    const response = await get(this.fetch, `${this.config.host}/api/ps`, {
-      headers: this.config.headers
-    });
-    return await response.json();
-  }
-};
-var browser = new Ollama$1();
+// node_modules/@langchain/core/dist/runnables/router.js
+init_base4();
+init_config();
 
-// node_modules/@langchain/core/outputs.js
+// node_modules/@langchain/core/dist/runnables/branch.js
+init_base4();
+init_config();
+init_stream();
+
+// node_modules/@langchain/core/dist/runnables/history.js
+init_messages2();
+init_base4();
+
+// node_modules/@langchain/core/dist/output_parsers/base.js
+init_errors();
+var BaseLLMOutputParser = class extends Runnable {
+  /**
+   * Parses the result of an LLM call with a given prompt. By default, it
+   * simply calls `parseResult`.
+   * @param generations The generations from an LLM call.
+   * @param _prompt The prompt used in the LLM call.
+   * @param callbacks Optional callbacks.
+   * @returns A promise of the parsed output.
+   */
+  parseResultWithPrompt(generations, _prompt, callbacks) {
+    return this.parseResult(generations, callbacks);
+  }
+  _baseMessageToString(message) {
+    return typeof message.content === "string" ? message.content : this._baseMessageContentToString(message.content);
+  }
+  _baseMessageContentToString(content) {
+    return JSON.stringify(content);
+  }
+  /**
+   * Calls the parser with a given input and optional configuration options.
+   * If the input is a string, it creates a generation with the input as
+   * text and calls `parseResult`. If the input is a `BaseMessage`, it
+   * creates a generation with the input as a message and the content of the
+   * input as text, and then calls `parseResult`.
+   * @param input The input to the parser, which can be a string or a `BaseMessage`.
+   * @param options Optional configuration options.
+   * @returns A promise of the parsed output.
+   */
+  async invoke(input, options) {
+    if (typeof input === "string") {
+      return this._callWithConfig(async (input2, options2) => this.parseResult([{ text: input2 }], options2 == null ? void 0 : options2.callbacks), input, { ...options, runType: "parser" });
+    } else {
+      return this._callWithConfig(async (input2, options2) => this.parseResult([
+        {
+          message: input2,
+          text: this._baseMessageToString(input2)
+        }
+      ], options2 == null ? void 0 : options2.callbacks), input, { ...options, runType: "parser" });
+    }
+  }
+};
+var BaseOutputParser = class extends BaseLLMOutputParser {
+  parseResult(generations, callbacks) {
+    return this.parse(generations[0].text, callbacks);
+  }
+  async parseWithPrompt(text, _prompt, callbacks) {
+    return this.parse(text, callbacks);
+  }
+  /**
+   * Return the string type key uniquely identifying this class of parser
+   */
+  _type() {
+    throw new Error("_type not implemented");
+  }
+};
+
+// node_modules/@langchain/core/dist/output_parsers/transform.js
+init_base();
+init_utils2();
 init_outputs();
+
+// node_modules/@langchain/core/dist/utils/@cfworker/json-schema/src/dereference.js
+var initialBaseURI = (
+  // @ts-ignore
+  typeof self !== "undefined" && self.location && self.location.origin !== "null" ? (
+    //@ts-ignore
+    /* @__PURE__ */ new URL(self.location.origin + self.location.pathname + location.search)
+  ) : /* @__PURE__ */ new URL("https://github.com/cfworker")
+);
+
+// node_modules/@langchain/core/dist/utils/@cfworker/json-schema/src/format.js
+var DATE = /^(\d\d\d\d)-(\d\d)-(\d\d)$/;
+var DAYS = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+var TIME = /^(\d\d):(\d\d):(\d\d)(\.\d+)?(z|[+-]\d\d(?::?\d\d)?)?$/i;
+var HOSTNAME = /^(?=.{1,253}\.?$)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[-0-9a-z]{0,61}[0-9a-z])?)*\.?$/i;
+var URIREF = /^(?:[a-z][a-z0-9+\-.]*:)?(?:\/?\/(?:(?:[a-z0-9\-._~!$&'()*+,;=:]|%[0-9a-f]{2})*@)?(?:\[(?:(?:(?:(?:[0-9a-f]{1,4}:){6}|::(?:[0-9a-f]{1,4}:){5}|(?:[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){4}|(?:(?:[0-9a-f]{1,4}:){0,1}[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){3}|(?:(?:[0-9a-f]{1,4}:){0,2}[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){2}|(?:(?:[0-9a-f]{1,4}:){0,3}[0-9a-f]{1,4})?::[0-9a-f]{1,4}:|(?:(?:[0-9a-f]{1,4}:){0,4}[0-9a-f]{1,4})?::)(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?))|(?:(?:[0-9a-f]{1,4}:){0,5}[0-9a-f]{1,4})?::[0-9a-f]{1,4}|(?:(?:[0-9a-f]{1,4}:){0,6}[0-9a-f]{1,4})?::)|[Vv][0-9a-f]+\.[a-z0-9\-._~!$&'()*+,;=:]+)\]|(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)|(?:[a-z0-9\-._~!$&'"()*+,;=]|%[0-9a-f]{2})*)(?::\d*)?(?:\/(?:[a-z0-9\-._~!$&'"()*+,;=:@]|%[0-9a-f]{2})*)*|\/(?:(?:[a-z0-9\-._~!$&'"()*+,;=:@]|%[0-9a-f]{2})+(?:\/(?:[a-z0-9\-._~!$&'"()*+,;=:@]|%[0-9a-f]{2})*)*)?|(?:[a-z0-9\-._~!$&'"()*+,;=:@]|%[0-9a-f]{2})+(?:\/(?:[a-z0-9\-._~!$&'"()*+,;=:@]|%[0-9a-f]{2})*)*)?(?:\?(?:[a-z0-9\-._~!$&'"()*+,;=:@/?]|%[0-9a-f]{2})*)?(?:#(?:[a-z0-9\-._~!$&'"()*+,;=:@/?]|%[0-9a-f]{2})*)?$/i;
+var URITEMPLATE = /^(?:(?:[^\x00-\x20"'<>%\\^`{|}]|%[0-9a-f]{2})|\{[+#./;?&=,!@|]?(?:[a-z0-9_]|%[0-9a-f]{2})+(?::[1-9][0-9]{0,3}|\*)?(?:,(?:[a-z0-9_]|%[0-9a-f]{2})+(?::[1-9][0-9]{0,3}|\*)?)*\})*$/i;
+var URL_ = /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u{00a1}-\u{ffff}0-9]+-?)*[a-z\u{00a1}-\u{ffff}0-9]+)(?:\.(?:[a-z\u{00a1}-\u{ffff}0-9]+-?)*[a-z\u{00a1}-\u{ffff}0-9]+)*(?:\.(?:[a-z\u{00a1}-\u{ffff}]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/iu;
+var UUID = /^(?:urn:uuid:)?[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i;
+var JSON_POINTER = /^(?:\/(?:[^~/]|~0|~1)*)*$/;
+var JSON_POINTER_URI_FRAGMENT = /^#(?:\/(?:[a-z0-9_\-.!$&'()*+,;:=@]|%[0-9a-f]{2}|~0|~1)*)*$/i;
+var RELATIVE_JSON_POINTER = /^(?:0|[1-9][0-9]*)(?:#|(?:\/(?:[^~/]|~0|~1)*)*)$/;
+var FASTDATE = /^\d\d\d\d-[0-1]\d-[0-3]\d$/;
+var FASTTIME = /^(?:[0-2]\d:[0-5]\d:[0-5]\d|23:59:60)(?:\.\d+)?(?:z|[+-]\d\d(?::?\d\d)?)?$/i;
+var FASTDATETIME = /^\d\d\d\d-[0-1]\d-[0-3]\d[t\s](?:[0-2]\d:[0-5]\d:[0-5]\d|23:59:60)(?:\.\d+)?(?:z|[+-]\d\d(?::?\d\d)?)$/i;
+var FASTURIREFERENCE = /^(?:(?:[a-z][a-z0-9+-.]*:)?\/?\/)?(?:[^\\\s#][^\s#]*)?(?:#[^\\\s]*)?$/i;
+var EMAIL = (input) => {
+  if (input[0] === '"')
+    return false;
+  const [name, host, ...rest] = input.split("@");
+  if (!name || !host || rest.length !== 0 || name.length > 64 || host.length > 253)
+    return false;
+  if (name[0] === "." || name.endsWith(".") || name.includes(".."))
+    return false;
+  if (!/^[a-z0-9.-]+$/i.test(host) || !/^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+$/i.test(name))
+    return false;
+  return host.split(".").every((part) => /^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$/i.test(part));
+};
+var IPV4 = /^(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)$/;
+var IPV6 = /^((([0-9a-f]{1,4}:){7}([0-9a-f]{1,4}|:))|(([0-9a-f]{1,4}:){6}(:[0-9a-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9a-f]{1,4}:){5}(((:[0-9a-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9a-f]{1,4}:){4}(((:[0-9a-f]{1,4}){1,3})|((:[0-9a-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9a-f]{1,4}:){3}(((:[0-9a-f]{1,4}){1,4})|((:[0-9a-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9a-f]{1,4}:){2}(((:[0-9a-f]{1,4}){1,5})|((:[0-9a-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9a-f]{1,4}:){1}(((:[0-9a-f]{1,4}){1,6})|((:[0-9a-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9a-f]{1,4}){1,7})|((:[0-9a-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))$/i;
+var DURATION = (input) => input.length > 1 && input.length < 80 && (/^P\d+([.,]\d+)?W$/.test(input) || /^P[\dYMDTHS]*(\d[.,]\d+)?[YMDHS]$/.test(input) && /^P([.,\d]+Y)?([.,\d]+M)?([.,\d]+D)?(T([.,\d]+H)?([.,\d]+M)?([.,\d]+S)?)?$/.test(input));
+function bind(r) {
+  return r.test.bind(r);
+}
+var fullFormat = {
+  date,
+  time: /* @__PURE__ */ time.bind(void 0, false),
+  "date-time": date_time,
+  duration: DURATION,
+  uri,
+  "uri-reference": /* @__PURE__ */ bind(URIREF),
+  "uri-template": /* @__PURE__ */ bind(URITEMPLATE),
+  url: /* @__PURE__ */ bind(URL_),
+  email: EMAIL,
+  hostname: /* @__PURE__ */ bind(HOSTNAME),
+  ipv4: /* @__PURE__ */ bind(IPV4),
+  ipv6: /* @__PURE__ */ bind(IPV6),
+  regex,
+  uuid: /* @__PURE__ */ bind(UUID),
+  "json-pointer": /* @__PURE__ */ bind(JSON_POINTER),
+  "json-pointer-uri-fragment": /* @__PURE__ */ bind(JSON_POINTER_URI_FRAGMENT),
+  "relative-json-pointer": /* @__PURE__ */ bind(RELATIVE_JSON_POINTER)
+};
+var fastFormat = {
+  ...fullFormat,
+  date: /* @__PURE__ */ bind(FASTDATE),
+  time: /* @__PURE__ */ bind(FASTTIME),
+  "date-time": /* @__PURE__ */ bind(FASTDATETIME),
+  "uri-reference": /* @__PURE__ */ bind(FASTURIREFERENCE)
+};
+function isLeapYear(year) {
+  return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+}
+function date(str2) {
+  const matches = str2.match(DATE);
+  if (!matches)
+    return false;
+  const year = +matches[1];
+  const month = +matches[2];
+  const day = +matches[3];
+  return month >= 1 && month <= 12 && day >= 1 && day <= (month == 2 && isLeapYear(year) ? 29 : DAYS[month]);
+}
+function time(full, str2) {
+  const matches = str2.match(TIME);
+  if (!matches)
+    return false;
+  const hour = +matches[1];
+  const minute = +matches[2];
+  const second = +matches[3];
+  const timeZone = !!matches[5];
+  return (hour <= 23 && minute <= 59 && second <= 59 || hour == 23 && minute == 59 && second == 60) && (!full || timeZone);
+}
+var DATE_TIME_SEPARATOR = /t|\s/i;
+function date_time(str2) {
+  const dateTime = str2.split(DATE_TIME_SEPARATOR);
+  return dateTime.length == 2 && date(dateTime[0]) && time(true, dateTime[1]);
+}
+var NOT_URI_FRAGMENT = /\/|:/;
+var URI_PATTERN = /^(?:[a-z][a-z0-9+\-.]*:)(?:\/?\/(?:(?:[a-z0-9\-._~!$&'()*+,;=:]|%[0-9a-f]{2})*@)?(?:\[(?:(?:(?:(?:[0-9a-f]{1,4}:){6}|::(?:[0-9a-f]{1,4}:){5}|(?:[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){4}|(?:(?:[0-9a-f]{1,4}:){0,1}[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){3}|(?:(?:[0-9a-f]{1,4}:){0,2}[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){2}|(?:(?:[0-9a-f]{1,4}:){0,3}[0-9a-f]{1,4})?::[0-9a-f]{1,4}:|(?:(?:[0-9a-f]{1,4}:){0,4}[0-9a-f]{1,4})?::)(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?))|(?:(?:[0-9a-f]{1,4}:){0,5}[0-9a-f]{1,4})?::[0-9a-f]{1,4}|(?:(?:[0-9a-f]{1,4}:){0,6}[0-9a-f]{1,4})?::)|[Vv][0-9a-f]+\.[a-z0-9\-._~!$&'()*+,;=:]+)\]|(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)|(?:[a-z0-9\-._~!$&'()*+,;=]|%[0-9a-f]{2})*)(?::\d*)?(?:\/(?:[a-z0-9\-._~!$&'()*+,;=:@]|%[0-9a-f]{2})*)*|\/(?:(?:[a-z0-9\-._~!$&'()*+,;=:@]|%[0-9a-f]{2})+(?:\/(?:[a-z0-9\-._~!$&'()*+,;=:@]|%[0-9a-f]{2})*)*)?|(?:[a-z0-9\-._~!$&'()*+,;=:@]|%[0-9a-f]{2})+(?:\/(?:[a-z0-9\-._~!$&'()*+,;=:@]|%[0-9a-f]{2})*)*)(?:\?(?:[a-z0-9\-._~!$&'()*+,;=:@/?]|%[0-9a-f]{2})*)?(?:#(?:[a-z0-9\-._~!$&'()*+,;=:@/?]|%[0-9a-f]{2})*)?$/i;
+function uri(str2) {
+  return NOT_URI_FRAGMENT.test(str2) && URI_PATTERN.test(str2);
+}
+var Z_ANCHOR = /[^\\]\\Z/;
+function regex(str2) {
+  if (Z_ANCHOR.test(str2))
+    return false;
+  try {
+    new RegExp(str2);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+// node_modules/@langchain/core/dist/output_parsers/transform.js
+var BaseTransformOutputParser = class extends BaseOutputParser {
+  async *_transform(inputGenerator) {
+    for await (const chunk of inputGenerator) {
+      if (typeof chunk === "string") {
+        yield this.parseResult([{ text: chunk }]);
+      } else {
+        yield this.parseResult([
+          {
+            message: chunk,
+            text: this._baseMessageToString(chunk)
+          }
+        ]);
+      }
+    }
+  }
+  /**
+   * Transforms an asynchronous generator of input into an asynchronous
+   * generator of parsed output.
+   * @param inputGenerator An asynchronous generator of input.
+   * @param options A configuration object.
+   * @returns An asynchronous generator of parsed output.
+   */
+  async *transform(inputGenerator, options) {
+    yield* this._transformStreamWithConfig(inputGenerator, this._transform.bind(this), {
+      ...options,
+      runType: "parser"
+    });
+  }
+};
+
+// node_modules/@langchain/core/dist/output_parsers/string.js
+var StringOutputParser = class extends BaseTransformOutputParser {
+  constructor() {
+    super(...arguments);
+    Object.defineProperty(this, "lc_namespace", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: ["langchain_core", "output_parsers", "string"]
+    });
+    Object.defineProperty(this, "lc_serializable", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: true
+    });
+  }
+  static lc_name() {
+    return "StrOutputParser";
+  }
+  /**
+   * Parses a string output from an LLM call. This method is meant to be
+   * implemented by subclasses to define how a string output from an LLM
+   * should be parsed.
+   * @param text The string output from an LLM call.
+   * @param callbacks Optional callbacks.
+   * @returns A promise of the parsed output.
+   */
+  parse(text) {
+    return Promise.resolve(text);
+  }
+  getFormatInstructions() {
+    return "";
+  }
+  _textContentToString(content) {
+    return content.text;
+  }
+  _imageUrlContentToString(_content) {
+    throw new Error(`Cannot coerce a multimodal "image_url" message part into a string.`);
+  }
+  _messageContentComplexToString(content) {
+    switch (content.type) {
+      case "text":
+      case "text_delta":
+        if ("text" in content) {
+          return this._textContentToString(content);
+        }
+        break;
+      case "image_url":
+        if ("image_url" in content) {
+          return this._imageUrlContentToString(content);
+        }
+        break;
+      default:
+        throw new Error(`Cannot coerce "${content.type}" message part into a string.`);
+    }
+    throw new Error(`Invalid content type: ${content.type}`);
+  }
+  _baseMessageContentToString(content) {
+    return content.reduce((acc, item) => acc + this._messageContentComplexToString(item), "");
+  }
+};
+
+// node_modules/@langchain/core/dist/output_parsers/structured.js
+init_esm();
+
+// node_modules/@langchain/core/dist/utils/json_patch.js
+init_fast_json_patch();
+
+// node_modules/@langchain/core/dist/output_parsers/json.js
+init_json();
+
+// node_modules/@langchain/core/dist/output_parsers/openai_tools/json_output_tools_parsers.js
+init_ai();
+
+// node_modules/@langchain/openai/dist/chat_models.js
+init_esm();
+
+// node_modules/@langchain/openai/dist/utils/openai.js
+init_esm();
 
 // node_modules/@langchain/core/dist/utils/function_calling.js
 init_esm();
 init_base4();
-
-// node_modules/@langchain/core/utils/stream.js
-init_stream();
-
-// node_modules/@langchain/core/dist/embeddings.js
-init_async_caller2();
 
 // node_modules/@langchain/core/dist/language_models/llms.js
 init_messages2();
@@ -23017,7 +27481,7 @@ var BaseLLM = class _BaseLLM extends BaseLanguageModel {
    * Run the LLM on the given prompts and input, handling caching.
    */
   async generate(prompts, options, callbacks) {
-    var _a, _b;
+    var _a2, _b;
     if (!Array.isArray(prompts)) {
       throw new Error("Argument 'prompts' is expected to be a string[]");
     }
@@ -23028,7 +27492,7 @@ var BaseLLM = class _BaseLLM extends BaseLanguageModel {
       parsedOptions = options;
     }
     const [runnableConfig, callOptions] = this._separateRunnableConfigFromCallOptionsCompat(parsedOptions);
-    runnableConfig.callbacks = (_a = runnableConfig.callbacks) != null ? _a : callbacks;
+    runnableConfig.callbacks = (_a2 = runnableConfig.callbacks) != null ? _a2 : callbacks;
     if (!this.cache) {
       return this._generateUncached(prompts, callOptions, runnableConfig);
     }
@@ -23119,13 +27583,1311 @@ var LLM = class extends BaseLLM {
   }
 };
 
+// node_modules/@langchain/core/dist/embeddings.js
+init_async_caller2();
+
+// node_modules/@langchain/core/dist/tools/index.js
+init_lib();
+init_manager();
+init_config();
+init_tool();
+init_singletons();
+init_utils();
+var StructuredTool = class extends BaseLangChain {
+  get lc_namespace() {
+    return ["langchain", "tools"];
+  }
+  constructor(fields) {
+    var _a2, _b;
+    super(fields != null ? fields : {});
+    Object.defineProperty(this, "returnDirect", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: false
+    });
+    Object.defineProperty(this, "verboseParsingErrors", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: false
+    });
+    Object.defineProperty(this, "responseFormat", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: "content"
+    });
+    this.verboseParsingErrors = (_a2 = fields == null ? void 0 : fields.verboseParsingErrors) != null ? _a2 : this.verboseParsingErrors;
+    this.responseFormat = (_b = fields == null ? void 0 : fields.responseFormat) != null ? _b : this.responseFormat;
+  }
+  /**
+   * Invokes the tool with the provided input and configuration.
+   * @param input The input for the tool.
+   * @param config Optional configuration for the tool.
+   * @returns A Promise that resolves with a string.
+   */
+  async invoke(input, config) {
+    let tool_call_id;
+    let toolInput;
+    if (_isToolCall(input)) {
+      tool_call_id = input.id;
+      toolInput = input.args;
+    } else {
+      toolInput = input;
+    }
+    const ensuredConfig = ensureConfig(config);
+    return this.call(toolInput, {
+      ...ensuredConfig,
+      configurable: {
+        ...ensuredConfig.configurable,
+        tool_call_id
+      }
+    });
+  }
+  /**
+   * @deprecated Use .invoke() instead. Will be removed in 0.3.0.
+   *
+   * Calls the tool with the provided argument, configuration, and tags. It
+   * parses the input according to the schema, handles any errors, and
+   * manages callbacks.
+   * @param arg The input argument for the tool.
+   * @param configArg Optional configuration or callbacks for the tool.
+   * @param tags Optional tags for the tool.
+   * @returns A Promise that resolves with a string.
+   */
+  async call(arg, configArg, tags) {
+    let parsed;
+    try {
+      parsed = await this.schema.parseAsync(arg);
+    } catch (e) {
+      let message = `Received tool input did not match expected schema`;
+      if (this.verboseParsingErrors) {
+        message = `${message}
+Details: ${e.message}`;
+      }
+      throw new ToolInputParsingException(message, JSON.stringify(arg));
+    }
+    const config = parseCallbackConfigArg(configArg);
+    const callbackManager_ = await CallbackManager.configure(config.callbacks, this.callbacks, config.tags || tags, this.tags, config.metadata, this.metadata, { verbose: this.verbose });
+    const runManager = await (callbackManager_ == null ? void 0 : callbackManager_.handleToolStart(this.toJSON(), typeof parsed === "string" ? parsed : JSON.stringify(parsed), config.runId, void 0, void 0, void 0, config.runName));
+    delete config.runId;
+    let result;
+    try {
+      result = await this._call(parsed, runManager, config);
+    } catch (e) {
+      await (runManager == null ? void 0 : runManager.handleToolError(e));
+      throw e;
+    }
+    let content;
+    let artifact;
+    if (this.responseFormat === "content_and_artifact") {
+      if (Array.isArray(result) && result.length === 2) {
+        [content, artifact] = result;
+      } else {
+        throw new Error(`Tool response format is "content_and_artifact" but the output was not a two-tuple.
+Result: ${JSON.stringify(result)}`);
+      }
+    } else {
+      content = result;
+    }
+    let toolCallId;
+    if (config && "configurable" in config) {
+      toolCallId = config.configurable.tool_call_id;
+    }
+    const formattedOutput = _formatToolOutput({
+      content,
+      artifact,
+      toolCallId,
+      name: this.name
+    });
+    await (runManager == null ? void 0 : runManager.handleToolEnd(formattedOutput));
+    return formattedOutput;
+  }
+};
+var Tool = class extends StructuredTool {
+  constructor(fields) {
+    super(fields);
+    Object.defineProperty(this, "schema", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: z.object({ input: z.string().optional() }).transform((obj) => obj.input)
+    });
+  }
+  /**
+   * @deprecated Use .invoke() instead. Will be removed in 0.3.0.
+   *
+   * Calls the tool with the provided argument and callbacks. It handles
+   * string inputs specifically.
+   * @param arg The input argument for the tool, which can be a string, undefined, or an input of the tool's schema.
+   * @param callbacks Optional callbacks for the tool.
+   * @returns A Promise that resolves with a string.
+   */
+  call(arg, callbacks) {
+    return super.call(typeof arg === "string" || !arg ? { input: arg } : arg, callbacks);
+  }
+};
+function _formatToolOutput(params) {
+  const { content, artifact, toolCallId } = params;
+  if (toolCallId) {
+    if (typeof content === "string" || Array.isArray(content) && content.every((item) => typeof item === "object")) {
+      return new ToolMessage({
+        content,
+        artifact,
+        tool_call_id: toolCallId,
+        name: params.name
+      });
+    } else {
+      return new ToolMessage({
+        content: _stringify(content),
+        artifact,
+        tool_call_id: toolCallId,
+        name: params.name
+      });
+    }
+  } else {
+    return content;
+  }
+}
+function _stringify(content) {
+  try {
+    return JSON.stringify(content, null, 2);
+  } catch (_noOp) {
+    return `${content}`;
+  }
+}
+
+// node_modules/@langchain/openai/dist/tools/dalle.js
+var DallEAPIWrapper = class extends Tool {
+  static lc_name() {
+    return "DallEAPIWrapper";
+  }
+  constructor(fields) {
+    var _a2, _b, _c, _d, _e, _f, _g, _h, _i, _j;
+    if ((fields == null ? void 0 : fields.responseFormat) !== void 0 && ["url", "b64_json"].includes(fields.responseFormat)) {
+      fields.dallEResponseFormat = fields.responseFormat;
+      fields.responseFormat = "content";
+    }
+    super(fields);
+    Object.defineProperty(this, "name", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: "dalle_api_wrapper"
+    });
+    Object.defineProperty(this, "description", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: "A wrapper around OpenAI DALL-E API. Useful for when you need to generate images from a text description. Input should be an image description."
+    });
+    Object.defineProperty(this, "client", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "model", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: "dall-e-3"
+    });
+    Object.defineProperty(this, "style", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: "vivid"
+    });
+    Object.defineProperty(this, "quality", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: "standard"
+    });
+    Object.defineProperty(this, "n", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: 1
+    });
+    Object.defineProperty(this, "size", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: "1024x1024"
+    });
+    Object.defineProperty(this, "dallEResponseFormat", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: "url"
+    });
+    Object.defineProperty(this, "user", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    const openAIApiKey = (_b = (_a2 = fields == null ? void 0 : fields.apiKey) != null ? _a2 : fields == null ? void 0 : fields.openAIApiKey) != null ? _b : getEnvironmentVariable2("OPENAI_API_KEY");
+    const organization = (_c = fields == null ? void 0 : fields.organization) != null ? _c : getEnvironmentVariable2("OPENAI_ORGANIZATION");
+    const clientConfig = {
+      apiKey: openAIApiKey,
+      organization,
+      dangerouslyAllowBrowser: true,
+      baseUrl: fields == null ? void 0 : fields.baseUrl
+    };
+    this.client = new OpenAI(clientConfig);
+    this.model = (_e = (_d = fields == null ? void 0 : fields.model) != null ? _d : fields == null ? void 0 : fields.modelName) != null ? _e : this.model;
+    this.style = (_f = fields == null ? void 0 : fields.style) != null ? _f : this.style;
+    this.quality = (_g = fields == null ? void 0 : fields.quality) != null ? _g : this.quality;
+    this.n = (_h = fields == null ? void 0 : fields.n) != null ? _h : this.n;
+    this.size = (_i = fields == null ? void 0 : fields.size) != null ? _i : this.size;
+    this.dallEResponseFormat = (_j = fields == null ? void 0 : fields.dallEResponseFormat) != null ? _j : this.dallEResponseFormat;
+    this.user = fields == null ? void 0 : fields.user;
+  }
+  /**
+   * Processes the API response if multiple images are generated.
+   * Returns a list of MessageContentImageUrl objects. If the response
+   * format is `url`, then the `image_url` field will contain the URL.
+   * If it is `b64_json`, then the `image_url` field will contain an object
+   * with a `url` field with the base64 encoded image.
+   *
+   * @param {OpenAIClient.Images.ImagesResponse[]} response The API response
+   * @returns {MessageContentImageUrl[]}
+   */
+  processMultipleGeneratedUrls(response) {
+    if (this.dallEResponseFormat === "url") {
+      return response.flatMap((res) => {
+        const imageUrlContent = res.data.flatMap((item) => {
+          if (!item.url)
+            return [];
+          return {
+            type: "image_url",
+            image_url: item.url
+          };
+        }).filter((item) => item !== void 0 && item.type === "image_url" && typeof item.image_url === "string" && item.image_url !== void 0);
+        return imageUrlContent;
+      });
+    } else {
+      return response.flatMap((res) => {
+        const b64Content = res.data.flatMap((item) => {
+          if (!item.b64_json)
+            return [];
+          return {
+            type: "image_url",
+            image_url: {
+              url: item.b64_json
+            }
+          };
+        }).filter((item) => item !== void 0 && item.type === "image_url" && typeof item.image_url === "object" && "url" in item.image_url && typeof item.image_url.url === "string" && item.image_url.url !== void 0);
+        return b64Content;
+      });
+    }
+  }
+  /** @ignore */
+  async _call(input) {
+    const generateImageFields = {
+      model: this.model,
+      prompt: input,
+      n: 1,
+      size: this.size,
+      response_format: this.dallEResponseFormat,
+      style: this.style,
+      quality: this.quality,
+      user: this.user
+    };
+    if (this.n > 1) {
+      const results = await Promise.all(Array.from({ length: this.n }).map(() => this.client.images.generate(generateImageFields)));
+      return this.processMultipleGeneratedUrls(results);
+    }
+    const response = await this.client.images.generate(generateImageFields);
+    let data = "";
+    if (this.dallEResponseFormat === "url") {
+      [data] = response.data.map((item) => item.url).filter((url) => url !== "undefined");
+    } else {
+      [data] = response.data.map((item) => item.b64_json).filter((b64_json) => b64_json !== "undefined");
+    }
+    return data;
+  }
+};
+Object.defineProperty(DallEAPIWrapper, "toolName", {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value: "dalle_api_wrapper"
+});
+
+// node_modules/whatwg-fetch/fetch.js
+var g = typeof globalThis !== "undefined" && globalThis || typeof self !== "undefined" && self || // eslint-disable-next-line no-undef
+typeof global !== "undefined" && global || {};
+var support = {
+  searchParams: "URLSearchParams" in g,
+  iterable: "Symbol" in g && "iterator" in Symbol,
+  blob: "FileReader" in g && "Blob" in g && function() {
+    try {
+      new Blob();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }(),
+  formData: "FormData" in g,
+  arrayBuffer: "ArrayBuffer" in g
+};
+function isDataView(obj) {
+  return obj && DataView.prototype.isPrototypeOf(obj);
+}
+if (support.arrayBuffer) {
+  viewClasses = [
+    "[object Int8Array]",
+    "[object Uint8Array]",
+    "[object Uint8ClampedArray]",
+    "[object Int16Array]",
+    "[object Uint16Array]",
+    "[object Int32Array]",
+    "[object Uint32Array]",
+    "[object Float32Array]",
+    "[object Float64Array]"
+  ];
+  isArrayBufferView = ArrayBuffer.isView || function(obj) {
+    return obj && viewClasses.indexOf(Object.prototype.toString.call(obj)) > -1;
+  };
+}
+var viewClasses;
+var isArrayBufferView;
+function normalizeName(name) {
+  if (typeof name !== "string") {
+    name = String(name);
+  }
+  if (/[^a-z0-9\-#$%&'*+.^_`|~!]/i.test(name) || name === "") {
+    throw new TypeError('Invalid character in header field name: "' + name + '"');
+  }
+  return name.toLowerCase();
+}
+function normalizeValue(value) {
+  if (typeof value !== "string") {
+    value = String(value);
+  }
+  return value;
+}
+function iteratorFor(items) {
+  var iterator = {
+    next: function() {
+      var value = items.shift();
+      return { done: value === void 0, value };
+    }
+  };
+  if (support.iterable) {
+    iterator[Symbol.iterator] = function() {
+      return iterator;
+    };
+  }
+  return iterator;
+}
+function Headers3(headers) {
+  this.map = {};
+  if (headers instanceof Headers3) {
+    headers.forEach(function(value, name) {
+      this.append(name, value);
+    }, this);
+  } else if (Array.isArray(headers)) {
+    headers.forEach(function(header) {
+      if (header.length != 2) {
+        throw new TypeError("Headers constructor: expected name/value pair to be length 2, found" + header.length);
+      }
+      this.append(header[0], header[1]);
+    }, this);
+  } else if (headers) {
+    Object.getOwnPropertyNames(headers).forEach(function(name) {
+      this.append(name, headers[name]);
+    }, this);
+  }
+}
+Headers3.prototype.append = function(name, value) {
+  name = normalizeName(name);
+  value = normalizeValue(value);
+  var oldValue = this.map[name];
+  this.map[name] = oldValue ? oldValue + ", " + value : value;
+};
+Headers3.prototype["delete"] = function(name) {
+  delete this.map[normalizeName(name)];
+};
+Headers3.prototype.get = function(name) {
+  name = normalizeName(name);
+  return this.has(name) ? this.map[name] : null;
+};
+Headers3.prototype.has = function(name) {
+  return this.map.hasOwnProperty(normalizeName(name));
+};
+Headers3.prototype.set = function(name, value) {
+  this.map[normalizeName(name)] = normalizeValue(value);
+};
+Headers3.prototype.forEach = function(callback, thisArg) {
+  for (var name in this.map) {
+    if (this.map.hasOwnProperty(name)) {
+      callback.call(thisArg, this.map[name], name, this);
+    }
+  }
+};
+Headers3.prototype.keys = function() {
+  var items = [];
+  this.forEach(function(value, name) {
+    items.push(name);
+  });
+  return iteratorFor(items);
+};
+Headers3.prototype.values = function() {
+  var items = [];
+  this.forEach(function(value) {
+    items.push(value);
+  });
+  return iteratorFor(items);
+};
+Headers3.prototype.entries = function() {
+  var items = [];
+  this.forEach(function(value, name) {
+    items.push([name, value]);
+  });
+  return iteratorFor(items);
+};
+if (support.iterable) {
+  Headers3.prototype[Symbol.iterator] = Headers3.prototype.entries;
+}
+function consumed(body) {
+  if (body._noBody) return;
+  if (body.bodyUsed) {
+    return Promise.reject(new TypeError("Already read"));
+  }
+  body.bodyUsed = true;
+}
+function fileReaderReady(reader) {
+  return new Promise(function(resolve, reject) {
+    reader.onload = function() {
+      resolve(reader.result);
+    };
+    reader.onerror = function() {
+      reject(reader.error);
+    };
+  });
+}
+function readBlobAsArrayBuffer(blob) {
+  var reader = new FileReader();
+  var promise = fileReaderReady(reader);
+  reader.readAsArrayBuffer(blob);
+  return promise;
+}
+function readBlobAsText(blob) {
+  var reader = new FileReader();
+  var promise = fileReaderReady(reader);
+  var match = /charset=([A-Za-z0-9_-]+)/.exec(blob.type);
+  var encoding = match ? match[1] : "utf-8";
+  reader.readAsText(blob, encoding);
+  return promise;
+}
+function readArrayBufferAsText(buf) {
+  var view = new Uint8Array(buf);
+  var chars = new Array(view.length);
+  for (var i = 0; i < view.length; i++) {
+    chars[i] = String.fromCharCode(view[i]);
+  }
+  return chars.join("");
+}
+function bufferClone(buf) {
+  if (buf.slice) {
+    return buf.slice(0);
+  } else {
+    var view = new Uint8Array(buf.byteLength);
+    view.set(new Uint8Array(buf));
+    return view.buffer;
+  }
+}
+function Body() {
+  this.bodyUsed = false;
+  this._initBody = function(body) {
+    this.bodyUsed = this.bodyUsed;
+    this._bodyInit = body;
+    if (!body) {
+      this._noBody = true;
+      this._bodyText = "";
+    } else if (typeof body === "string") {
+      this._bodyText = body;
+    } else if (support.blob && Blob.prototype.isPrototypeOf(body)) {
+      this._bodyBlob = body;
+    } else if (support.formData && FormData.prototype.isPrototypeOf(body)) {
+      this._bodyFormData = body;
+    } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
+      this._bodyText = body.toString();
+    } else if (support.arrayBuffer && support.blob && isDataView(body)) {
+      this._bodyArrayBuffer = bufferClone(body.buffer);
+      this._bodyInit = new Blob([this._bodyArrayBuffer]);
+    } else if (support.arrayBuffer && (ArrayBuffer.prototype.isPrototypeOf(body) || isArrayBufferView(body))) {
+      this._bodyArrayBuffer = bufferClone(body);
+    } else {
+      this._bodyText = body = Object.prototype.toString.call(body);
+    }
+    if (!this.headers.get("content-type")) {
+      if (typeof body === "string") {
+        this.headers.set("content-type", "text/plain;charset=UTF-8");
+      } else if (this._bodyBlob && this._bodyBlob.type) {
+        this.headers.set("content-type", this._bodyBlob.type);
+      } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
+        this.headers.set("content-type", "application/x-www-form-urlencoded;charset=UTF-8");
+      }
+    }
+  };
+  if (support.blob) {
+    this.blob = function() {
+      var rejected = consumed(this);
+      if (rejected) {
+        return rejected;
+      }
+      if (this._bodyBlob) {
+        return Promise.resolve(this._bodyBlob);
+      } else if (this._bodyArrayBuffer) {
+        return Promise.resolve(new Blob([this._bodyArrayBuffer]));
+      } else if (this._bodyFormData) {
+        throw new Error("could not read FormData body as blob");
+      } else {
+        return Promise.resolve(new Blob([this._bodyText]));
+      }
+    };
+  }
+  this.arrayBuffer = function() {
+    if (this._bodyArrayBuffer) {
+      var isConsumed = consumed(this);
+      if (isConsumed) {
+        return isConsumed;
+      } else if (ArrayBuffer.isView(this._bodyArrayBuffer)) {
+        return Promise.resolve(
+          this._bodyArrayBuffer.buffer.slice(
+            this._bodyArrayBuffer.byteOffset,
+            this._bodyArrayBuffer.byteOffset + this._bodyArrayBuffer.byteLength
+          )
+        );
+      } else {
+        return Promise.resolve(this._bodyArrayBuffer);
+      }
+    } else if (support.blob) {
+      return this.blob().then(readBlobAsArrayBuffer);
+    } else {
+      throw new Error("could not read as ArrayBuffer");
+    }
+  };
+  this.text = function() {
+    var rejected = consumed(this);
+    if (rejected) {
+      return rejected;
+    }
+    if (this._bodyBlob) {
+      return readBlobAsText(this._bodyBlob);
+    } else if (this._bodyArrayBuffer) {
+      return Promise.resolve(readArrayBufferAsText(this._bodyArrayBuffer));
+    } else if (this._bodyFormData) {
+      throw new Error("could not read FormData body as text");
+    } else {
+      return Promise.resolve(this._bodyText);
+    }
+  };
+  if (support.formData) {
+    this.formData = function() {
+      return this.text().then(decode);
+    };
+  }
+  this.json = function() {
+    return this.text().then(JSON.parse);
+  };
+  return this;
+}
+var methods = ["CONNECT", "DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT", "TRACE"];
+function normalizeMethod(method) {
+  var upcased = method.toUpperCase();
+  return methods.indexOf(upcased) > -1 ? upcased : method;
+}
+function Request3(input, options) {
+  if (!(this instanceof Request3)) {
+    throw new TypeError('Please use the "new" operator, this DOM object constructor cannot be called as a function.');
+  }
+  options = options || {};
+  var body = options.body;
+  if (input instanceof Request3) {
+    if (input.bodyUsed) {
+      throw new TypeError("Already read");
+    }
+    this.url = input.url;
+    this.credentials = input.credentials;
+    if (!options.headers) {
+      this.headers = new Headers3(input.headers);
+    }
+    this.method = input.method;
+    this.mode = input.mode;
+    this.signal = input.signal;
+    if (!body && input._bodyInit != null) {
+      body = input._bodyInit;
+      input.bodyUsed = true;
+    }
+  } else {
+    this.url = String(input);
+  }
+  this.credentials = options.credentials || this.credentials || "same-origin";
+  if (options.headers || !this.headers) {
+    this.headers = new Headers3(options.headers);
+  }
+  this.method = normalizeMethod(options.method || this.method || "GET");
+  this.mode = options.mode || this.mode || null;
+  this.signal = options.signal || this.signal || function() {
+    if ("AbortController" in g) {
+      var ctrl = new AbortController();
+      return ctrl.signal;
+    }
+  }();
+  this.referrer = null;
+  if ((this.method === "GET" || this.method === "HEAD") && body) {
+    throw new TypeError("Body not allowed for GET or HEAD requests");
+  }
+  this._initBody(body);
+  if (this.method === "GET" || this.method === "HEAD") {
+    if (options.cache === "no-store" || options.cache === "no-cache") {
+      var reParamSearch = /([?&])_=[^&]*/;
+      if (reParamSearch.test(this.url)) {
+        this.url = this.url.replace(reParamSearch, "$1_=" + (/* @__PURE__ */ new Date()).getTime());
+      } else {
+        var reQueryString = /\?/;
+        this.url += (reQueryString.test(this.url) ? "&" : "?") + "_=" + (/* @__PURE__ */ new Date()).getTime();
+      }
+    }
+  }
+}
+Request3.prototype.clone = function() {
+  return new Request3(this, { body: this._bodyInit });
+};
+function decode(body) {
+  var form = new FormData();
+  body.trim().split("&").forEach(function(bytes) {
+    if (bytes) {
+      var split = bytes.split("=");
+      var name = split.shift().replace(/\+/g, " ");
+      var value = split.join("=").replace(/\+/g, " ");
+      form.append(decodeURIComponent(name), decodeURIComponent(value));
+    }
+  });
+  return form;
+}
+function parseHeaders(rawHeaders) {
+  var headers = new Headers3();
+  var preProcessedHeaders = rawHeaders.replace(/\r?\n[\t ]+/g, " ");
+  preProcessedHeaders.split("\r").map(function(header) {
+    return header.indexOf("\n") === 0 ? header.substr(1, header.length) : header;
+  }).forEach(function(line) {
+    var parts = line.split(":");
+    var key = parts.shift().trim();
+    if (key) {
+      var value = parts.join(":").trim();
+      try {
+        headers.append(key, value);
+      } catch (error) {
+        console.warn("Response " + error.message);
+      }
+    }
+  });
+  return headers;
+}
+Body.call(Request3.prototype);
+function Response3(bodyInit, options) {
+  if (!(this instanceof Response3)) {
+    throw new TypeError('Please use the "new" operator, this DOM object constructor cannot be called as a function.');
+  }
+  if (!options) {
+    options = {};
+  }
+  this.type = "default";
+  this.status = options.status === void 0 ? 200 : options.status;
+  if (this.status < 200 || this.status > 599) {
+    throw new RangeError("Failed to construct 'Response': The status provided (0) is outside the range [200, 599].");
+  }
+  this.ok = this.status >= 200 && this.status < 300;
+  this.statusText = options.statusText === void 0 ? "" : "" + options.statusText;
+  this.headers = new Headers3(options.headers);
+  this.url = options.url || "";
+  this._initBody(bodyInit);
+}
+Body.call(Response3.prototype);
+Response3.prototype.clone = function() {
+  return new Response3(this._bodyInit, {
+    status: this.status,
+    statusText: this.statusText,
+    headers: new Headers3(this.headers),
+    url: this.url
+  });
+};
+Response3.error = function() {
+  var response = new Response3(null, { status: 200, statusText: "" });
+  response.ok = false;
+  response.status = 0;
+  response.type = "error";
+  return response;
+};
+var redirectStatuses = [301, 302, 303, 307, 308];
+Response3.redirect = function(url, status) {
+  if (redirectStatuses.indexOf(status) === -1) {
+    throw new RangeError("Invalid status code");
+  }
+  return new Response3(null, { status, headers: { location: url } });
+};
+var DOMException = g.DOMException;
+try {
+  new DOMException();
+} catch (err) {
+  DOMException = function(message, name) {
+    this.message = message;
+    this.name = name;
+    var error = Error(message);
+    this.stack = error.stack;
+  };
+  DOMException.prototype = Object.create(Error.prototype);
+  DOMException.prototype.constructor = DOMException;
+}
+function fetch3(input, init) {
+  return new Promise(function(resolve, reject) {
+    var request = new Request3(input, init);
+    if (request.signal && request.signal.aborted) {
+      return reject(new DOMException("Aborted", "AbortError"));
+    }
+    var xhr = new XMLHttpRequest();
+    function abortXhr() {
+      xhr.abort();
+    }
+    xhr.onload = function() {
+      var options = {
+        statusText: xhr.statusText,
+        headers: parseHeaders(xhr.getAllResponseHeaders() || "")
+      };
+      if (request.url.indexOf("file://") === 0 && (xhr.status < 200 || xhr.status > 599)) {
+        options.status = 200;
+      } else {
+        options.status = xhr.status;
+      }
+      options.url = "responseURL" in xhr ? xhr.responseURL : options.headers.get("X-Request-URL");
+      var body = "response" in xhr ? xhr.response : xhr.responseText;
+      setTimeout(function() {
+        resolve(new Response3(body, options));
+      }, 0);
+    };
+    xhr.onerror = function() {
+      setTimeout(function() {
+        reject(new TypeError("Network request failed"));
+      }, 0);
+    };
+    xhr.ontimeout = function() {
+      setTimeout(function() {
+        reject(new TypeError("Network request timed out"));
+      }, 0);
+    };
+    xhr.onabort = function() {
+      setTimeout(function() {
+        reject(new DOMException("Aborted", "AbortError"));
+      }, 0);
+    };
+    function fixUrl(url) {
+      try {
+        return url === "" && g.location.href ? g.location.href : url;
+      } catch (e) {
+        return url;
+      }
+    }
+    xhr.open(request.method, fixUrl(request.url), true);
+    if (request.credentials === "include") {
+      xhr.withCredentials = true;
+    } else if (request.credentials === "omit") {
+      xhr.withCredentials = false;
+    }
+    if ("responseType" in xhr) {
+      if (support.blob) {
+        xhr.responseType = "blob";
+      } else if (support.arrayBuffer) {
+        xhr.responseType = "arraybuffer";
+      }
+    }
+    if (init && typeof init.headers === "object" && !(init.headers instanceof Headers3 || g.Headers && init.headers instanceof g.Headers)) {
+      var names = [];
+      Object.getOwnPropertyNames(init.headers).forEach(function(name) {
+        names.push(normalizeName(name));
+        xhr.setRequestHeader(name, normalizeValue(init.headers[name]));
+      });
+      request.headers.forEach(function(value, name) {
+        if (names.indexOf(name) === -1) {
+          xhr.setRequestHeader(name, value);
+        }
+      });
+    } else {
+      request.headers.forEach(function(value, name) {
+        xhr.setRequestHeader(name, value);
+      });
+    }
+    if (request.signal) {
+      request.signal.addEventListener("abort", abortXhr);
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+          request.signal.removeEventListener("abort", abortXhr);
+        }
+      };
+    }
+    xhr.send(typeof request._bodyInit === "undefined" ? null : request._bodyInit);
+  });
+}
+fetch3.polyfill = true;
+if (!g.fetch) {
+  g.fetch = fetch3;
+  g.Headers = Headers3;
+  g.Request = Request3;
+  g.Response = Response3;
+}
+
+// node_modules/ollama/dist/shared/ollama.06ec3df8.mjs
+var version = "0.5.10";
+var __defProp$1 = Object.defineProperty;
+var __defNormalProp$1 = (obj, key, value) => key in obj ? __defProp$1(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField$1 = (obj, key, value) => {
+  __defNormalProp$1(obj, typeof key !== "symbol" ? key + "" : key, value);
+  return value;
+};
+var ResponseError = class _ResponseError extends Error {
+  constructor(error, status_code) {
+    super(error);
+    this.error = error;
+    this.status_code = status_code;
+    this.name = "ResponseError";
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, _ResponseError);
+    }
+  }
+};
+var AbortableAsyncIterator = class {
+  constructor(abortController, itr, doneCallback) {
+    __publicField$1(this, "abortController");
+    __publicField$1(this, "itr");
+    __publicField$1(this, "doneCallback");
+    this.abortController = abortController;
+    this.itr = itr;
+    this.doneCallback = doneCallback;
+  }
+  abort() {
+    this.abortController.abort();
+  }
+  async *[Symbol.asyncIterator]() {
+    for await (const message of this.itr) {
+      if ("error" in message) {
+        throw new Error(message.error);
+      }
+      yield message;
+      if (message.done || message.status === "success") {
+        this.doneCallback();
+        return;
+      }
+    }
+    throw new Error("Did not receive done or success response in stream.");
+  }
+};
+var checkOk = async (response) => {
+  var _a2;
+  if (response.ok) {
+    return;
+  }
+  let message = `Error ${response.status}: ${response.statusText}`;
+  let errorData = null;
+  if ((_a2 = response.headers.get("content-type")) == null ? void 0 : _a2.includes("application/json")) {
+    try {
+      errorData = await response.json();
+      message = errorData.error || message;
+    } catch (error) {
+      console.log("Failed to parse error response as JSON");
+    }
+  } else {
+    try {
+      console.log("Getting text from response");
+      const textResponse = await response.text();
+      message = textResponse || message;
+    } catch (error) {
+      console.log("Failed to get text from error response");
+    }
+  }
+  throw new ResponseError(message, response.status);
+};
+function getPlatform() {
+  if (typeof window !== "undefined" && window.navigator) {
+    return `${window.navigator.platform.toLowerCase()} Browser/${navigator.userAgent};`;
+  } else if (typeof process !== "undefined") {
+    return `${process.arch} ${process.platform} Node.js/${process.version}`;
+  }
+  return "";
+}
+var fetchWithHeaders = async (fetch4, url, options = {}) => {
+  const defaultHeaders = {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+    "User-Agent": `ollama-js/${version} (${getPlatform()})`
+  };
+  if (!options.headers) {
+    options.headers = {};
+  }
+  const customHeaders = Object.fromEntries(
+    Object.entries(options.headers).filter(([key]) => !Object.keys(defaultHeaders).some((defaultKey) => defaultKey.toLowerCase() === key.toLowerCase()))
+  );
+  options.headers = {
+    ...defaultHeaders,
+    ...customHeaders
+  };
+  return fetch4(url, options);
+};
+var get = async (fetch4, host, options) => {
+  const response = await fetchWithHeaders(fetch4, host, {
+    headers: options == null ? void 0 : options.headers
+  });
+  await checkOk(response);
+  return response;
+};
+var post = async (fetch4, host, data, options) => {
+  const isRecord = (input) => {
+    return input !== null && typeof input === "object" && !Array.isArray(input);
+  };
+  const formattedData = isRecord(data) ? JSON.stringify(data) : data;
+  const response = await fetchWithHeaders(fetch4, host, {
+    method: "POST",
+    body: formattedData,
+    signal: options == null ? void 0 : options.signal,
+    headers: options == null ? void 0 : options.headers
+  });
+  await checkOk(response);
+  return response;
+};
+var del = async (fetch4, host, data, options) => {
+  const response = await fetchWithHeaders(fetch4, host, {
+    method: "DELETE",
+    body: JSON.stringify(data),
+    headers: options == null ? void 0 : options.headers
+  });
+  await checkOk(response);
+  return response;
+};
+var parseJSON2 = async function* (itr) {
+  var _a2;
+  const decoder = new TextDecoder("utf-8");
+  let buffer = "";
+  const reader = itr.getReader();
+  while (true) {
+    const { done, value: chunk } = await reader.read();
+    if (done) {
+      break;
+    }
+    buffer += decoder.decode(chunk);
+    const parts = buffer.split("\n");
+    buffer = (_a2 = parts.pop()) != null ? _a2 : "";
+    for (const part of parts) {
+      try {
+        yield JSON.parse(part);
+      } catch (error) {
+        console.warn("invalid json: ", part);
+      }
+    }
+  }
+  for (const part of buffer.split("\n").filter((p) => p !== "")) {
+    try {
+      yield JSON.parse(part);
+    } catch (error) {
+      console.warn("invalid json: ", part);
+    }
+  }
+};
+var formatHost = (host) => {
+  if (!host) {
+    return "http://127.0.0.1:11434";
+  }
+  let isExplicitProtocol = host.includes("://");
+  if (host.startsWith(":")) {
+    host = `http://127.0.0.1${host}`;
+    isExplicitProtocol = true;
+  }
+  if (!isExplicitProtocol) {
+    host = `http://${host}`;
+  }
+  const url = new URL(host);
+  let port = url.port;
+  if (!port) {
+    if (!isExplicitProtocol) {
+      port = "11434";
+    } else {
+      port = url.protocol === "https:" ? "443" : "80";
+    }
+  }
+  let formattedHost = `${url.protocol}//${url.hostname}:${port}${url.pathname}`;
+  if (formattedHost.endsWith("/")) {
+    formattedHost = formattedHost.slice(0, -1);
+  }
+  return formattedHost;
+};
+var __defProp3 = Object.defineProperty;
+var __defNormalProp3 = (obj, key, value) => key in obj ? __defProp3(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField3 = (obj, key, value) => {
+  __defNormalProp3(obj, typeof key !== "symbol" ? key + "" : key, value);
+  return value;
+};
+var Ollama$1 = class Ollama {
+  constructor(config) {
+    var _a2, _b;
+    __publicField3(this, "config");
+    __publicField3(this, "fetch");
+    __publicField3(this, "ongoingStreamedRequests", []);
+    this.config = {
+      host: "",
+      headers: config == null ? void 0 : config.headers
+    };
+    if (!(config == null ? void 0 : config.proxy)) {
+      this.config.host = formatHost((_a2 = config == null ? void 0 : config.host) != null ? _a2 : "http://127.0.0.1:11434");
+    }
+    this.fetch = (_b = config == null ? void 0 : config.fetch) != null ? _b : fetch;
+  }
+  // Abort any ongoing streamed requests to Ollama
+  abort() {
+    for (const request of this.ongoingStreamedRequests) {
+      request.abort();
+    }
+    this.ongoingStreamedRequests.length = 0;
+  }
+  /**
+   * Processes a request to the Ollama server. If the request is streamable, it will return a
+   * AbortableAsyncIterator that yields the response messages. Otherwise, it will return the response
+   * object.
+   * @param endpoint {string} - The endpoint to send the request to.
+   * @param request {object} - The request object to send to the endpoint.
+   * @protected {T | AbortableAsyncIterator<T>} - The response object or a AbortableAsyncIterator that yields
+   * response messages.
+   * @throws {Error} - If the response body is missing or if the response is an error.
+   * @returns {Promise<T | AbortableAsyncIterator<T>>} - The response object or a AbortableAsyncIterator that yields the streamed response.
+   */
+  async processStreamableRequest(endpoint, request) {
+    var _a2;
+    request.stream = (_a2 = request.stream) != null ? _a2 : false;
+    const host = `${this.config.host}/api/${endpoint}`;
+    if (request.stream) {
+      const abortController = new AbortController();
+      const response2 = await post(this.fetch, host, request, {
+        signal: abortController.signal,
+        headers: this.config.headers
+      });
+      if (!response2.body) {
+        throw new Error("Missing body");
+      }
+      const itr = parseJSON2(response2.body);
+      const abortableAsyncIterator = new AbortableAsyncIterator(
+        abortController,
+        itr,
+        () => {
+          const i = this.ongoingStreamedRequests.indexOf(abortableAsyncIterator);
+          if (i > -1) {
+            this.ongoingStreamedRequests.splice(i, 1);
+          }
+        }
+      );
+      this.ongoingStreamedRequests.push(abortableAsyncIterator);
+      return abortableAsyncIterator;
+    }
+    const response = await post(this.fetch, host, request, {
+      headers: this.config.headers
+    });
+    return await response.json();
+  }
+  /**
+  * Encodes an image to base64 if it is a Uint8Array.
+  * @param image {Uint8Array | string} - The image to encode.
+  * @returns {Promise<string>} - The base64 encoded image.
+  */
+  async encodeImage(image) {
+    if (typeof image !== "string") {
+      const uint8Array = new Uint8Array(image);
+      let byteString = "";
+      const len = uint8Array.byteLength;
+      for (let i = 0; i < len; i++) {
+        byteString += String.fromCharCode(uint8Array[i]);
+      }
+      return btoa(byteString);
+    }
+    return image;
+  }
+  /**
+   * Generates a response from a text prompt.
+   * @param request {GenerateRequest} - The request object.
+   * @returns {Promise<GenerateResponse | AbortableAsyncIterator<GenerateResponse>>} - The response object or
+   * an AbortableAsyncIterator that yields response messages.
+   */
+  async generate(request) {
+    if (request.images) {
+      request.images = await Promise.all(request.images.map(this.encodeImage.bind(this)));
+    }
+    return this.processStreamableRequest("generate", request);
+  }
+  /**
+   * Chats with the model. The request object can contain messages with images that are either
+   * Uint8Arrays or base64 encoded strings. The images will be base64 encoded before sending the
+   * request.
+   * @param request {ChatRequest} - The request object.
+   * @returns {Promise<ChatResponse | AbortableAsyncIterator<ChatResponse>>} - The response object or an
+   * AbortableAsyncIterator that yields response messages.
+   */
+  async chat(request) {
+    if (request.messages) {
+      for (const message of request.messages) {
+        if (message.images) {
+          message.images = await Promise.all(
+            message.images.map(this.encodeImage.bind(this))
+          );
+        }
+      }
+    }
+    return this.processStreamableRequest("chat", request);
+  }
+  /**
+   * Creates a new model from a stream of data.
+   * @param request {CreateRequest} - The request object.
+   * @returns {Promise<ProgressResponse | AbortableAsyncIterator<ProgressResponse>>} - The response object or a stream of progress responses.
+   */
+  async create(request) {
+    return this.processStreamableRequest("create", {
+      name: request.model,
+      stream: request.stream,
+      modelfile: request.modelfile,
+      quantize: request.quantize
+    });
+  }
+  /**
+   * Pulls a model from the Ollama registry. The request object can contain a stream flag to indicate if the
+   * response should be streamed.
+   * @param request {PullRequest} - The request object.
+   * @returns {Promise<ProgressResponse | AbortableAsyncIterator<ProgressResponse>>} - The response object or
+   * an AbortableAsyncIterator that yields response messages.
+   */
+  async pull(request) {
+    return this.processStreamableRequest("pull", {
+      name: request.model,
+      stream: request.stream,
+      insecure: request.insecure
+    });
+  }
+  /**
+   * Pushes a model to the Ollama registry. The request object can contain a stream flag to indicate if the
+   * response should be streamed.
+   * @param request {PushRequest} - The request object.
+   * @returns {Promise<ProgressResponse | AbortableAsyncIterator<ProgressResponse>>} - The response object or
+   * an AbortableAsyncIterator that yields response messages.
+   */
+  async push(request) {
+    return this.processStreamableRequest("push", {
+      name: request.model,
+      stream: request.stream,
+      insecure: request.insecure
+    });
+  }
+  /**
+   * Deletes a model from the server. The request object should contain the name of the model to
+   * delete.
+   * @param request {DeleteRequest} - The request object.
+   * @returns {Promise<StatusResponse>} - The response object.
+   */
+  async delete(request) {
+    await del(
+      this.fetch,
+      `${this.config.host}/api/delete`,
+      { name: request.model },
+      { headers: this.config.headers }
+    );
+    return { status: "success" };
+  }
+  /**
+   * Copies a model from one name to another. The request object should contain the name of the
+   * model to copy and the new name.
+   * @param request {CopyRequest} - The request object.
+   * @returns {Promise<StatusResponse>} - The response object.
+   */
+  async copy(request) {
+    await post(this.fetch, `${this.config.host}/api/copy`, { ...request }, {
+      headers: this.config.headers
+    });
+    return { status: "success" };
+  }
+  /**
+   * Lists the models on the server.
+   * @returns {Promise<ListResponse>} - The response object.
+   * @throws {Error} - If the response body is missing.
+   */
+  async list() {
+    const response = await get(this.fetch, `${this.config.host}/api/tags`, {
+      headers: this.config.headers
+    });
+    return await response.json();
+  }
+  /**
+   * Shows the metadata of a model. The request object should contain the name of the model.
+   * @param request {ShowRequest} - The request object.
+   * @returns {Promise<ShowResponse>} - The response object.
+   */
+  async show(request) {
+    const response = await post(this.fetch, `${this.config.host}/api/show`, {
+      ...request
+    }, {
+      headers: this.config.headers
+    });
+    return await response.json();
+  }
+  /**
+   * Embeds text input into vectors.
+   * @param request {EmbedRequest} - The request object.
+   * @returns {Promise<EmbedResponse>} - The response object.
+   */
+  async embed(request) {
+    const response = await post(this.fetch, `${this.config.host}/api/embed`, {
+      ...request
+    }, {
+      headers: this.config.headers
+    });
+    return await response.json();
+  }
+  /**
+   * Embeds a text prompt into a vector.
+   * @param request {EmbeddingsRequest} - The request object.
+   * @returns {Promise<EmbeddingsResponse>} - The response object.
+   */
+  async embeddings(request) {
+    const response = await post(this.fetch, `${this.config.host}/api/embeddings`, {
+      ...request
+    }, {
+      headers: this.config.headers
+    });
+    return await response.json();
+  }
+  /**
+   * Lists the running models on the server
+   * @returns {Promise<ListResponse>} - The response object.
+   * @throws {Error} - If the response body is missing.
+   */
+  async ps() {
+    const response = await get(this.fetch, `${this.config.host}/api/ps`, {
+      headers: this.config.headers
+    });
+    return await response.json();
+  }
+};
+var browser = new Ollama$1();
+
+// node_modules/@langchain/core/utils/stream.js
+init_stream();
+
 // node_modules/@langchain/ollama/dist/llms.js
 var Ollama2 = class extends LLM {
   static lc_name() {
     return "Ollama";
   }
   constructor(fields) {
-    var _a, _b, _c, _d;
+    var _a2, _b, _c, _d;
     super(fields != null ? fields : {});
     Object.defineProperty(this, "lc_serializable", {
       enumerable: true,
@@ -23331,7 +29093,7 @@ var Ollama2 = class extends LLM {
       writable: true,
       value: void 0
     });
-    this.model = (_a = fields == null ? void 0 : fields.model) != null ? _a : this.model;
+    this.model = (_a2 = fields == null ? void 0 : fields.model) != null ? _a2 : this.model;
     this.baseUrl = ((_b = fields == null ? void 0 : fields.baseUrl) == null ? void 0 : _b.endsWith("/")) ? fields == null ? void 0 : fields.baseUrl.slice(0, -1) : (_c = fields == null ? void 0 : fields.baseUrl) != null ? _c : this.baseUrl;
     this.client = new Ollama$1({
       host: this.baseUrl,
@@ -23372,7 +29134,7 @@ var Ollama2 = class extends LLM {
     return "ollama";
   }
   invocationParams(options) {
-    var _a;
+    var _a2;
     return {
       model: this.model,
       format: this.format,
@@ -23399,7 +29161,7 @@ var Ollama2 = class extends LLM {
         repeat_last_n: this.repeatLastN,
         repeat_penalty: this.repeatPenalty,
         temperature: this.temperature,
-        stop: (_a = options == null ? void 0 : options.stop) != null ? _a : this.stop,
+        stop: (_a2 = options == null ? void 0 : options.stop) != null ? _a2 : this.stop,
         tfs_z: this.tfsZ,
         top_k: this.topK,
         top_p: this.topP,
@@ -23411,14 +29173,14 @@ var Ollama2 = class extends LLM {
     };
   }
   async *_streamResponseChunks(prompt, options, runManager) {
-    var _a, _b;
+    var _a2, _b;
     const stream = await this.caller.call(async () => this.client.generate({
       ...this.invocationParams(options),
       prompt,
       stream: true
     }));
     for await (const chunk of stream) {
-      if ((_a = options.signal) == null ? void 0 : _a.aborted) {
+      if ((_a2 = options.signal) == null ? void 0 : _a2.aborted) {
         throw new Error("This operation was aborted");
       }
       if (!chunk.done) {
@@ -23456,6 +29218,19 @@ var Ollama2 = class extends LLM {
   }
 };
 
+// src/services/llmFactory.ts
+var LLMProvider = /* @__PURE__ */ ((LLMProvider2) => {
+  LLMProvider2["OPENAI"] = "openai";
+  LLMProvider2["OLLAMA"] = "ollama";
+  return LLMProvider2;
+})(LLMProvider || {});
+
+// src/models/types.ts
+var DEFAULT_SETTINGS = {
+  llmProvider: "ollama" /* OLLAMA */,
+  modelName: "llama2"
+};
+
 // node_modules/@langchain/core/dist/prompts/index.js
 init_base5();
 init_chat2();
@@ -23474,308 +29249,12 @@ init_image();
 // node_modules/@langchain/core/dist/prompts/structured.js
 init_chat2();
 
-// node_modules/@langchain/core/dist/runnables/index.js
-init_base4();
-init_config();
-
-// node_modules/@langchain/core/dist/runnables/router.js
-init_base4();
-init_config();
-
-// node_modules/@langchain/core/dist/runnables/branch.js
-init_base4();
-init_config();
-init_stream();
-
-// node_modules/@langchain/core/dist/runnables/history.js
-init_messages2();
-init_base4();
-
-// node_modules/@langchain/core/dist/output_parsers/base.js
-init_errors();
-var BaseLLMOutputParser = class extends Runnable {
-  /**
-   * Parses the result of an LLM call with a given prompt. By default, it
-   * simply calls `parseResult`.
-   * @param generations The generations from an LLM call.
-   * @param _prompt The prompt used in the LLM call.
-   * @param callbacks Optional callbacks.
-   * @returns A promise of the parsed output.
-   */
-  parseResultWithPrompt(generations, _prompt, callbacks) {
-    return this.parseResult(generations, callbacks);
-  }
-  _baseMessageToString(message) {
-    return typeof message.content === "string" ? message.content : this._baseMessageContentToString(message.content);
-  }
-  _baseMessageContentToString(content) {
-    return JSON.stringify(content);
-  }
-  /**
-   * Calls the parser with a given input and optional configuration options.
-   * If the input is a string, it creates a generation with the input as
-   * text and calls `parseResult`. If the input is a `BaseMessage`, it
-   * creates a generation with the input as a message and the content of the
-   * input as text, and then calls `parseResult`.
-   * @param input The input to the parser, which can be a string or a `BaseMessage`.
-   * @param options Optional configuration options.
-   * @returns A promise of the parsed output.
-   */
-  async invoke(input, options) {
-    if (typeof input === "string") {
-      return this._callWithConfig(async (input2, options2) => this.parseResult([{ text: input2 }], options2 == null ? void 0 : options2.callbacks), input, { ...options, runType: "parser" });
-    } else {
-      return this._callWithConfig(async (input2, options2) => this.parseResult([
-        {
-          message: input2,
-          text: this._baseMessageToString(input2)
-        }
-      ], options2 == null ? void 0 : options2.callbacks), input, { ...options, runType: "parser" });
-    }
-  }
-};
-var BaseOutputParser = class extends BaseLLMOutputParser {
-  parseResult(generations, callbacks) {
-    return this.parse(generations[0].text, callbacks);
-  }
-  async parseWithPrompt(text, _prompt, callbacks) {
-    return this.parse(text, callbacks);
-  }
-  /**
-   * Return the string type key uniquely identifying this class of parser
-   */
-  _type() {
-    throw new Error("_type not implemented");
-  }
-};
-
-// node_modules/@langchain/core/dist/output_parsers/transform.js
-init_base();
-init_utils2();
-init_outputs();
-
-// node_modules/@langchain/core/dist/utils/@cfworker/json-schema/src/dereference.js
-var initialBaseURI = (
-  // @ts-ignore
-  typeof self !== "undefined" && self.location && self.location.origin !== "null" ? (
-    //@ts-ignore
-    /* @__PURE__ */ new URL(self.location.origin + self.location.pathname + location.search)
-  ) : /* @__PURE__ */ new URL("https://github.com/cfworker")
-);
-
-// node_modules/@langchain/core/dist/utils/@cfworker/json-schema/src/format.js
-var DATE = /^(\d\d\d\d)-(\d\d)-(\d\d)$/;
-var DAYS = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-var TIME = /^(\d\d):(\d\d):(\d\d)(\.\d+)?(z|[+-]\d\d(?::?\d\d)?)?$/i;
-var HOSTNAME = /^(?=.{1,253}\.?$)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[-0-9a-z]{0,61}[0-9a-z])?)*\.?$/i;
-var URIREF = /^(?:[a-z][a-z0-9+\-.]*:)?(?:\/?\/(?:(?:[a-z0-9\-._~!$&'()*+,;=:]|%[0-9a-f]{2})*@)?(?:\[(?:(?:(?:(?:[0-9a-f]{1,4}:){6}|::(?:[0-9a-f]{1,4}:){5}|(?:[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){4}|(?:(?:[0-9a-f]{1,4}:){0,1}[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){3}|(?:(?:[0-9a-f]{1,4}:){0,2}[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){2}|(?:(?:[0-9a-f]{1,4}:){0,3}[0-9a-f]{1,4})?::[0-9a-f]{1,4}:|(?:(?:[0-9a-f]{1,4}:){0,4}[0-9a-f]{1,4})?::)(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?))|(?:(?:[0-9a-f]{1,4}:){0,5}[0-9a-f]{1,4})?::[0-9a-f]{1,4}|(?:(?:[0-9a-f]{1,4}:){0,6}[0-9a-f]{1,4})?::)|[Vv][0-9a-f]+\.[a-z0-9\-._~!$&'()*+,;=:]+)\]|(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)|(?:[a-z0-9\-._~!$&'"()*+,;=]|%[0-9a-f]{2})*)(?::\d*)?(?:\/(?:[a-z0-9\-._~!$&'"()*+,;=:@]|%[0-9a-f]{2})*)*|\/(?:(?:[a-z0-9\-._~!$&'"()*+,;=:@]|%[0-9a-f]{2})+(?:\/(?:[a-z0-9\-._~!$&'"()*+,;=:@]|%[0-9a-f]{2})*)*)?|(?:[a-z0-9\-._~!$&'"()*+,;=:@]|%[0-9a-f]{2})+(?:\/(?:[a-z0-9\-._~!$&'"()*+,;=:@]|%[0-9a-f]{2})*)*)?(?:\?(?:[a-z0-9\-._~!$&'"()*+,;=:@/?]|%[0-9a-f]{2})*)?(?:#(?:[a-z0-9\-._~!$&'"()*+,;=:@/?]|%[0-9a-f]{2})*)?$/i;
-var URITEMPLATE = /^(?:(?:[^\x00-\x20"'<>%\\^`{|}]|%[0-9a-f]{2})|\{[+#./;?&=,!@|]?(?:[a-z0-9_]|%[0-9a-f]{2})+(?::[1-9][0-9]{0,3}|\*)?(?:,(?:[a-z0-9_]|%[0-9a-f]{2})+(?::[1-9][0-9]{0,3}|\*)?)*\})*$/i;
-var URL_ = /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u{00a1}-\u{ffff}0-9]+-?)*[a-z\u{00a1}-\u{ffff}0-9]+)(?:\.(?:[a-z\u{00a1}-\u{ffff}0-9]+-?)*[a-z\u{00a1}-\u{ffff}0-9]+)*(?:\.(?:[a-z\u{00a1}-\u{ffff}]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/iu;
-var UUID = /^(?:urn:uuid:)?[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i;
-var JSON_POINTER = /^(?:\/(?:[^~/]|~0|~1)*)*$/;
-var JSON_POINTER_URI_FRAGMENT = /^#(?:\/(?:[a-z0-9_\-.!$&'()*+,;:=@]|%[0-9a-f]{2}|~0|~1)*)*$/i;
-var RELATIVE_JSON_POINTER = /^(?:0|[1-9][0-9]*)(?:#|(?:\/(?:[^~/]|~0|~1)*)*)$/;
-var FASTDATE = /^\d\d\d\d-[0-1]\d-[0-3]\d$/;
-var FASTTIME = /^(?:[0-2]\d:[0-5]\d:[0-5]\d|23:59:60)(?:\.\d+)?(?:z|[+-]\d\d(?::?\d\d)?)?$/i;
-var FASTDATETIME = /^\d\d\d\d-[0-1]\d-[0-3]\d[t\s](?:[0-2]\d:[0-5]\d:[0-5]\d|23:59:60)(?:\.\d+)?(?:z|[+-]\d\d(?::?\d\d)?)$/i;
-var FASTURIREFERENCE = /^(?:(?:[a-z][a-z0-9+-.]*:)?\/?\/)?(?:[^\\\s#][^\s#]*)?(?:#[^\\\s]*)?$/i;
-var EMAIL = (input) => {
-  if (input[0] === '"')
-    return false;
-  const [name, host, ...rest] = input.split("@");
-  if (!name || !host || rest.length !== 0 || name.length > 64 || host.length > 253)
-    return false;
-  if (name[0] === "." || name.endsWith(".") || name.includes(".."))
-    return false;
-  if (!/^[a-z0-9.-]+$/i.test(host) || !/^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+$/i.test(name))
-    return false;
-  return host.split(".").every((part) => /^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$/i.test(part));
-};
-var IPV4 = /^(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)$/;
-var IPV6 = /^((([0-9a-f]{1,4}:){7}([0-9a-f]{1,4}|:))|(([0-9a-f]{1,4}:){6}(:[0-9a-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9a-f]{1,4}:){5}(((:[0-9a-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9a-f]{1,4}:){4}(((:[0-9a-f]{1,4}){1,3})|((:[0-9a-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9a-f]{1,4}:){3}(((:[0-9a-f]{1,4}){1,4})|((:[0-9a-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9a-f]{1,4}:){2}(((:[0-9a-f]{1,4}){1,5})|((:[0-9a-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9a-f]{1,4}:){1}(((:[0-9a-f]{1,4}){1,6})|((:[0-9a-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9a-f]{1,4}){1,7})|((:[0-9a-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))$/i;
-var DURATION = (input) => input.length > 1 && input.length < 80 && (/^P\d+([.,]\d+)?W$/.test(input) || /^P[\dYMDTHS]*(\d[.,]\d+)?[YMDHS]$/.test(input) && /^P([.,\d]+Y)?([.,\d]+M)?([.,\d]+D)?(T([.,\d]+H)?([.,\d]+M)?([.,\d]+S)?)?$/.test(input));
-function bind(r) {
-  return r.test.bind(r);
-}
-var fullFormat = {
-  date,
-  time: /* @__PURE__ */ time.bind(void 0, false),
-  "date-time": date_time,
-  duration: DURATION,
-  uri,
-  "uri-reference": /* @__PURE__ */ bind(URIREF),
-  "uri-template": /* @__PURE__ */ bind(URITEMPLATE),
-  url: /* @__PURE__ */ bind(URL_),
-  email: EMAIL,
-  hostname: /* @__PURE__ */ bind(HOSTNAME),
-  ipv4: /* @__PURE__ */ bind(IPV4),
-  ipv6: /* @__PURE__ */ bind(IPV6),
-  regex,
-  uuid: /* @__PURE__ */ bind(UUID),
-  "json-pointer": /* @__PURE__ */ bind(JSON_POINTER),
-  "json-pointer-uri-fragment": /* @__PURE__ */ bind(JSON_POINTER_URI_FRAGMENT),
-  "relative-json-pointer": /* @__PURE__ */ bind(RELATIVE_JSON_POINTER)
-};
-var fastFormat = {
-  ...fullFormat,
-  date: /* @__PURE__ */ bind(FASTDATE),
-  time: /* @__PURE__ */ bind(FASTTIME),
-  "date-time": /* @__PURE__ */ bind(FASTDATETIME),
-  "uri-reference": /* @__PURE__ */ bind(FASTURIREFERENCE)
-};
-function isLeapYear(year) {
-  return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
-}
-function date(str) {
-  const matches = str.match(DATE);
-  if (!matches)
-    return false;
-  const year = +matches[1];
-  const month = +matches[2];
-  const day = +matches[3];
-  return month >= 1 && month <= 12 && day >= 1 && day <= (month == 2 && isLeapYear(year) ? 29 : DAYS[month]);
-}
-function time(full, str) {
-  const matches = str.match(TIME);
-  if (!matches)
-    return false;
-  const hour = +matches[1];
-  const minute = +matches[2];
-  const second = +matches[3];
-  const timeZone = !!matches[5];
-  return (hour <= 23 && minute <= 59 && second <= 59 || hour == 23 && minute == 59 && second == 60) && (!full || timeZone);
-}
-var DATE_TIME_SEPARATOR = /t|\s/i;
-function date_time(str) {
-  const dateTime = str.split(DATE_TIME_SEPARATOR);
-  return dateTime.length == 2 && date(dateTime[0]) && time(true, dateTime[1]);
-}
-var NOT_URI_FRAGMENT = /\/|:/;
-var URI_PATTERN = /^(?:[a-z][a-z0-9+\-.]*:)(?:\/?\/(?:(?:[a-z0-9\-._~!$&'()*+,;=:]|%[0-9a-f]{2})*@)?(?:\[(?:(?:(?:(?:[0-9a-f]{1,4}:){6}|::(?:[0-9a-f]{1,4}:){5}|(?:[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){4}|(?:(?:[0-9a-f]{1,4}:){0,1}[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){3}|(?:(?:[0-9a-f]{1,4}:){0,2}[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){2}|(?:(?:[0-9a-f]{1,4}:){0,3}[0-9a-f]{1,4})?::[0-9a-f]{1,4}:|(?:(?:[0-9a-f]{1,4}:){0,4}[0-9a-f]{1,4})?::)(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?))|(?:(?:[0-9a-f]{1,4}:){0,5}[0-9a-f]{1,4})?::[0-9a-f]{1,4}|(?:(?:[0-9a-f]{1,4}:){0,6}[0-9a-f]{1,4})?::)|[Vv][0-9a-f]+\.[a-z0-9\-._~!$&'()*+,;=:]+)\]|(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)|(?:[a-z0-9\-._~!$&'()*+,;=]|%[0-9a-f]{2})*)(?::\d*)?(?:\/(?:[a-z0-9\-._~!$&'()*+,;=:@]|%[0-9a-f]{2})*)*|\/(?:(?:[a-z0-9\-._~!$&'()*+,;=:@]|%[0-9a-f]{2})+(?:\/(?:[a-z0-9\-._~!$&'()*+,;=:@]|%[0-9a-f]{2})*)*)?|(?:[a-z0-9\-._~!$&'()*+,;=:@]|%[0-9a-f]{2})+(?:\/(?:[a-z0-9\-._~!$&'()*+,;=:@]|%[0-9a-f]{2})*)*)(?:\?(?:[a-z0-9\-._~!$&'()*+,;=:@/?]|%[0-9a-f]{2})*)?(?:#(?:[a-z0-9\-._~!$&'()*+,;=:@/?]|%[0-9a-f]{2})*)?$/i;
-function uri(str) {
-  return NOT_URI_FRAGMENT.test(str) && URI_PATTERN.test(str);
-}
-var Z_ANCHOR = /[^\\]\\Z/;
-function regex(str) {
-  if (Z_ANCHOR.test(str))
-    return false;
-  try {
-    new RegExp(str);
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
-// node_modules/@langchain/core/dist/output_parsers/transform.js
-var BaseTransformOutputParser = class extends BaseOutputParser {
-  async *_transform(inputGenerator) {
-    for await (const chunk of inputGenerator) {
-      if (typeof chunk === "string") {
-        yield this.parseResult([{ text: chunk }]);
-      } else {
-        yield this.parseResult([
-          {
-            message: chunk,
-            text: this._baseMessageToString(chunk)
-          }
-        ]);
-      }
-    }
-  }
-  /**
-   * Transforms an asynchronous generator of input into an asynchronous
-   * generator of parsed output.
-   * @param inputGenerator An asynchronous generator of input.
-   * @param options A configuration object.
-   * @returns An asynchronous generator of parsed output.
-   */
-  async *transform(inputGenerator, options) {
-    yield* this._transformStreamWithConfig(inputGenerator, this._transform.bind(this), {
-      ...options,
-      runType: "parser"
-    });
-  }
-};
-
-// node_modules/@langchain/core/dist/output_parsers/string.js
-var StringOutputParser = class extends BaseTransformOutputParser {
-  constructor() {
-    super(...arguments);
-    Object.defineProperty(this, "lc_namespace", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: ["langchain_core", "output_parsers", "string"]
-    });
-    Object.defineProperty(this, "lc_serializable", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: true
-    });
-  }
-  static lc_name() {
-    return "StrOutputParser";
-  }
-  /**
-   * Parses a string output from an LLM call. This method is meant to be
-   * implemented by subclasses to define how a string output from an LLM
-   * should be parsed.
-   * @param text The string output from an LLM call.
-   * @param callbacks Optional callbacks.
-   * @returns A promise of the parsed output.
-   */
-  parse(text) {
-    return Promise.resolve(text);
-  }
-  getFormatInstructions() {
-    return "";
-  }
-  _textContentToString(content) {
-    return content.text;
-  }
-  _imageUrlContentToString(_content) {
-    throw new Error(`Cannot coerce a multimodal "image_url" message part into a string.`);
-  }
-  _messageContentComplexToString(content) {
-    switch (content.type) {
-      case "text":
-      case "text_delta":
-        if ("text" in content) {
-          return this._textContentToString(content);
-        }
-        break;
-      case "image_url":
-        if ("image_url" in content) {
-          return this._imageUrlContentToString(content);
-        }
-        break;
-      default:
-        throw new Error(`Cannot coerce "${content.type}" message part into a string.`);
-    }
-    throw new Error(`Invalid content type: ${content.type}`);
-  }
-  _baseMessageContentToString(content) {
-    return content.reduce((acc, item) => acc + this._messageContentComplexToString(item), "");
-  }
-};
-
-// node_modules/@langchain/core/dist/output_parsers/structured.js
-init_esm();
-
-// node_modules/@langchain/core/dist/utils/json_patch.js
-init_fast_json_patch();
-
-// node_modules/@langchain/core/dist/output_parsers/json.js
-init_json();
-
 // src/services/tagGenerator.ts
 var TagGenerator = class {
-  constructor(ollamaHost, ollamaModel) {
+  constructor(llmHost, modelName) {
     this.model = new Ollama2({
-      baseUrl: ollamaHost,
-      model: ollamaModel,
+      baseUrl: llmHost || "http://localhost:11434",
+      model: modelName,
       temperature: 0,
       maxRetries: 2
     });
@@ -23915,18 +29394,33 @@ var TagAgentSettingTab = class extends import_obsidian2.PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
     containerEl.createEl("h2", { text: "Tag Agent Settings" });
-    new import_obsidian2.Setting(containerEl).setName("Ollama Host").setDesc("The host address of your Ollama instance").addText(
-      (text) => text.setPlaceholder("http://localhost:11434").setValue(this.plugin.settings.ollamaHost).onChange(async (value) => {
-        this.plugin.settings.ollamaHost = value;
+    new import_obsidian2.Setting(containerEl).setName("LLM Provider").setDesc("Choose your LLM provider").addDropdown((dropdown) => {
+      Object.values(LLMProvider).forEach((provider) => {
+        dropdown.addOption(provider, provider);
+      });
+      dropdown.setValue(this.plugin.settings.llmProvider).onChange(async (value) => {
+        this.plugin.settings.llmProvider = value;
+        if (value === "ollama" /* OLLAMA */ && !this.plugin.settings.llmHost) {
+          this.plugin.settings.llmHost = "http://localhost:11434";
+        }
+        await this.plugin.saveSettings();
+        this.display();
+      });
+    });
+    new import_obsidian2.Setting(containerEl).setName("Model Name").setDesc("The name of the LLM model to use").addText(
+      (text) => text.setPlaceholder("gpt-3.5-turbo").setValue(this.plugin.settings.modelName).onChange(async (value) => {
+        this.plugin.settings.modelName = value;
         await this.plugin.saveSettings();
       })
     );
-    new import_obsidian2.Setting(containerEl).setName("Ollama Model").setDesc("The model to use for tag generation").addText(
-      (text) => text.setPlaceholder("llama3.1").setValue(this.plugin.settings.ollamaModel).onChange(async (value) => {
-        this.plugin.settings.ollamaModel = value;
-        await this.plugin.saveSettings();
-      })
-    );
+    if (this.plugin.settings.llmProvider === "ollama" /* OLLAMA */) {
+      new import_obsidian2.Setting(containerEl).setName("LLM Host").setDesc("The host address of your LLM server").addText(
+        (text) => text.setPlaceholder("http://localhost:11434").setValue(this.plugin.settings.llmHost || "").onChange(async (value) => {
+          this.plugin.settings.llmHost = value;
+          await this.plugin.saveSettings();
+        })
+      );
+    }
   }
 };
 
@@ -23987,7 +29481,7 @@ var TagAgent = class extends import_obsidian4.Plugin {
     });
   }
   initializeTagGenerator() {
-    this.tagGenerator = new TagGenerator(this.settings.ollamaHost, this.settings.ollamaModel);
+    this.tagGenerator = new TagGenerator(this.settings.llmHost, this.settings.modelName);
   }
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());

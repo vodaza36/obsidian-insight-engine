@@ -10,10 +10,10 @@ export class TagGenerator {
     private promptTemplate: PromptTemplate;
     private outputParser: StringOutputParser;
 
-    constructor(ollamaHost: string, ollamaModel: string) {
+    constructor(llmHost: string | undefined, modelName: string) {
         this.model = new Ollama({
-            baseUrl: ollamaHost,
-            model: ollamaModel,
+            baseUrl: llmHost || 'http://localhost:11434',
+            model: modelName,
             temperature: 0,
             maxRetries: 2
         });

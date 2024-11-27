@@ -1,11 +1,14 @@
+import { LLMProvider } from '../services/llmFactory';
+
 export interface TagAgentSettings {
-	ollamaHost: string;
-	ollamaModel: string;
+	llmProvider: LLMProvider;
+	modelName: string;
+	llmHost?: string;
 }
 
 export const DEFAULT_SETTINGS: TagAgentSettings = {
-	ollamaHost: 'http://localhost:11434',
-	ollamaModel: 'llama3.1',
+	llmProvider: LLMProvider.OLLAMA,
+	modelName: 'llama2',
 };
 
 export interface TagSuggestion {

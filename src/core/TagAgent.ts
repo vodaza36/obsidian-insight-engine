@@ -41,7 +41,7 @@ export default class TagAgent extends Plugin {
 	}
 
 	private initializeTagGenerator() {
-		this.tagGenerator = new TagGenerator(this.settings.ollamaHost, this.settings.ollamaModel);
+		this.tagGenerator = new TagGenerator(this.settings.llmHost, this.settings.modelName);
 	}
 
 	async loadSettings() {
