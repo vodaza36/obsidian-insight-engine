@@ -40,6 +40,15 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 // node_modules/@langchain/core/dist/utils/json.js
+function parseJsonMarkdown(s, parser = parsePartialJson) {
+  s = s.trim();
+  const match = /```(json)?(.*)```/s.exec(s);
+  if (!match) {
+    return parser(s);
+  } else {
+    return parser(match[2]);
+  }
+}
 function parsePartialJson(s) {
   if (typeof s === "undefined") {
     return null;
@@ -398,6 +407,12 @@ function mergeContent(firstContent, secondContent) {
     return [...firstContent, { type: "text", text: secondContent }];
   }
 }
+function _mergeStatus(left, right) {
+  if (left === "error" || right === "error") {
+    return "error";
+  }
+  return "success";
+}
 function stringifyWithDepthLimit(obj, depthLimit) {
   function helper(obj2, currentDepth) {
     if (typeof obj2 !== "object" || obj2 === null || obj2 === void 0) {
@@ -470,11 +485,38 @@ function _mergeLists(left, right) {
     return merged;
   }
 }
+function _mergeObj(left, right) {
+  if (!left && !right) {
+    throw new Error("Cannot merge two undefined objects.");
+  }
+  if (!left || !right) {
+    return left || right;
+  } else if (typeof left !== typeof right) {
+    throw new Error(`Cannot merge objects of different types.
+Left ${typeof left}
+Right ${typeof right}`);
+  } else if (typeof left === "string" && typeof right === "string") {
+    return left + right;
+  } else if (Array.isArray(left) && Array.isArray(right)) {
+    return _mergeLists(left, right);
+  } else if (typeof left === "object" && typeof right === "object") {
+    return _mergeDicts(left, right);
+  } else if (left === right) {
+    return left;
+  } else {
+    throw new Error(`Can not merge objects of different types.
+Left ${left}
+Right ${right}`);
+  }
+}
 function _isMessageFieldWithRole(x) {
   return typeof x.role === "string";
 }
 function isBaseMessage(messageLike) {
   return typeof (messageLike == null ? void 0 : messageLike._getType) === "function";
+}
+function isBaseMessageChunk(messageLike) {
+  return isBaseMessage(messageLike) && typeof messageLike.concat === "function";
 }
 var BaseMessage, BaseMessageChunk;
 var init_base = __esm({
@@ -632,7 +674,7 @@ function defaultToolCallParser(rawToolCalls) {
   }
   return [toolCalls, invalidToolCalls];
 }
-var ToolMessage;
+var ToolMessage, ToolMessageChunk;
 var init_tool = __esm({
   "node_modules/@langchain/core/dist/messages/tool.js"() {
     init_base();
@@ -684,10 +726,67 @@ var init_tool = __esm({
         };
       }
     };
+    ToolMessageChunk = class _ToolMessageChunk extends BaseMessageChunk {
+      constructor(fields) {
+        super(fields);
+        Object.defineProperty(this, "tool_call_id", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: void 0
+        });
+        Object.defineProperty(this, "status", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: void 0
+        });
+        Object.defineProperty(this, "artifact", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: void 0
+        });
+        this.tool_call_id = fields.tool_call_id;
+        this.artifact = fields.artifact;
+        this.status = fields.status;
+      }
+      static lc_name() {
+        return "ToolMessageChunk";
+      }
+      _getType() {
+        return "tool";
+      }
+      concat(chunk) {
+        var _a2;
+        return new _ToolMessageChunk({
+          content: mergeContent(this.content, chunk.content),
+          additional_kwargs: _mergeDicts(this.additional_kwargs, chunk.additional_kwargs),
+          response_metadata: _mergeDicts(this.response_metadata, chunk.response_metadata),
+          artifact: _mergeObj(this.artifact, chunk.artifact),
+          tool_call_id: this.tool_call_id,
+          id: (_a2 = this.id) != null ? _a2 : chunk.id,
+          status: _mergeStatus(this.status, chunk.status)
+        });
+      }
+      get _printableFields() {
+        return {
+          ...super._printableFields,
+          tool_call_id: this.tool_call_id,
+          artifact: this.artifact
+        };
+      }
+    };
   }
 });
 
 // node_modules/@langchain/core/dist/messages/ai.js
+function isAIMessage(x) {
+  return x._getType() === "ai";
+}
+function isAIMessageChunk(x) {
+  return x._getType() === "ai";
+}
 var AIMessage, AIMessageChunk;
 var init_ai = __esm({
   "node_modules/@langchain/core/dist/messages/ai.js"() {
@@ -950,21 +1049,111 @@ var init_ai = __esm({
 });
 
 // node_modules/@langchain/core/dist/messages/chat.js
+var ChatMessage, ChatMessageChunk;
 var init_chat = __esm({
   "node_modules/@langchain/core/dist/messages/chat.js"() {
     init_base();
+    ChatMessage = class _ChatMessage extends BaseMessage {
+      static lc_name() {
+        return "ChatMessage";
+      }
+      static _chatMessageClass() {
+        return _ChatMessage;
+      }
+      constructor(fields, role) {
+        if (typeof fields === "string") {
+          fields = { content: fields, role };
+        }
+        super(fields);
+        Object.defineProperty(this, "role", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: void 0
+        });
+        this.role = fields.role;
+      }
+      _getType() {
+        return "generic";
+      }
+      static isInstance(message) {
+        return message._getType() === "generic";
+      }
+      get _printableFields() {
+        return {
+          ...super._printableFields,
+          role: this.role
+        };
+      }
+    };
+    ChatMessageChunk = class _ChatMessageChunk extends BaseMessageChunk {
+      static lc_name() {
+        return "ChatMessageChunk";
+      }
+      constructor(fields, role) {
+        if (typeof fields === "string") {
+          fields = { content: fields, role };
+        }
+        super(fields);
+        Object.defineProperty(this, "role", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: void 0
+        });
+        this.role = fields.role;
+      }
+      _getType() {
+        return "generic";
+      }
+      concat(chunk) {
+        var _a2;
+        return new _ChatMessageChunk({
+          content: mergeContent(this.content, chunk.content),
+          additional_kwargs: _mergeDicts(this.additional_kwargs, chunk.additional_kwargs),
+          response_metadata: _mergeDicts(this.response_metadata, chunk.response_metadata),
+          role: this.role,
+          id: (_a2 = this.id) != null ? _a2 : chunk.id
+        });
+      }
+      get _printableFields() {
+        return {
+          ...super._printableFields,
+          role: this.role
+        };
+      }
+    };
   }
 });
 
 // node_modules/@langchain/core/dist/messages/function.js
+var FunctionMessageChunk;
 var init_function = __esm({
   "node_modules/@langchain/core/dist/messages/function.js"() {
     init_base();
+    FunctionMessageChunk = class _FunctionMessageChunk extends BaseMessageChunk {
+      static lc_name() {
+        return "FunctionMessageChunk";
+      }
+      _getType() {
+        return "function";
+      }
+      concat(chunk) {
+        var _a2, _b;
+        return new _FunctionMessageChunk({
+          content: mergeContent(this.content, chunk.content),
+          additional_kwargs: _mergeDicts(this.additional_kwargs, chunk.additional_kwargs),
+          response_metadata: _mergeDicts(this.response_metadata, chunk.response_metadata),
+          name: (_a2 = this.name) != null ? _a2 : "",
+          id: (_b = this.id) != null ? _b : chunk.id
+        });
+      }
+    };
   }
 });
 
 // node_modules/@langchain/core/dist/messages/human.js
-var HumanMessage;
+var HumanMessage, HumanMessageChunk;
 var init_human = __esm({
   "node_modules/@langchain/core/dist/messages/human.js"() {
     init_base();
@@ -976,11 +1165,28 @@ var init_human = __esm({
         return "human";
       }
     };
+    HumanMessageChunk = class _HumanMessageChunk extends BaseMessageChunk {
+      static lc_name() {
+        return "HumanMessageChunk";
+      }
+      _getType() {
+        return "human";
+      }
+      concat(chunk) {
+        var _a2;
+        return new _HumanMessageChunk({
+          content: mergeContent(this.content, chunk.content),
+          additional_kwargs: _mergeDicts(this.additional_kwargs, chunk.additional_kwargs),
+          response_metadata: _mergeDicts(this.response_metadata, chunk.response_metadata),
+          id: (_a2 = this.id) != null ? _a2 : chunk.id
+        });
+      }
+    };
   }
 });
 
 // node_modules/@langchain/core/dist/messages/system.js
-var SystemMessage;
+var SystemMessage, SystemMessageChunk;
 var init_system = __esm({
   "node_modules/@langchain/core/dist/messages/system.js"() {
     init_base();
@@ -990,6 +1196,23 @@ var init_system = __esm({
       }
       _getType() {
         return "system";
+      }
+    };
+    SystemMessageChunk = class _SystemMessageChunk extends BaseMessageChunk {
+      static lc_name() {
+        return "SystemMessageChunk";
+      }
+      _getType() {
+        return "system";
+      }
+      concat(chunk) {
+        var _a2;
+        return new _SystemMessageChunk({
+          content: mergeContent(this.content, chunk.content),
+          additional_kwargs: _mergeDicts(this.additional_kwargs, chunk.additional_kwargs),
+          response_metadata: _mergeDicts(this.response_metadata, chunk.response_metadata),
+          id: (_a2 = this.id) != null ? _a2 : chunk.id
+        });
       }
     };
   }
@@ -1134,6 +1357,37 @@ function getBufferString(messages, humanPrefix = "Human", aiPrefix = "AI") {
     string_messages.push(`${role}: ${nameStr}${readableContent}`);
   }
   return string_messages.join("\n");
+}
+function convertToChunk(message) {
+  var _a2;
+  const type = message._getType();
+  if (type === "human") {
+    return new HumanMessageChunk({ ...message });
+  } else if (type === "ai") {
+    let aiChunkFields = {
+      ...message
+    };
+    if ("tool_calls" in aiChunkFields) {
+      aiChunkFields = {
+        ...aiChunkFields,
+        tool_call_chunks: (_a2 = aiChunkFields.tool_calls) == null ? void 0 : _a2.map((tc) => ({
+          ...tc,
+          type: "tool_call_chunk",
+          index: void 0,
+          args: JSON.stringify(tc.args)
+        }))
+      };
+    }
+    return new AIMessageChunk({ ...aiChunkFields });
+  } else if (type === "system") {
+    return new SystemMessageChunk({ ...message });
+  } else if (type === "function") {
+    return new FunctionMessageChunk({ ...message });
+  } else if (ChatMessage.isInstance(message)) {
+    return new ChatMessageChunk({ ...message });
+  } else {
+    throw new Error("Unknown message type.");
+  }
 }
 var init_utils2 = __esm({
   "node_modules/@langchain/core/dist/messages/utils.js"() {
@@ -12161,6 +12415,81 @@ var init_core = __esm({
 });
 
 // node_modules/@langchain/core/dist/utils/fast-json-patch/src/duplex.js
+function _generate(mirror, obj, patches, path, invertible) {
+  if (obj === mirror) {
+    return;
+  }
+  if (typeof obj.toJSON === "function") {
+    obj = obj.toJSON();
+  }
+  var newKeys = _objectKeys(obj);
+  var oldKeys = _objectKeys(mirror);
+  var changed = false;
+  var deleted = false;
+  for (var t = oldKeys.length - 1; t >= 0; t--) {
+    var key = oldKeys[t];
+    var oldVal = mirror[key];
+    if (hasOwnProperty(obj, key) && !(obj[key] === void 0 && oldVal !== void 0 && Array.isArray(obj) === false)) {
+      var newVal = obj[key];
+      if (typeof oldVal == "object" && oldVal != null && typeof newVal == "object" && newVal != null && Array.isArray(oldVal) === Array.isArray(newVal)) {
+        _generate(oldVal, newVal, patches, path + "/" + escapePathComponent(key), invertible);
+      } else {
+        if (oldVal !== newVal) {
+          changed = true;
+          if (invertible) {
+            patches.push({
+              op: "test",
+              path: path + "/" + escapePathComponent(key),
+              value: _deepClone(oldVal)
+            });
+          }
+          patches.push({
+            op: "replace",
+            path: path + "/" + escapePathComponent(key),
+            value: _deepClone(newVal)
+          });
+        }
+      }
+    } else if (Array.isArray(mirror) === Array.isArray(obj)) {
+      if (invertible) {
+        patches.push({
+          op: "test",
+          path: path + "/" + escapePathComponent(key),
+          value: _deepClone(oldVal)
+        });
+      }
+      patches.push({
+        op: "remove",
+        path: path + "/" + escapePathComponent(key)
+      });
+      deleted = true;
+    } else {
+      if (invertible) {
+        patches.push({ op: "test", path, value: mirror });
+      }
+      patches.push({ op: "replace", path, value: obj });
+      changed = true;
+    }
+  }
+  if (!deleted && newKeys.length == oldKeys.length) {
+    return;
+  }
+  for (var t = 0; t < newKeys.length; t++) {
+    var key = newKeys[t];
+    if (!hasOwnProperty(mirror, key) && obj[key] !== void 0) {
+      patches.push({
+        op: "add",
+        path: path + "/" + escapePathComponent(key),
+        value: _deepClone(obj[key])
+      });
+    }
+  }
+}
+function compare(tree1, tree2, invertible = false) {
+  var patches = [];
+  _generate(tree1, tree2, patches, "", invertible);
+  return patches;
+}
 var init_duplex = __esm({
   "node_modules/@langchain/core/dist/utils/fast-json-patch/src/duplex.js"() {
     init_helpers();
@@ -14871,7 +15200,7 @@ var init_log_stream = __esm({
 });
 
 // node_modules/@langchain/core/dist/outputs.js
-var RUN_KEY, GenerationChunk;
+var RUN_KEY, GenerationChunk, ChatGenerationChunk;
 var init_outputs = __esm({
   "node_modules/@langchain/core/dist/outputs.js"() {
     RUN_KEY = "__run";
@@ -14899,6 +15228,28 @@ var init_outputs = __esm({
             ...this.generationInfo,
             ...chunk.generationInfo
           }
+        });
+      }
+    };
+    ChatGenerationChunk = class _ChatGenerationChunk extends GenerationChunk {
+      constructor(fields) {
+        super(fields);
+        Object.defineProperty(this, "message", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: void 0
+        });
+        this.message = fields.message;
+      }
+      concat(chunk) {
+        return new _ChatGenerationChunk({
+          text: this.text + chunk.text,
+          generationInfo: {
+            ...this.generationInfo,
+            ...chunk.generationInfo
+          },
+          message: this.message.concat(chunk.message)
         });
       }
     };
@@ -23318,8 +23669,40 @@ _EventStream_connectedPromise = /* @__PURE__ */ new WeakMap(), _EventStream_reso
 };
 
 // node_modules/openai/lib/parser.mjs
+function makeParseableResponseFormat(response_format, parser) {
+  const obj = { ...response_format };
+  Object.defineProperties(obj, {
+    $brand: {
+      value: "auto-parseable-response-format",
+      enumerable: false
+    },
+    $parseRaw: {
+      value: parser,
+      enumerable: false
+    }
+  });
+  return obj;
+}
 function isAutoParsableResponseFormat(response_format) {
   return (response_format == null ? void 0 : response_format["$brand"]) === "auto-parseable-response-format";
+}
+function makeParseableTool(tool, { parser, callback }) {
+  const obj = { ...tool };
+  Object.defineProperties(obj, {
+    $brand: {
+      value: "auto-parseable-tool",
+      enumerable: false
+    },
+    $parseRaw: {
+      value: parser,
+      enumerable: false
+    },
+    $callback: {
+      value: callback,
+      enumerable: false
+    }
+  });
+  return obj;
 }
 function isAutoParsableTool(tool) {
   return (tool == null ? void 0 : tool["$brand"]) === "auto-parseable-tool";
@@ -26795,6 +27178,14 @@ var getModelNameForTiktoken = (modelName) => {
   }
   return modelName;
 };
+function isOpenAITool(tool) {
+  if (typeof tool !== "object" || !tool)
+    return false;
+  if ("type" in tool && tool.type === "function" && "function" in tool && typeof tool.function === "object" && tool.function && "name" in tool.function && "parameters" in tool.function) {
+    return true;
+  }
+  return false;
+}
 var getVerbosity = () => false;
 var BaseLangChain = class extends Runnable {
   get lc_attributes() {
@@ -26960,6 +27351,565 @@ init_stream();
 init_stream();
 init_base4();
 init_config();
+var RunnablePassthrough = class extends Runnable {
+  static lc_name() {
+    return "RunnablePassthrough";
+  }
+  constructor(fields) {
+    super(fields);
+    Object.defineProperty(this, "lc_namespace", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: ["langchain_core", "runnables"]
+    });
+    Object.defineProperty(this, "lc_serializable", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: true
+    });
+    Object.defineProperty(this, "func", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    if (fields) {
+      this.func = fields.func;
+    }
+  }
+  async invoke(input, options) {
+    const config = ensureConfig(options);
+    if (this.func) {
+      await this.func(input, config);
+    }
+    return this._callWithConfig((input2) => Promise.resolve(input2), input, config);
+  }
+  async *transform(generator, options) {
+    const config = ensureConfig(options);
+    let finalOutput;
+    let finalOutputSupported = true;
+    for await (const chunk of this._transformStreamWithConfig(generator, (input) => input, config)) {
+      yield chunk;
+      if (finalOutputSupported) {
+        if (finalOutput === void 0) {
+          finalOutput = chunk;
+        } else {
+          try {
+            finalOutput = concat(finalOutput, chunk);
+          } catch (e) {
+            finalOutput = void 0;
+            finalOutputSupported = false;
+          }
+        }
+      }
+    }
+    if (this.func && finalOutput !== void 0) {
+      await this.func(finalOutput, config);
+    }
+  }
+  /**
+   * A runnable that assigns key-value pairs to the input.
+   *
+   * The example below shows how you could use it with an inline function.
+   *
+   * @example
+   * ```typescript
+   * const prompt =
+   *   PromptTemplate.fromTemplate(`Write a SQL query to answer the question using the following schema: {schema}
+   * Question: {question}
+   * SQL Query:`);
+   *
+   * // The `RunnablePassthrough.assign()` is used here to passthrough the input from the `.invoke()`
+   * // call (in this example it's the question), along with any inputs passed to the `.assign()` method.
+   * // In this case, we're passing the schema.
+   * const sqlQueryGeneratorChain = RunnableSequence.from([
+   *   RunnablePassthrough.assign({
+   *     schema: async () => db.getTableInfo(),
+   *   }),
+   *   prompt,
+   *   new ChatOpenAI({}).bind({ stop: ["\nSQLResult:"] }),
+   *   new StringOutputParser(),
+   * ]);
+   * const result = await sqlQueryGeneratorChain.invoke({
+   *   question: "How many employees are there?",
+   * });
+   * ```
+   */
+  static assign(mapping) {
+    return new RunnableAssign(new RunnableMap({ steps: mapping }));
+  }
+};
+
+// node_modules/@langchain/core/dist/utils/types/is_zod_schema.js
+function isZodSchema(input) {
+  return typeof (input == null ? void 0 : input.parse) === "function";
+}
+
+// node_modules/@langchain/core/dist/language_models/chat_models.js
+var BaseChatModel = class _BaseChatModel extends BaseLanguageModel {
+  constructor(fields) {
+    super(fields);
+    Object.defineProperty(this, "lc_namespace", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: ["langchain", "chat_models", this._llmType()]
+    });
+  }
+  _separateRunnableConfigFromCallOptionsCompat(options) {
+    const [runnableConfig, callOptions] = super._separateRunnableConfigFromCallOptions(options);
+    callOptions.signal = runnableConfig.signal;
+    return [runnableConfig, callOptions];
+  }
+  /**
+   * Invokes the chat model with a single input.
+   * @param input The input for the language model.
+   * @param options The call options.
+   * @returns A Promise that resolves to a BaseMessageChunk.
+   */
+  async invoke(input, options) {
+    const promptValue = _BaseChatModel._convertInputToPromptValue(input);
+    const result = await this.generatePrompt([promptValue], options, options == null ? void 0 : options.callbacks);
+    const chatGeneration = result.generations[0][0];
+    return chatGeneration.message;
+  }
+  // eslint-disable-next-line require-yield
+  async *_streamResponseChunks(_messages, _options, _runManager) {
+    throw new Error("Not implemented.");
+  }
+  async *_streamIterator(input, options) {
+    var _a2;
+    if (this._streamResponseChunks === _BaseChatModel.prototype._streamResponseChunks) {
+      yield this.invoke(input, options);
+    } else {
+      const prompt = _BaseChatModel._convertInputToPromptValue(input);
+      const messages = prompt.toChatMessages();
+      const [runnableConfig, callOptions] = this._separateRunnableConfigFromCallOptionsCompat(options);
+      const inheritableMetadata = {
+        ...runnableConfig.metadata,
+        ...this.getLsParams(callOptions)
+      };
+      const callbackManager_ = await CallbackManager.configure(runnableConfig.callbacks, this.callbacks, runnableConfig.tags, this.tags, inheritableMetadata, this.metadata, { verbose: this.verbose });
+      const extra = {
+        options: callOptions,
+        invocation_params: this == null ? void 0 : this.invocationParams(callOptions),
+        batch_size: 1
+      };
+      const runManagers = await (callbackManager_ == null ? void 0 : callbackManager_.handleChatModelStart(this.toJSON(), [messages], runnableConfig.runId, void 0, extra, void 0, void 0, runnableConfig.runName));
+      let generationChunk;
+      let llmOutput;
+      try {
+        for await (const chunk of this._streamResponseChunks(messages, callOptions, runManagers == null ? void 0 : runManagers[0])) {
+          if (chunk.message.id == null) {
+            const runId = (_a2 = runManagers == null ? void 0 : runManagers.at(0)) == null ? void 0 : _a2.runId;
+            if (runId != null)
+              chunk.message._updateId(`run-${runId}`);
+          }
+          chunk.message.response_metadata = {
+            ...chunk.generationInfo,
+            ...chunk.message.response_metadata
+          };
+          yield chunk.message;
+          if (!generationChunk) {
+            generationChunk = chunk;
+          } else {
+            generationChunk = generationChunk.concat(chunk);
+          }
+          if (isAIMessageChunk(chunk.message) && chunk.message.usage_metadata !== void 0) {
+            llmOutput = {
+              tokenUsage: {
+                promptTokens: chunk.message.usage_metadata.input_tokens,
+                completionTokens: chunk.message.usage_metadata.output_tokens,
+                totalTokens: chunk.message.usage_metadata.total_tokens
+              }
+            };
+          }
+        }
+      } catch (err) {
+        await Promise.all((runManagers != null ? runManagers : []).map((runManager) => runManager == null ? void 0 : runManager.handleLLMError(err)));
+        throw err;
+      }
+      await Promise.all((runManagers != null ? runManagers : []).map((runManager) => runManager == null ? void 0 : runManager.handleLLMEnd({
+        // TODO: Remove cast after figuring out inheritance
+        generations: [[generationChunk]],
+        llmOutput
+      })));
+    }
+  }
+  getLsParams(options) {
+    const providerName = this.getName().startsWith("Chat") ? this.getName().replace("Chat", "") : this.getName();
+    return {
+      ls_model_type: "chat",
+      ls_stop: options.stop,
+      ls_provider: providerName
+    };
+  }
+  /** @ignore */
+  async _generateUncached(messages, parsedOptions, handledOptions) {
+    var _a2, _b;
+    const baseMessages = messages.map((messageList) => messageList.map(coerceMessageLikeToMessage));
+    const inheritableMetadata = {
+      ...handledOptions.metadata,
+      ...this.getLsParams(parsedOptions)
+    };
+    const callbackManager_ = await CallbackManager.configure(handledOptions.callbacks, this.callbacks, handledOptions.tags, this.tags, inheritableMetadata, this.metadata, { verbose: this.verbose });
+    const extra = {
+      options: parsedOptions,
+      invocation_params: this == null ? void 0 : this.invocationParams(parsedOptions),
+      batch_size: 1
+    };
+    const runManagers = await (callbackManager_ == null ? void 0 : callbackManager_.handleChatModelStart(this.toJSON(), baseMessages, handledOptions.runId, void 0, extra, void 0, void 0, handledOptions.runName));
+    const generations = [];
+    const llmOutputs = [];
+    const hasStreamingHandler = !!(runManagers == null ? void 0 : runManagers[0].handlers.find((handler) => {
+      return isStreamEventsHandler(handler) || isLogStreamHandler(handler);
+    }));
+    if (hasStreamingHandler && baseMessages.length === 1 && this._streamResponseChunks !== _BaseChatModel.prototype._streamResponseChunks) {
+      try {
+        const stream = await this._streamResponseChunks(baseMessages[0], parsedOptions, runManagers == null ? void 0 : runManagers[0]);
+        let aggregated;
+        let llmOutput;
+        for await (const chunk of stream) {
+          if (chunk.message.id == null) {
+            const runId = (_a2 = runManagers == null ? void 0 : runManagers.at(0)) == null ? void 0 : _a2.runId;
+            if (runId != null)
+              chunk.message._updateId(`run-${runId}`);
+          }
+          if (aggregated === void 0) {
+            aggregated = chunk;
+          } else {
+            aggregated = concat(aggregated, chunk);
+          }
+          if (isAIMessageChunk(chunk.message) && chunk.message.usage_metadata !== void 0) {
+            llmOutput = {
+              tokenUsage: {
+                promptTokens: chunk.message.usage_metadata.input_tokens,
+                completionTokens: chunk.message.usage_metadata.output_tokens,
+                totalTokens: chunk.message.usage_metadata.total_tokens
+              }
+            };
+          }
+        }
+        if (aggregated === void 0) {
+          throw new Error("Received empty response from chat model call.");
+        }
+        generations.push([aggregated]);
+        await (runManagers == null ? void 0 : runManagers[0].handleLLMEnd({
+          generations,
+          llmOutput
+        }));
+      } catch (e) {
+        await (runManagers == null ? void 0 : runManagers[0].handleLLMError(e));
+        throw e;
+      }
+    } else {
+      const results = await Promise.allSettled(baseMessages.map((messageList, i) => this._generate(messageList, { ...parsedOptions, promptIndex: i }, runManagers == null ? void 0 : runManagers[i])));
+      await Promise.all(results.map(async (pResult, i) => {
+        var _a3, _b2, _c;
+        if (pResult.status === "fulfilled") {
+          const result = pResult.value;
+          for (const generation of result.generations) {
+            if (generation.message.id == null) {
+              const runId = (_a3 = runManagers == null ? void 0 : runManagers.at(0)) == null ? void 0 : _a3.runId;
+              if (runId != null)
+                generation.message._updateId(`run-${runId}`);
+            }
+            generation.message.response_metadata = {
+              ...generation.generationInfo,
+              ...generation.message.response_metadata
+            };
+          }
+          if (result.generations.length === 1) {
+            result.generations[0].message.response_metadata = {
+              ...result.llmOutput,
+              ...result.generations[0].message.response_metadata
+            };
+          }
+          generations[i] = result.generations;
+          llmOutputs[i] = result.llmOutput;
+          return (_b2 = runManagers == null ? void 0 : runManagers[i]) == null ? void 0 : _b2.handleLLMEnd({
+            generations: [result.generations],
+            llmOutput: result.llmOutput
+          });
+        } else {
+          await ((_c = runManagers == null ? void 0 : runManagers[i]) == null ? void 0 : _c.handleLLMError(pResult.reason));
+          return Promise.reject(pResult.reason);
+        }
+      }));
+    }
+    const output = {
+      generations,
+      llmOutput: llmOutputs.length ? (_b = this._combineLLMOutput) == null ? void 0 : _b.call(this, ...llmOutputs) : void 0
+    };
+    Object.defineProperty(output, RUN_KEY, {
+      value: runManagers ? { runIds: runManagers == null ? void 0 : runManagers.map((manager) => manager.runId) } : void 0,
+      configurable: true
+    });
+    return output;
+  }
+  async _generateCached({ messages, cache: cache2, llmStringKey, parsedOptions, handledOptions }) {
+    const baseMessages = messages.map((messageList) => messageList.map(coerceMessageLikeToMessage));
+    const inheritableMetadata = {
+      ...handledOptions.metadata,
+      ...this.getLsParams(parsedOptions)
+    };
+    const callbackManager_ = await CallbackManager.configure(handledOptions.callbacks, this.callbacks, handledOptions.tags, this.tags, inheritableMetadata, this.metadata, { verbose: this.verbose });
+    const extra = {
+      options: parsedOptions,
+      invocation_params: this == null ? void 0 : this.invocationParams(parsedOptions),
+      batch_size: 1,
+      cached: true
+    };
+    const runManagers = await (callbackManager_ == null ? void 0 : callbackManager_.handleChatModelStart(this.toJSON(), baseMessages, handledOptions.runId, void 0, extra, void 0, void 0, handledOptions.runName));
+    const missingPromptIndices = [];
+    const results = await Promise.allSettled(baseMessages.map(async (baseMessage, index) => {
+      const prompt = _BaseChatModel._convertInputToPromptValue(baseMessage).toString();
+      const result = await cache2.lookup(prompt, llmStringKey);
+      if (result == null) {
+        missingPromptIndices.push(index);
+      }
+      return result;
+    }));
+    const cachedResults = results.map((result, index) => ({ result, runManager: runManagers == null ? void 0 : runManagers[index] })).filter(({ result }) => result.status === "fulfilled" && result.value != null || result.status === "rejected");
+    const generations = [];
+    await Promise.all(cachedResults.map(async ({ result: promiseResult, runManager }, i) => {
+      if (promiseResult.status === "fulfilled") {
+        const result = promiseResult.value;
+        generations[i] = result;
+        if (result.length) {
+          await (runManager == null ? void 0 : runManager.handleLLMNewToken(result[0].text));
+        }
+        return runManager == null ? void 0 : runManager.handleLLMEnd({
+          generations: [result]
+        });
+      } else {
+        await (runManager == null ? void 0 : runManager.handleLLMError(promiseResult.reason));
+        return Promise.reject(promiseResult.reason);
+      }
+    }));
+    const output = {
+      generations,
+      missingPromptIndices
+    };
+    Object.defineProperty(output, RUN_KEY, {
+      value: runManagers ? { runIds: runManagers == null ? void 0 : runManagers.map((manager) => manager.runId) } : void 0,
+      configurable: true
+    });
+    return output;
+  }
+  /**
+   * Generates chat based on the input messages.
+   * @param messages An array of arrays of BaseMessage instances.
+   * @param options The call options or an array of stop sequences.
+   * @param callbacks The callbacks for the language model.
+   * @returns A Promise that resolves to an LLMResult.
+   */
+  async generate(messages, options, callbacks) {
+    var _a2, _b;
+    let parsedOptions;
+    if (Array.isArray(options)) {
+      parsedOptions = { stop: options };
+    } else {
+      parsedOptions = options;
+    }
+    const baseMessages = messages.map((messageList) => messageList.map(coerceMessageLikeToMessage));
+    const [runnableConfig, callOptions] = this._separateRunnableConfigFromCallOptionsCompat(parsedOptions);
+    runnableConfig.callbacks = (_a2 = runnableConfig.callbacks) != null ? _a2 : callbacks;
+    if (!this.cache) {
+      return this._generateUncached(baseMessages, callOptions, runnableConfig);
+    }
+    const { cache: cache2 } = this;
+    const llmStringKey = this._getSerializedCacheKeyParametersForCall(callOptions);
+    const { generations, missingPromptIndices } = await this._generateCached({
+      messages: baseMessages,
+      cache: cache2,
+      llmStringKey,
+      parsedOptions: callOptions,
+      handledOptions: runnableConfig
+    });
+    let llmOutput = {};
+    if (missingPromptIndices.length > 0) {
+      const results = await this._generateUncached(missingPromptIndices.map((i) => baseMessages[i]), callOptions, runnableConfig);
+      await Promise.all(results.generations.map(async (generation, index) => {
+        const promptIndex = missingPromptIndices[index];
+        generations[promptIndex] = generation;
+        const prompt = _BaseChatModel._convertInputToPromptValue(baseMessages[promptIndex]).toString();
+        return cache2.update(prompt, llmStringKey, generation);
+      }));
+      llmOutput = (_b = results.llmOutput) != null ? _b : {};
+    }
+    return { generations, llmOutput };
+  }
+  /**
+   * Get the parameters used to invoke the model
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  invocationParams(_options) {
+    return {};
+  }
+  _modelType() {
+    return "base_chat_model";
+  }
+  /**
+   * @deprecated
+   * Return a json-like object representing this LLM.
+   */
+  serialize() {
+    return {
+      ...this.invocationParams(),
+      _type: this._llmType(),
+      _model: this._modelType()
+    };
+  }
+  /**
+   * Generates a prompt based on the input prompt values.
+   * @param promptValues An array of BasePromptValue instances.
+   * @param options The call options or an array of stop sequences.
+   * @param callbacks The callbacks for the language model.
+   * @returns A Promise that resolves to an LLMResult.
+   */
+  async generatePrompt(promptValues, options, callbacks) {
+    const promptMessages = promptValues.map((promptValue) => promptValue.toChatMessages());
+    return this.generate(promptMessages, options, callbacks);
+  }
+  /**
+   * @deprecated Use .invoke() instead. Will be removed in 0.2.0.
+   *
+   * Makes a single call to the chat model.
+   * @param messages An array of BaseMessage instances.
+   * @param options The call options or an array of stop sequences.
+   * @param callbacks The callbacks for the language model.
+   * @returns A Promise that resolves to a BaseMessage.
+   */
+  async call(messages, options, callbacks) {
+    const result = await this.generate([messages.map(coerceMessageLikeToMessage)], options, callbacks);
+    const generations = result.generations;
+    return generations[0][0].message;
+  }
+  /**
+   * @deprecated Use .invoke() instead. Will be removed in 0.2.0.
+   *
+   * Makes a single call to the chat model with a prompt value.
+   * @param promptValue The value of the prompt.
+   * @param options The call options or an array of stop sequences.
+   * @param callbacks The callbacks for the language model.
+   * @returns A Promise that resolves to a BaseMessage.
+   */
+  async callPrompt(promptValue, options, callbacks) {
+    const promptMessages = promptValue.toChatMessages();
+    return this.call(promptMessages, options, callbacks);
+  }
+  /**
+   * @deprecated Use .invoke() instead. Will be removed in 0.2.0.
+   *
+   * Predicts the next message based on the input messages.
+   * @param messages An array of BaseMessage instances.
+   * @param options The call options or an array of stop sequences.
+   * @param callbacks The callbacks for the language model.
+   * @returns A Promise that resolves to a BaseMessage.
+   */
+  async predictMessages(messages, options, callbacks) {
+    return this.call(messages, options, callbacks);
+  }
+  /**
+   * @deprecated Use .invoke() instead. Will be removed in 0.2.0.
+   *
+   * Predicts the next message based on a text input.
+   * @param text The text input.
+   * @param options The call options or an array of stop sequences.
+   * @param callbacks The callbacks for the language model.
+   * @returns A Promise that resolves to a string.
+   */
+  async predict(text, options, callbacks) {
+    const message = new HumanMessage(text);
+    const result = await this.call([message], options, callbacks);
+    if (typeof result.content !== "string") {
+      throw new Error("Cannot use predict when output is not a string.");
+    }
+    return result.content;
+  }
+  withStructuredOutput(outputSchema, config) {
+    var _a2;
+    if (typeof this.bindTools !== "function") {
+      throw new Error(`Chat model must implement ".bindTools()" to use withStructuredOutput.`);
+    }
+    if (config == null ? void 0 : config.strict) {
+      throw new Error(`"strict" mode is not supported for this model by default.`);
+    }
+    const schema = outputSchema;
+    const name = config == null ? void 0 : config.name;
+    const description = (_a2 = schema.description) != null ? _a2 : "A function available to call.";
+    const method = config == null ? void 0 : config.method;
+    const includeRaw = config == null ? void 0 : config.includeRaw;
+    if (method === "jsonMode") {
+      throw new Error(`Base withStructuredOutput implementation only supports "functionCalling" as a method.`);
+    }
+    let functionName = name != null ? name : "extract";
+    let tools;
+    if (isZodSchema(schema)) {
+      tools = [
+        {
+          type: "function",
+          function: {
+            name: functionName,
+            description,
+            parameters: zodToJsonSchema(schema)
+          }
+        }
+      ];
+    } else {
+      if ("name" in schema) {
+        functionName = schema.name;
+      }
+      tools = [
+        {
+          type: "function",
+          function: {
+            name: functionName,
+            description,
+            parameters: schema
+          }
+        }
+      ];
+    }
+    const llm = this.bindTools(tools);
+    const outputParser = RunnableLambda.from((input) => {
+      if (!input.tool_calls || input.tool_calls.length === 0) {
+        throw new Error("No tool calls found in the response.");
+      }
+      const toolCall = input.tool_calls.find((tc) => tc.name === functionName);
+      if (!toolCall) {
+        throw new Error(`No tool call found with name ${functionName}.`);
+      }
+      return toolCall.args;
+    });
+    if (!includeRaw) {
+      return llm.pipe(outputParser).withConfig({
+        runName: "StructuredOutput"
+      });
+    }
+    const parserAssign = RunnablePassthrough.assign({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      parsed: (input, config2) => outputParser.invoke(input.raw, config2)
+    });
+    const parserNone = RunnablePassthrough.assign({
+      parsed: () => null
+    });
+    const parsedWithFallback = parserAssign.withFallbacks({
+      fallbacks: [parserNone]
+    });
+    return RunnableSequence.from([
+      {
+        raw: llm
+      },
+      parsedWithFallback
+    ]).withConfig({
+      runName: "StructuredOutputRunnable"
+    });
+  }
+};
 
 // node_modules/@langchain/core/dist/runnables/index.js
 init_base4();
@@ -27035,11 +27985,84 @@ var BaseOutputParser = class extends BaseLLMOutputParser {
     throw new Error("_type not implemented");
   }
 };
+var OutputParserException = class extends Error {
+  constructor(message, llmOutput, observation, sendToLLM = false) {
+    super(message);
+    Object.defineProperty(this, "llmOutput", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "observation", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "sendToLLM", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    this.llmOutput = llmOutput;
+    this.observation = observation;
+    this.sendToLLM = sendToLLM;
+    if (sendToLLM) {
+      if (observation === void 0 || llmOutput === void 0) {
+        throw new Error("Arguments 'observation' & 'llmOutput' are required if 'sendToLlm' is true");
+      }
+    }
+    addLangChainErrorFields(this, "OUTPUT_PARSING_FAILURE");
+  }
+};
 
 // node_modules/@langchain/core/dist/output_parsers/transform.js
 init_base();
 init_utils2();
 init_outputs();
+
+// node_modules/@langchain/core/dist/utils/@cfworker/json-schema/src/deep-compare-strict.js
+function deepCompareStrict(a, b) {
+  const typeofa = typeof a;
+  if (typeofa !== typeof b) {
+    return false;
+  }
+  if (Array.isArray(a)) {
+    if (!Array.isArray(b)) {
+      return false;
+    }
+    const length = a.length;
+    if (length !== b.length) {
+      return false;
+    }
+    for (let i = 0; i < length; i++) {
+      if (!deepCompareStrict(a[i], b[i])) {
+        return false;
+      }
+    }
+    return true;
+  }
+  if (typeofa === "object") {
+    if (!a || !b) {
+      return a === b;
+    }
+    const aKeys = Object.keys(a);
+    const bKeys = Object.keys(b);
+    const length = aKeys.length;
+    if (length !== bKeys.length) {
+      return false;
+    }
+    for (const k of aKeys) {
+      if (!deepCompareStrict(a[k], b[k])) {
+        return false;
+      }
+    }
+    return true;
+  }
+  return a === b;
+}
 
 // node_modules/@langchain/core/dist/utils/@cfworker/json-schema/src/dereference.js
 var initialBaseURI = (
@@ -27184,6 +28207,65 @@ var BaseTransformOutputParser = class extends BaseOutputParser {
     });
   }
 };
+var BaseCumulativeTransformOutputParser = class extends BaseTransformOutputParser {
+  constructor(fields) {
+    var _a2;
+    super(fields);
+    Object.defineProperty(this, "diff", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: false
+    });
+    this.diff = (_a2 = fields == null ? void 0 : fields.diff) != null ? _a2 : this.diff;
+  }
+  async *_transform(inputGenerator) {
+    let prevParsed;
+    let accGen;
+    for await (const chunk of inputGenerator) {
+      if (typeof chunk !== "string" && typeof chunk.content !== "string") {
+        throw new Error("Cannot handle non-string output.");
+      }
+      let chunkGen;
+      if (isBaseMessageChunk(chunk)) {
+        if (typeof chunk.content !== "string") {
+          throw new Error("Cannot handle non-string message output.");
+        }
+        chunkGen = new ChatGenerationChunk({
+          message: chunk,
+          text: chunk.content
+        });
+      } else if (isBaseMessage(chunk)) {
+        if (typeof chunk.content !== "string") {
+          throw new Error("Cannot handle non-string message output.");
+        }
+        chunkGen = new ChatGenerationChunk({
+          message: convertToChunk(chunk),
+          text: chunk.content
+        });
+      } else {
+        chunkGen = new GenerationChunk({ text: chunk });
+      }
+      if (accGen === void 0) {
+        accGen = chunkGen;
+      } else {
+        accGen = accGen.concat(chunkGen);
+      }
+      const parsed = await this.parsePartialResult([accGen]);
+      if (parsed !== void 0 && parsed !== null && !deepCompareStrict(parsed, prevParsed)) {
+        if (this.diff) {
+          yield this._diff(prevParsed, parsed);
+        } else {
+          yield parsed;
+        }
+        prevParsed = parsed;
+      }
+    }
+  }
+  getFormatInstructions() {
+    return "";
+  }
+};
 
 // node_modules/@langchain/core/dist/output_parsers/string.js
 var StringOutputParser = class extends BaseTransformOutputParser {
@@ -27249,19 +28331,1664 @@ var StringOutputParser = class extends BaseTransformOutputParser {
 };
 
 // node_modules/@langchain/core/dist/output_parsers/structured.js
+init_lib();
 init_esm();
+var StructuredOutputParser = class extends BaseOutputParser {
+  static lc_name() {
+    return "StructuredOutputParser";
+  }
+  toJSON() {
+    return this.toJSONNotImplemented();
+  }
+  constructor(schema) {
+    super(schema);
+    Object.defineProperty(this, "schema", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: schema
+    });
+    Object.defineProperty(this, "lc_namespace", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: ["langchain", "output_parsers", "structured"]
+    });
+  }
+  /**
+   * Creates a new StructuredOutputParser from a Zod schema.
+   * @param schema The Zod schema which the output should match
+   * @returns A new instance of StructuredOutputParser.
+   */
+  static fromZodSchema(schema) {
+    return new this(schema);
+  }
+  /**
+   * Creates a new StructuredOutputParser from a set of names and
+   * descriptions.
+   * @param schemas An object where each key is a name and each value is a description
+   * @returns A new instance of StructuredOutputParser.
+   */
+  static fromNamesAndDescriptions(schemas) {
+    const zodSchema = z.object(Object.fromEntries(Object.entries(schemas).map(([name, description]) => [name, z.string().describe(description)])));
+    return new this(zodSchema);
+  }
+  /**
+   * Returns a markdown code snippet with a JSON object formatted according
+   * to the schema.
+   * @param options Optional. The options for formatting the instructions
+   * @returns A markdown code snippet with a JSON object formatted according to the schema.
+   */
+  getFormatInstructions() {
+    return `You must format your output as a JSON value that adheres to a given "JSON Schema" instance.
+
+"JSON Schema" is a declarative language that allows you to annotate and validate JSON documents.
+
+For example, the example "JSON Schema" instance {{"properties": {{"foo": {{"description": "a list of test words", "type": "array", "items": {{"type": "string"}}}}}}, "required": ["foo"]}}}}
+would match an object with one required property, "foo". The "type" property specifies "foo" must be an "array", and the "description" property semantically describes it as "a list of test words". The items within "foo" must be strings.
+Thus, the object {{"foo": ["bar", "baz"]}} is a well-formatted instance of this example "JSON Schema". The object {{"properties": {{"foo": ["bar", "baz"]}}}} is not well-formatted.
+
+Your output will be parsed and type-checked according to the provided schema instance, so make sure all fields in your output match the schema exactly and there are no trailing commas!
+
+Here is the JSON Schema instance your output must adhere to. Include the enclosing markdown codeblock:
+\`\`\`json
+${JSON.stringify(zodToJsonSchema(this.schema))}
+\`\`\`
+`;
+  }
+  /**
+   * Parses the given text according to the schema.
+   * @param text The text to parse
+   * @returns The parsed output.
+   */
+  async parse(text) {
+    try {
+      const json = text.includes("```") ? text.trim().split(/```(?:json)?/)[1] : text.trim();
+      const escapedJson = json.replace(/"([^"\\]*(\\.[^"\\]*)*)"/g, (_match, capturedGroup) => {
+        const escapedInsideQuotes = capturedGroup.replace(/\n/g, "\\n");
+        return `"${escapedInsideQuotes}"`;
+      }).replace(/\n/g, "");
+      return await this.schema.parseAsync(JSON.parse(escapedJson));
+    } catch (e) {
+      throw new OutputParserException(`Failed to parse. Text: "${text}". Error: ${e}`, text);
+    }
+  }
+};
 
 // node_modules/@langchain/core/dist/utils/json_patch.js
 init_fast_json_patch();
 
 // node_modules/@langchain/core/dist/output_parsers/json.js
 init_json();
+var JsonOutputParser = class extends BaseCumulativeTransformOutputParser {
+  constructor() {
+    super(...arguments);
+    Object.defineProperty(this, "lc_namespace", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: ["langchain_core", "output_parsers"]
+    });
+    Object.defineProperty(this, "lc_serializable", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: true
+    });
+  }
+  static lc_name() {
+    return "JsonOutputParser";
+  }
+  _diff(prev, next) {
+    if (!next) {
+      return void 0;
+    }
+    if (!prev) {
+      return [{ op: "replace", path: "", value: next }];
+    }
+    return compare(prev, next);
+  }
+  // This should actually return Partial<T>, but there's no way
+  // to specify emitted chunks as instances separate from the main output type.
+  async parsePartialResult(generations) {
+    return parseJsonMarkdown(generations[0].text);
+  }
+  async parse(text) {
+    return parseJsonMarkdown(text, JSON.parse);
+  }
+  getFormatInstructions() {
+    return "";
+  }
+};
 
 // node_modules/@langchain/core/dist/output_parsers/openai_tools/json_output_tools_parsers.js
 init_ai();
+function parseToolCall2(rawToolCall, options) {
+  var _a2;
+  if (rawToolCall.function === void 0) {
+    return void 0;
+  }
+  let functionArgs;
+  if (options == null ? void 0 : options.partial) {
+    try {
+      functionArgs = parsePartialJson((_a2 = rawToolCall.function.arguments) != null ? _a2 : "{}");
+    } catch (e) {
+      return void 0;
+    }
+  } else {
+    try {
+      functionArgs = JSON.parse(rawToolCall.function.arguments);
+    } catch (e) {
+      throw new OutputParserException([
+        `Function "${rawToolCall.function.name}" arguments:`,
+        ``,
+        rawToolCall.function.arguments,
+        ``,
+        `are not valid JSON.`,
+        `Error: ${e.message}`
+      ].join("\n"));
+    }
+  }
+  const parsedToolCall = {
+    name: rawToolCall.function.name,
+    args: functionArgs,
+    type: "tool_call"
+  };
+  if (options == null ? void 0 : options.returnId) {
+    parsedToolCall.id = rawToolCall.id;
+  }
+  return parsedToolCall;
+}
+function convertLangChainToolCallToOpenAI(toolCall) {
+  if (toolCall.id === void 0) {
+    throw new Error(`All OpenAI tool calls must have an "id" field.`);
+  }
+  return {
+    id: toolCall.id,
+    type: "function",
+    function: {
+      name: toolCall.name,
+      arguments: JSON.stringify(toolCall.args)
+    }
+  };
+}
+function makeInvalidToolCall(rawToolCall, errorMsg) {
+  var _a2, _b;
+  return {
+    name: (_a2 = rawToolCall.function) == null ? void 0 : _a2.name,
+    args: (_b = rawToolCall.function) == null ? void 0 : _b.arguments,
+    id: rawToolCall.id,
+    error: errorMsg,
+    type: "invalid_tool_call"
+  };
+}
+var JsonOutputToolsParser = class extends BaseCumulativeTransformOutputParser {
+  static lc_name() {
+    return "JsonOutputToolsParser";
+  }
+  constructor(fields) {
+    var _a2;
+    super(fields);
+    Object.defineProperty(this, "returnId", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: false
+    });
+    Object.defineProperty(this, "lc_namespace", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: ["langchain", "output_parsers", "openai_tools"]
+    });
+    Object.defineProperty(this, "lc_serializable", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: true
+    });
+    this.returnId = (_a2 = fields == null ? void 0 : fields.returnId) != null ? _a2 : this.returnId;
+  }
+  _diff() {
+    throw new Error("Not supported.");
+  }
+  async parse() {
+    throw new Error("Not implemented.");
+  }
+  async parseResult(generations) {
+    const result = await this.parsePartialResult(generations, false);
+    return result;
+  }
+  /**
+   * Parses the output and returns a JSON object. If `argsOnly` is true,
+   * only the arguments of the function call are returned.
+   * @param generations The output of the LLM to parse.
+   * @returns A JSON object representation of the function call or its arguments.
+   */
+  async parsePartialResult(generations, partial = true) {
+    var _a2;
+    const message = generations[0].message;
+    let toolCalls;
+    if (isAIMessage(message) && ((_a2 = message.tool_calls) == null ? void 0 : _a2.length)) {
+      toolCalls = message.tool_calls.map((toolCall) => {
+        const { id, ...rest } = toolCall;
+        if (!this.returnId) {
+          return rest;
+        }
+        return {
+          id,
+          ...rest
+        };
+      });
+    } else if (message.additional_kwargs.tool_calls !== void 0) {
+      const rawToolCalls = JSON.parse(JSON.stringify(message.additional_kwargs.tool_calls));
+      toolCalls = rawToolCalls.map((rawToolCall) => {
+        return parseToolCall2(rawToolCall, { returnId: this.returnId, partial });
+      });
+    }
+    if (!toolCalls) {
+      return [];
+    }
+    const parsedToolCalls = [];
+    for (const toolCall of toolCalls) {
+      if (toolCall !== void 0) {
+        const backwardsCompatibleToolCall = {
+          type: toolCall.name,
+          args: toolCall.args,
+          id: toolCall.id
+        };
+        parsedToolCalls.push(backwardsCompatibleToolCall);
+      }
+    }
+    return parsedToolCalls;
+  }
+};
+var JsonOutputKeyToolsParser = class extends JsonOutputToolsParser {
+  static lc_name() {
+    return "JsonOutputKeyToolsParser";
+  }
+  constructor(params) {
+    var _a2;
+    super(params);
+    Object.defineProperty(this, "lc_namespace", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: ["langchain", "output_parsers", "openai_tools"]
+    });
+    Object.defineProperty(this, "lc_serializable", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: true
+    });
+    Object.defineProperty(this, "returnId", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: false
+    });
+    Object.defineProperty(this, "keyName", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "returnSingle", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: false
+    });
+    Object.defineProperty(this, "zodSchema", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    this.keyName = params.keyName;
+    this.returnSingle = (_a2 = params.returnSingle) != null ? _a2 : this.returnSingle;
+    this.zodSchema = params.zodSchema;
+  }
+  async _validateResult(result) {
+    if (this.zodSchema === void 0) {
+      return result;
+    }
+    const zodParsedResult = await this.zodSchema.safeParseAsync(result);
+    if (zodParsedResult.success) {
+      return zodParsedResult.data;
+    } else {
+      throw new OutputParserException(`Failed to parse. Text: "${JSON.stringify(result, null, 2)}". Error: ${JSON.stringify(zodParsedResult.error.errors)}`, JSON.stringify(result, null, 2));
+    }
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async parsePartialResult(generations) {
+    const results = await super.parsePartialResult(generations);
+    const matchingResults = results.filter((result) => result.type === this.keyName);
+    let returnedValues = matchingResults;
+    if (!matchingResults.length) {
+      return void 0;
+    }
+    if (!this.returnId) {
+      returnedValues = matchingResults.map((result) => result.args);
+    }
+    if (this.returnSingle) {
+      return returnedValues[0];
+    }
+    return returnedValues;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async parseResult(generations) {
+    const results = await super.parsePartialResult(generations, false);
+    const matchingResults = results.filter((result) => result.type === this.keyName);
+    let returnedValues = matchingResults;
+    if (!matchingResults.length) {
+      return void 0;
+    }
+    if (!this.returnId) {
+      returnedValues = matchingResults.map((result) => result.args);
+    }
+    if (this.returnSingle) {
+      return this._validateResult(returnedValues[0]);
+    }
+    const toolCallResults = await Promise.all(returnedValues.map((value) => this._validateResult(value)));
+    return toolCallResults;
+  }
+};
 
 // node_modules/@langchain/openai/dist/chat_models.js
 init_esm();
+
+// node_modules/openai/_vendor/zod-to-json-schema/Options.mjs
+var ignoreOverride2 = Symbol("Let zodToJsonSchema decide on which parser to use");
+var defaultOptions3 = {
+  name: void 0,
+  $refStrategy: "root",
+  effectStrategy: "input",
+  pipeStrategy: "all",
+  dateStrategy: "format:date-time",
+  mapStrategy: "entries",
+  nullableStrategy: "from-target",
+  removeAdditionalStrategy: "passthrough",
+  definitionPath: "definitions",
+  target: "jsonSchema7",
+  strictUnions: false,
+  errorMessages: false,
+  markdownDescription: false,
+  patternStrategy: "escape",
+  applyRegexFlags: false,
+  emailStrategy: "format:email",
+  base64Strategy: "contentEncoding:base64",
+  nameStrategy: "ref"
+};
+var getDefaultOptions2 = (options) => {
+  return typeof options === "string" ? {
+    ...defaultOptions3,
+    basePath: ["#"],
+    definitions: {},
+    name: options
+  } : {
+    ...defaultOptions3,
+    basePath: ["#"],
+    definitions: {},
+    ...options
+  };
+};
+
+// node_modules/openai/_vendor/zod-to-json-schema/util.mjs
+var zodDef = (zodSchema) => {
+  return "_def" in zodSchema ? zodSchema._def : zodSchema;
+};
+function isEmptyObj2(obj) {
+  if (!obj)
+    return true;
+  for (const _k in obj)
+    return false;
+  return true;
+}
+
+// node_modules/openai/_vendor/zod-to-json-schema/Refs.mjs
+var getRefs2 = (options) => {
+  const _options = getDefaultOptions2(options);
+  const currentPath = _options.name !== void 0 ? [..._options.basePath, _options.definitionPath, _options.name] : _options.basePath;
+  return {
+    ..._options,
+    currentPath,
+    propertyPath: void 0,
+    seenRefs: /* @__PURE__ */ new Set(),
+    seen: new Map(Object.entries(_options.definitions).map(([name, def]) => [
+      zodDef(def),
+      {
+        def: zodDef(def),
+        path: [..._options.basePath, _options.definitionPath, name],
+        // Resolution of references will be forced even though seen, so it's ok that the schema is undefined here for now.
+        jsonSchema: void 0
+      }
+    ]))
+  };
+};
+
+// node_modules/openai/_vendor/zod-to-json-schema/errorMessages.mjs
+function addErrorMessage2(res, key, errorMessage, refs) {
+  if (!(refs == null ? void 0 : refs.errorMessages))
+    return;
+  if (errorMessage) {
+    res.errorMessage = {
+      ...res.errorMessage,
+      [key]: errorMessage
+    };
+  }
+}
+function setResponseValueAndErrors2(res, key, value, errorMessage, refs) {
+  res[key] = value;
+  addErrorMessage2(res, key, errorMessage, refs);
+}
+
+// node_modules/openai/_vendor/zod-to-json-schema/parseDef.mjs
+init_lib();
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/any.mjs
+function parseAnyDef2() {
+  return {};
+}
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/array.mjs
+init_lib();
+function parseArrayDef2(def, refs) {
+  var _a2, _b;
+  const res = {
+    type: "array"
+  };
+  if (((_b = (_a2 = def.type) == null ? void 0 : _a2._def) == null ? void 0 : _b.typeName) !== ZodFirstPartyTypeKind.ZodAny) {
+    res.items = parseDef2(def.type._def, {
+      ...refs,
+      currentPath: [...refs.currentPath, "items"]
+    });
+  }
+  if (def.minLength) {
+    setResponseValueAndErrors2(res, "minItems", def.minLength.value, def.minLength.message, refs);
+  }
+  if (def.maxLength) {
+    setResponseValueAndErrors2(res, "maxItems", def.maxLength.value, def.maxLength.message, refs);
+  }
+  if (def.exactLength) {
+    setResponseValueAndErrors2(res, "minItems", def.exactLength.value, def.exactLength.message, refs);
+    setResponseValueAndErrors2(res, "maxItems", def.exactLength.value, def.exactLength.message, refs);
+  }
+  return res;
+}
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/bigint.mjs
+function parseBigintDef2(def, refs) {
+  const res = {
+    type: "integer",
+    format: "int64"
+  };
+  if (!def.checks)
+    return res;
+  for (const check of def.checks) {
+    switch (check.kind) {
+      case "min":
+        if (refs.target === "jsonSchema7") {
+          if (check.inclusive) {
+            setResponseValueAndErrors2(res, "minimum", check.value, check.message, refs);
+          } else {
+            setResponseValueAndErrors2(res, "exclusiveMinimum", check.value, check.message, refs);
+          }
+        } else {
+          if (!check.inclusive) {
+            res.exclusiveMinimum = true;
+          }
+          setResponseValueAndErrors2(res, "minimum", check.value, check.message, refs);
+        }
+        break;
+      case "max":
+        if (refs.target === "jsonSchema7") {
+          if (check.inclusive) {
+            setResponseValueAndErrors2(res, "maximum", check.value, check.message, refs);
+          } else {
+            setResponseValueAndErrors2(res, "exclusiveMaximum", check.value, check.message, refs);
+          }
+        } else {
+          if (!check.inclusive) {
+            res.exclusiveMaximum = true;
+          }
+          setResponseValueAndErrors2(res, "maximum", check.value, check.message, refs);
+        }
+        break;
+      case "multipleOf":
+        setResponseValueAndErrors2(res, "multipleOf", check.value, check.message, refs);
+        break;
+    }
+  }
+  return res;
+}
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/boolean.mjs
+function parseBooleanDef2() {
+  return {
+    type: "boolean"
+  };
+}
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/branded.mjs
+function parseBrandedDef2(_def, refs) {
+  return parseDef2(_def.type._def, refs);
+}
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/catch.mjs
+var parseCatchDef2 = (def, refs) => {
+  return parseDef2(def.innerType._def, refs);
+};
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/date.mjs
+function parseDateDef2(def, refs, overrideDateStrategy) {
+  const strategy = overrideDateStrategy != null ? overrideDateStrategy : refs.dateStrategy;
+  if (Array.isArray(strategy)) {
+    return {
+      anyOf: strategy.map((item, i) => parseDateDef2(def, refs, item))
+    };
+  }
+  switch (strategy) {
+    case "string":
+    case "format:date-time":
+      return {
+        type: "string",
+        format: "date-time"
+      };
+    case "format:date":
+      return {
+        type: "string",
+        format: "date"
+      };
+    case "integer":
+      return integerDateParser2(def, refs);
+  }
+}
+var integerDateParser2 = (def, refs) => {
+  const res = {
+    type: "integer",
+    format: "unix-time"
+  };
+  if (refs.target === "openApi3") {
+    return res;
+  }
+  for (const check of def.checks) {
+    switch (check.kind) {
+      case "min":
+        setResponseValueAndErrors2(
+          res,
+          "minimum",
+          check.value,
+          // This is in milliseconds
+          check.message,
+          refs
+        );
+        break;
+      case "max":
+        setResponseValueAndErrors2(
+          res,
+          "maximum",
+          check.value,
+          // This is in milliseconds
+          check.message,
+          refs
+        );
+        break;
+    }
+  }
+  return res;
+};
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/default.mjs
+function parseDefaultDef2(_def, refs) {
+  return {
+    ...parseDef2(_def.innerType._def, refs),
+    default: _def.defaultValue()
+  };
+}
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/effects.mjs
+function parseEffectsDef2(_def, refs, forceResolution) {
+  return refs.effectStrategy === "input" ? parseDef2(_def.schema._def, refs, forceResolution) : {};
+}
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/enum.mjs
+function parseEnumDef2(def) {
+  return {
+    type: "string",
+    enum: [...def.values]
+  };
+}
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/intersection.mjs
+var isJsonSchema7AllOfType2 = (type) => {
+  if ("type" in type && type.type === "string")
+    return false;
+  return "allOf" in type;
+};
+function parseIntersectionDef2(def, refs) {
+  const allOf = [
+    parseDef2(def.left._def, {
+      ...refs,
+      currentPath: [...refs.currentPath, "allOf", "0"]
+    }),
+    parseDef2(def.right._def, {
+      ...refs,
+      currentPath: [...refs.currentPath, "allOf", "1"]
+    })
+  ].filter((x) => !!x);
+  let unevaluatedProperties = refs.target === "jsonSchema2019-09" ? { unevaluatedProperties: false } : void 0;
+  const mergedAllOf = [];
+  allOf.forEach((schema) => {
+    if (isJsonSchema7AllOfType2(schema)) {
+      mergedAllOf.push(...schema.allOf);
+      if (schema.unevaluatedProperties === void 0) {
+        unevaluatedProperties = void 0;
+      }
+    } else {
+      let nestedSchema = schema;
+      if ("additionalProperties" in schema && schema.additionalProperties === false) {
+        const { additionalProperties, ...rest } = schema;
+        nestedSchema = rest;
+      } else {
+        unevaluatedProperties = void 0;
+      }
+      mergedAllOf.push(nestedSchema);
+    }
+  });
+  return mergedAllOf.length ? {
+    allOf: mergedAllOf,
+    ...unevaluatedProperties
+  } : void 0;
+}
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/literal.mjs
+function parseLiteralDef2(def, refs) {
+  const parsedType = typeof def.value;
+  if (parsedType !== "bigint" && parsedType !== "number" && parsedType !== "boolean" && parsedType !== "string") {
+    return {
+      type: Array.isArray(def.value) ? "array" : "object"
+    };
+  }
+  if (refs.target === "openApi3") {
+    return {
+      type: parsedType === "bigint" ? "integer" : parsedType,
+      enum: [def.value]
+    };
+  }
+  return {
+    type: parsedType === "bigint" ? "integer" : parsedType,
+    const: def.value
+  };
+}
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/record.mjs
+init_lib();
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/string.mjs
+var emojiRegex3;
+var zodPatterns2 = {
+  /**
+   * `c` was changed to `[cC]` to replicate /i flag
+   */
+  cuid: /^[cC][^\s-]{8,}$/,
+  cuid2: /^[0-9a-z]+$/,
+  ulid: /^[0-9A-HJKMNP-TV-Z]{26}$/,
+  /**
+   * `a-z` was added to replicate /i flag
+   */
+  email: /^(?!\.)(?!.*\.\.)([a-zA-Z0-9_'+\-\.]*)[a-zA-Z0-9_+-]@([a-zA-Z0-9][a-zA-Z0-9\-]*\.)+[a-zA-Z]{2,}$/,
+  /**
+   * Constructed a valid Unicode RegExp
+   *
+   * Lazily instantiate since this type of regex isn't supported
+   * in all envs (e.g. React Native).
+   *
+   * See:
+   * https://github.com/colinhacks/zod/issues/2433
+   * Fix in Zod:
+   * https://github.com/colinhacks/zod/commit/9340fd51e48576a75adc919bff65dbc4a5d4c99b
+   */
+  emoji: () => {
+    if (emojiRegex3 === void 0) {
+      emojiRegex3 = RegExp("^(\\p{Extended_Pictographic}|\\p{Emoji_Component})+$", "u");
+    }
+    return emojiRegex3;
+  },
+  /**
+   * Unused
+   */
+  uuid: /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/,
+  /**
+   * Unused
+   */
+  ipv4: /^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$/,
+  /**
+   * Unused
+   */
+  ipv6: /^(([a-f0-9]{1,4}:){7}|::([a-f0-9]{1,4}:){0,6}|([a-f0-9]{1,4}:){1}:([a-f0-9]{1,4}:){0,5}|([a-f0-9]{1,4}:){2}:([a-f0-9]{1,4}:){0,4}|([a-f0-9]{1,4}:){3}:([a-f0-9]{1,4}:){0,3}|([a-f0-9]{1,4}:){4}:([a-f0-9]{1,4}:){0,2}|([a-f0-9]{1,4}:){5}:([a-f0-9]{1,4}:){0,1})([a-f0-9]{1,4}|(((25[0-5])|(2[0-4][0-9])|(1[0-9]{2})|([0-9]{1,2}))\.){3}((25[0-5])|(2[0-4][0-9])|(1[0-9]{2})|([0-9]{1,2})))$/,
+  base64: /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/,
+  nanoid: /^[a-zA-Z0-9_-]{21}$/
+};
+function parseStringDef2(def, refs) {
+  const res = {
+    type: "string"
+  };
+  function processPattern(value) {
+    return refs.patternStrategy === "escape" ? escapeNonAlphaNumeric2(value) : value;
+  }
+  if (def.checks) {
+    for (const check of def.checks) {
+      switch (check.kind) {
+        case "min":
+          setResponseValueAndErrors2(res, "minLength", typeof res.minLength === "number" ? Math.max(res.minLength, check.value) : check.value, check.message, refs);
+          break;
+        case "max":
+          setResponseValueAndErrors2(res, "maxLength", typeof res.maxLength === "number" ? Math.min(res.maxLength, check.value) : check.value, check.message, refs);
+          break;
+        case "email":
+          switch (refs.emailStrategy) {
+            case "format:email":
+              addFormat2(res, "email", check.message, refs);
+              break;
+            case "format:idn-email":
+              addFormat2(res, "idn-email", check.message, refs);
+              break;
+            case "pattern:zod":
+              addPattern2(res, zodPatterns2.email, check.message, refs);
+              break;
+          }
+          break;
+        case "url":
+          addFormat2(res, "uri", check.message, refs);
+          break;
+        case "uuid":
+          addFormat2(res, "uuid", check.message, refs);
+          break;
+        case "regex":
+          addPattern2(res, check.regex, check.message, refs);
+          break;
+        case "cuid":
+          addPattern2(res, zodPatterns2.cuid, check.message, refs);
+          break;
+        case "cuid2":
+          addPattern2(res, zodPatterns2.cuid2, check.message, refs);
+          break;
+        case "startsWith":
+          addPattern2(res, RegExp(`^${processPattern(check.value)}`), check.message, refs);
+          break;
+        case "endsWith":
+          addPattern2(res, RegExp(`${processPattern(check.value)}$`), check.message, refs);
+          break;
+        case "datetime":
+          addFormat2(res, "date-time", check.message, refs);
+          break;
+        case "date":
+          addFormat2(res, "date", check.message, refs);
+          break;
+        case "time":
+          addFormat2(res, "time", check.message, refs);
+          break;
+        case "duration":
+          addFormat2(res, "duration", check.message, refs);
+          break;
+        case "length":
+          setResponseValueAndErrors2(res, "minLength", typeof res.minLength === "number" ? Math.max(res.minLength, check.value) : check.value, check.message, refs);
+          setResponseValueAndErrors2(res, "maxLength", typeof res.maxLength === "number" ? Math.min(res.maxLength, check.value) : check.value, check.message, refs);
+          break;
+        case "includes": {
+          addPattern2(res, RegExp(processPattern(check.value)), check.message, refs);
+          break;
+        }
+        case "ip": {
+          if (check.version !== "v6") {
+            addFormat2(res, "ipv4", check.message, refs);
+          }
+          if (check.version !== "v4") {
+            addFormat2(res, "ipv6", check.message, refs);
+          }
+          break;
+        }
+        case "emoji":
+          addPattern2(res, zodPatterns2.emoji, check.message, refs);
+          break;
+        case "ulid": {
+          addPattern2(res, zodPatterns2.ulid, check.message, refs);
+          break;
+        }
+        case "base64": {
+          switch (refs.base64Strategy) {
+            case "format:binary": {
+              addFormat2(res, "binary", check.message, refs);
+              break;
+            }
+            case "contentEncoding:base64": {
+              setResponseValueAndErrors2(res, "contentEncoding", "base64", check.message, refs);
+              break;
+            }
+            case "pattern:zod": {
+              addPattern2(res, zodPatterns2.base64, check.message, refs);
+              break;
+            }
+          }
+          break;
+        }
+        case "nanoid": {
+          addPattern2(res, zodPatterns2.nanoid, check.message, refs);
+        }
+        case "toLowerCase":
+        case "toUpperCase":
+        case "trim":
+          break;
+        default:
+          /* @__PURE__ */ ((_) => {
+          })(check);
+      }
+    }
+  }
+  return res;
+}
+var escapeNonAlphaNumeric2 = (value) => Array.from(value).map((c) => /[a-zA-Z0-9]/.test(c) ? c : `\\${c}`).join("");
+var addFormat2 = (schema, value, message, refs) => {
+  var _a2;
+  if (schema.format || ((_a2 = schema.anyOf) == null ? void 0 : _a2.some((x) => x.format))) {
+    if (!schema.anyOf) {
+      schema.anyOf = [];
+    }
+    if (schema.format) {
+      schema.anyOf.push({
+        format: schema.format,
+        ...schema.errorMessage && refs.errorMessages && {
+          errorMessage: { format: schema.errorMessage.format }
+        }
+      });
+      delete schema.format;
+      if (schema.errorMessage) {
+        delete schema.errorMessage.format;
+        if (Object.keys(schema.errorMessage).length === 0) {
+          delete schema.errorMessage;
+        }
+      }
+    }
+    schema.anyOf.push({
+      format: value,
+      ...message && refs.errorMessages && { errorMessage: { format: message } }
+    });
+  } else {
+    setResponseValueAndErrors2(schema, "format", value, message, refs);
+  }
+};
+var addPattern2 = (schema, regex2, message, refs) => {
+  var _a2;
+  if (schema.pattern || ((_a2 = schema.allOf) == null ? void 0 : _a2.some((x) => x.pattern))) {
+    if (!schema.allOf) {
+      schema.allOf = [];
+    }
+    if (schema.pattern) {
+      schema.allOf.push({
+        pattern: schema.pattern,
+        ...schema.errorMessage && refs.errorMessages && {
+          errorMessage: { pattern: schema.errorMessage.pattern }
+        }
+      });
+      delete schema.pattern;
+      if (schema.errorMessage) {
+        delete schema.errorMessage.pattern;
+        if (Object.keys(schema.errorMessage).length === 0) {
+          delete schema.errorMessage;
+        }
+      }
+    }
+    schema.allOf.push({
+      pattern: processRegExp2(regex2, refs),
+      ...message && refs.errorMessages && { errorMessage: { pattern: message } }
+    });
+  } else {
+    setResponseValueAndErrors2(schema, "pattern", processRegExp2(regex2, refs), message, refs);
+  }
+};
+var processRegExp2 = (regexOrFunction, refs) => {
+  var _a2;
+  const regex2 = typeof regexOrFunction === "function" ? regexOrFunction() : regexOrFunction;
+  if (!refs.applyRegexFlags || !regex2.flags)
+    return regex2.source;
+  const flags = {
+    i: regex2.flags.includes("i"),
+    m: regex2.flags.includes("m"),
+    s: regex2.flags.includes("s")
+    // `.` matches newlines
+  };
+  const source = flags.i ? regex2.source.toLowerCase() : regex2.source;
+  let pattern = "";
+  let isEscaped = false;
+  let inCharGroup = false;
+  let inCharRange = false;
+  for (let i = 0; i < source.length; i++) {
+    if (isEscaped) {
+      pattern += source[i];
+      isEscaped = false;
+      continue;
+    }
+    if (flags.i) {
+      if (inCharGroup) {
+        if (source[i].match(/[a-z]/)) {
+          if (inCharRange) {
+            pattern += source[i];
+            pattern += `${source[i - 2]}-${source[i]}`.toUpperCase();
+            inCharRange = false;
+          } else if (source[i + 1] === "-" && ((_a2 = source[i + 2]) == null ? void 0 : _a2.match(/[a-z]/))) {
+            pattern += source[i];
+            inCharRange = true;
+          } else {
+            pattern += `${source[i]}${source[i].toUpperCase()}`;
+          }
+          continue;
+        }
+      } else if (source[i].match(/[a-z]/)) {
+        pattern += `[${source[i]}${source[i].toUpperCase()}]`;
+        continue;
+      }
+    }
+    if (flags.m) {
+      if (source[i] === "^") {
+        pattern += `(^|(?<=[\r
+]))`;
+        continue;
+      } else if (source[i] === "$") {
+        pattern += `($|(?=[\r
+]))`;
+        continue;
+      }
+    }
+    if (flags.s && source[i] === ".") {
+      pattern += inCharGroup ? `${source[i]}\r
+` : `[${source[i]}\r
+]`;
+      continue;
+    }
+    pattern += source[i];
+    if (source[i] === "\\") {
+      isEscaped = true;
+    } else if (inCharGroup && source[i] === "]") {
+      inCharGroup = false;
+    } else if (!inCharGroup && source[i] === "[") {
+      inCharGroup = true;
+    }
+  }
+  try {
+    const regexTest = new RegExp(pattern);
+  } catch (e) {
+    console.warn(`Could not convert regex pattern at ${refs.currentPath.join("/")} to a flag-independent form! Falling back to the flag-ignorant source`);
+    return regex2.source;
+  }
+  return pattern;
+};
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/record.mjs
+function parseRecordDef2(def, refs) {
+  var _a2, _b, _c, _d, _e;
+  if (refs.target === "openApi3" && ((_a2 = def.keyType) == null ? void 0 : _a2._def.typeName) === ZodFirstPartyTypeKind.ZodEnum) {
+    return {
+      type: "object",
+      required: def.keyType._def.values,
+      properties: def.keyType._def.values.reduce((acc, key) => {
+        var _a3;
+        return {
+          ...acc,
+          [key]: (_a3 = parseDef2(def.valueType._def, {
+            ...refs,
+            currentPath: [...refs.currentPath, "properties", key]
+          })) != null ? _a3 : {}
+        };
+      }, {}),
+      additionalProperties: false
+    };
+  }
+  const schema = {
+    type: "object",
+    additionalProperties: (_b = parseDef2(def.valueType._def, {
+      ...refs,
+      currentPath: [...refs.currentPath, "additionalProperties"]
+    })) != null ? _b : {}
+  };
+  if (refs.target === "openApi3") {
+    return schema;
+  }
+  if (((_c = def.keyType) == null ? void 0 : _c._def.typeName) === ZodFirstPartyTypeKind.ZodString && ((_d = def.keyType._def.checks) == null ? void 0 : _d.length)) {
+    const keyType = Object.entries(parseStringDef2(def.keyType._def, refs)).reduce((acc, [key, value]) => key === "type" ? acc : { ...acc, [key]: value }, {});
+    return {
+      ...schema,
+      propertyNames: keyType
+    };
+  } else if (((_e = def.keyType) == null ? void 0 : _e._def.typeName) === ZodFirstPartyTypeKind.ZodEnum) {
+    return {
+      ...schema,
+      propertyNames: {
+        enum: def.keyType._def.values
+      }
+    };
+  }
+  return schema;
+}
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/map.mjs
+function parseMapDef2(def, refs) {
+  if (refs.mapStrategy === "record") {
+    return parseRecordDef2(def, refs);
+  }
+  const keys = parseDef2(def.keyType._def, {
+    ...refs,
+    currentPath: [...refs.currentPath, "items", "items", "0"]
+  }) || {};
+  const values = parseDef2(def.valueType._def, {
+    ...refs,
+    currentPath: [...refs.currentPath, "items", "items", "1"]
+  }) || {};
+  return {
+    type: "array",
+    maxItems: 125,
+    items: {
+      type: "array",
+      items: [keys, values],
+      minItems: 2,
+      maxItems: 2
+    }
+  };
+}
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/nativeEnum.mjs
+function parseNativeEnumDef2(def) {
+  const object = def.values;
+  const actualKeys = Object.keys(def.values).filter((key) => {
+    return typeof object[object[key]] !== "number";
+  });
+  const actualValues = actualKeys.map((key) => object[key]);
+  const parsedTypes = Array.from(new Set(actualValues.map((values) => typeof values)));
+  return {
+    type: parsedTypes.length === 1 ? parsedTypes[0] === "string" ? "string" : "number" : ["string", "number"],
+    enum: actualValues
+  };
+}
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/never.mjs
+function parseNeverDef2() {
+  return {
+    not: {}
+  };
+}
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/null.mjs
+function parseNullDef2(refs) {
+  return refs.target === "openApi3" ? {
+    enum: ["null"],
+    nullable: true
+  } : {
+    type: "null"
+  };
+}
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/union.mjs
+var primitiveMappings2 = {
+  ZodString: "string",
+  ZodNumber: "number",
+  ZodBigInt: "integer",
+  ZodBoolean: "boolean",
+  ZodNull: "null"
+};
+function parseUnionDef2(def, refs) {
+  if (refs.target === "openApi3")
+    return asAnyOf2(def, refs);
+  const options = def.options instanceof Map ? Array.from(def.options.values()) : def.options;
+  if (options.every((x) => x._def.typeName in primitiveMappings2 && (!x._def.checks || !x._def.checks.length))) {
+    const types = options.reduce((types2, x) => {
+      const type = primitiveMappings2[x._def.typeName];
+      return type && !types2.includes(type) ? [...types2, type] : types2;
+    }, []);
+    return {
+      type: types.length > 1 ? types : types[0]
+    };
+  } else if (options.every((x) => x._def.typeName === "ZodLiteral" && !x.description)) {
+    const types = options.reduce((acc, x) => {
+      const type = typeof x._def.value;
+      switch (type) {
+        case "string":
+        case "number":
+        case "boolean":
+          return [...acc, type];
+        case "bigint":
+          return [...acc, "integer"];
+        case "object":
+          if (x._def.value === null)
+            return [...acc, "null"];
+        case "symbol":
+        case "undefined":
+        case "function":
+        default:
+          return acc;
+      }
+    }, []);
+    if (types.length === options.length) {
+      const uniqueTypes = types.filter((x, i, a) => a.indexOf(x) === i);
+      return {
+        type: uniqueTypes.length > 1 ? uniqueTypes : uniqueTypes[0],
+        enum: options.reduce((acc, x) => {
+          return acc.includes(x._def.value) ? acc : [...acc, x._def.value];
+        }, [])
+      };
+    }
+  } else if (options.every((x) => x._def.typeName === "ZodEnum")) {
+    return {
+      type: "string",
+      enum: options.reduce((acc, x) => [...acc, ...x._def.values.filter((x2) => !acc.includes(x2))], [])
+    };
+  }
+  return asAnyOf2(def, refs);
+}
+var asAnyOf2 = (def, refs) => {
+  const anyOf = (def.options instanceof Map ? Array.from(def.options.values()) : def.options).map((x, i) => parseDef2(x._def, {
+    ...refs,
+    currentPath: [...refs.currentPath, "anyOf", `${i}`]
+  })).filter((x) => !!x && (!refs.strictUnions || typeof x === "object" && Object.keys(x).length > 0));
+  return anyOf.length ? { anyOf } : void 0;
+};
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/nullable.mjs
+function parseNullableDef2(def, refs) {
+  if (["ZodString", "ZodNumber", "ZodBigInt", "ZodBoolean", "ZodNull"].includes(def.innerType._def.typeName) && (!def.innerType._def.checks || !def.innerType._def.checks.length)) {
+    if (refs.target === "openApi3" || refs.nullableStrategy === "property") {
+      return {
+        type: primitiveMappings2[def.innerType._def.typeName],
+        nullable: true
+      };
+    }
+    return {
+      type: [primitiveMappings2[def.innerType._def.typeName], "null"]
+    };
+  }
+  if (refs.target === "openApi3") {
+    const base2 = parseDef2(def.innerType._def, {
+      ...refs,
+      currentPath: [...refs.currentPath]
+    });
+    if (base2 && "$ref" in base2)
+      return { allOf: [base2], nullable: true };
+    return base2 && { ...base2, nullable: true };
+  }
+  const base = parseDef2(def.innerType._def, {
+    ...refs,
+    currentPath: [...refs.currentPath, "anyOf", "0"]
+  });
+  return base && { anyOf: [base, { type: "null" }] };
+}
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/number.mjs
+function parseNumberDef2(def, refs) {
+  const res = {
+    type: "number"
+  };
+  if (!def.checks)
+    return res;
+  for (const check of def.checks) {
+    switch (check.kind) {
+      case "int":
+        res.type = "integer";
+        addErrorMessage2(res, "type", check.message, refs);
+        break;
+      case "min":
+        if (refs.target === "jsonSchema7") {
+          if (check.inclusive) {
+            setResponseValueAndErrors2(res, "minimum", check.value, check.message, refs);
+          } else {
+            setResponseValueAndErrors2(res, "exclusiveMinimum", check.value, check.message, refs);
+          }
+        } else {
+          if (!check.inclusive) {
+            res.exclusiveMinimum = true;
+          }
+          setResponseValueAndErrors2(res, "minimum", check.value, check.message, refs);
+        }
+        break;
+      case "max":
+        if (refs.target === "jsonSchema7") {
+          if (check.inclusive) {
+            setResponseValueAndErrors2(res, "maximum", check.value, check.message, refs);
+          } else {
+            setResponseValueAndErrors2(res, "exclusiveMaximum", check.value, check.message, refs);
+          }
+        } else {
+          if (!check.inclusive) {
+            res.exclusiveMaximum = true;
+          }
+          setResponseValueAndErrors2(res, "maximum", check.value, check.message, refs);
+        }
+        break;
+      case "multipleOf":
+        setResponseValueAndErrors2(res, "multipleOf", check.value, check.message, refs);
+        break;
+    }
+  }
+  return res;
+}
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/object.mjs
+function decideAdditionalProperties2(def, refs) {
+  var _a2, _b;
+  if (refs.removeAdditionalStrategy === "strict") {
+    return def.catchall._def.typeName === "ZodNever" ? def.unknownKeys !== "strict" : (_a2 = parseDef2(def.catchall._def, {
+      ...refs,
+      currentPath: [...refs.currentPath, "additionalProperties"]
+    })) != null ? _a2 : true;
+  } else {
+    return def.catchall._def.typeName === "ZodNever" ? def.unknownKeys === "passthrough" : (_b = parseDef2(def.catchall._def, {
+      ...refs,
+      currentPath: [...refs.currentPath, "additionalProperties"]
+    })) != null ? _b : true;
+  }
+}
+function parseObjectDef2(def, refs) {
+  const result = {
+    type: "object",
+    ...Object.entries(def.shape()).reduce((acc, [propName, propDef]) => {
+      if (propDef === void 0 || propDef._def === void 0)
+        return acc;
+      const parsedDef = parseDef2(propDef._def, {
+        ...refs,
+        currentPath: [...refs.currentPath, "properties", propName],
+        propertyPath: [...refs.currentPath, "properties", propName]
+      });
+      if (parsedDef === void 0)
+        return acc;
+      return {
+        properties: {
+          ...acc.properties,
+          [propName]: parsedDef
+        },
+        required: propDef.isOptional() && !refs.openaiStrictMode ? acc.required : [...acc.required, propName]
+      };
+    }, { properties: {}, required: [] }),
+    additionalProperties: decideAdditionalProperties2(def, refs)
+  };
+  if (!result.required.length)
+    delete result.required;
+  return result;
+}
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/optional.mjs
+var parseOptionalDef2 = (def, refs) => {
+  var _a2;
+  if (refs.currentPath.toString() === ((_a2 = refs.propertyPath) == null ? void 0 : _a2.toString())) {
+    return parseDef2(def.innerType._def, refs);
+  }
+  const innerSchema = parseDef2(def.innerType._def, {
+    ...refs,
+    currentPath: [...refs.currentPath, "anyOf", "1"]
+  });
+  return innerSchema ? {
+    anyOf: [
+      {
+        not: {}
+      },
+      innerSchema
+    ]
+  } : {};
+};
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/pipeline.mjs
+var parsePipelineDef2 = (def, refs) => {
+  if (refs.pipeStrategy === "input") {
+    return parseDef2(def.in._def, refs);
+  } else if (refs.pipeStrategy === "output") {
+    return parseDef2(def.out._def, refs);
+  }
+  const a = parseDef2(def.in._def, {
+    ...refs,
+    currentPath: [...refs.currentPath, "allOf", "0"]
+  });
+  const b = parseDef2(def.out._def, {
+    ...refs,
+    currentPath: [...refs.currentPath, "allOf", a ? "1" : "0"]
+  });
+  return {
+    allOf: [a, b].filter((x) => x !== void 0)
+  };
+};
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/promise.mjs
+function parsePromiseDef2(def, refs) {
+  return parseDef2(def.type._def, refs);
+}
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/set.mjs
+function parseSetDef2(def, refs) {
+  const items = parseDef2(def.valueType._def, {
+    ...refs,
+    currentPath: [...refs.currentPath, "items"]
+  });
+  const schema = {
+    type: "array",
+    uniqueItems: true,
+    items
+  };
+  if (def.minSize) {
+    setResponseValueAndErrors2(schema, "minItems", def.minSize.value, def.minSize.message, refs);
+  }
+  if (def.maxSize) {
+    setResponseValueAndErrors2(schema, "maxItems", def.maxSize.value, def.maxSize.message, refs);
+  }
+  return schema;
+}
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/tuple.mjs
+function parseTupleDef2(def, refs) {
+  if (def.rest) {
+    return {
+      type: "array",
+      minItems: def.items.length,
+      items: def.items.map((x, i) => parseDef2(x._def, {
+        ...refs,
+        currentPath: [...refs.currentPath, "items", `${i}`]
+      })).reduce((acc, x) => x === void 0 ? acc : [...acc, x], []),
+      additionalItems: parseDef2(def.rest._def, {
+        ...refs,
+        currentPath: [...refs.currentPath, "additionalItems"]
+      })
+    };
+  } else {
+    return {
+      type: "array",
+      minItems: def.items.length,
+      maxItems: def.items.length,
+      items: def.items.map((x, i) => parseDef2(x._def, {
+        ...refs,
+        currentPath: [...refs.currentPath, "items", `${i}`]
+      })).reduce((acc, x) => x === void 0 ? acc : [...acc, x], [])
+    };
+  }
+}
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/undefined.mjs
+function parseUndefinedDef2() {
+  return {
+    not: {}
+  };
+}
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/unknown.mjs
+function parseUnknownDef2() {
+  return {};
+}
+
+// node_modules/openai/_vendor/zod-to-json-schema/parsers/readonly.mjs
+var parseReadonlyDef2 = (def, refs) => {
+  return parseDef2(def.innerType._def, refs);
+};
+
+// node_modules/openai/_vendor/zod-to-json-schema/parseDef.mjs
+function parseDef2(def, refs, forceResolution = false) {
+  var _a2;
+  const seenItem = refs.seen.get(def);
+  if (refs.override) {
+    const overrideResult = (_a2 = refs.override) == null ? void 0 : _a2.call(refs, def, refs, seenItem, forceResolution);
+    if (overrideResult !== ignoreOverride2) {
+      return overrideResult;
+    }
+  }
+  if (seenItem && !forceResolution) {
+    const seenSchema = get$ref2(seenItem, refs);
+    if (seenSchema !== void 0) {
+      if ("$ref" in seenSchema) {
+        refs.seenRefs.add(seenSchema.$ref);
+      }
+      return seenSchema;
+    }
+  }
+  const newItem = { def, path: refs.currentPath, jsonSchema: void 0 };
+  refs.seen.set(def, newItem);
+  const jsonSchema = selectParser2(def, def.typeName, refs, forceResolution);
+  if (jsonSchema) {
+    addMeta2(def, refs, jsonSchema);
+  }
+  newItem.jsonSchema = jsonSchema;
+  return jsonSchema;
+}
+var get$ref2 = (item, refs) => {
+  switch (refs.$refStrategy) {
+    case "root":
+      return { $ref: item.path.join("/") };
+    // this case is needed as OpenAI strict mode doesn't support top-level `$ref`s, i.e.
+    // the top-level schema *must* be `{"type": "object", "properties": {...}}` but if we ever
+    // need to define a `$ref`, relative `$ref`s aren't supported, so we need to extract
+    // the schema to `#/definitions/` and reference that.
+    //
+    // e.g. if we need to reference a schema at
+    // `["#","definitions","contactPerson","properties","person1","properties","name"]`
+    // then we'll extract it out to `contactPerson_properties_person1_properties_name`
+    case "extract-to-root":
+      const name = item.path.slice(refs.basePath.length + 1).join("_");
+      if (name !== refs.name && refs.nameStrategy === "duplicate-ref") {
+        refs.definitions[name] = item.def;
+      }
+      return { $ref: [...refs.basePath, refs.definitionPath, name].join("/") };
+    case "relative":
+      return { $ref: getRelativePath2(refs.currentPath, item.path) };
+    case "none":
+    case "seen": {
+      if (item.path.length < refs.currentPath.length && item.path.every((value, index) => refs.currentPath[index] === value)) {
+        console.warn(`Recursive reference detected at ${refs.currentPath.join("/")}! Defaulting to any`);
+        return {};
+      }
+      return refs.$refStrategy === "seen" ? {} : void 0;
+    }
+  }
+};
+var getRelativePath2 = (pathA, pathB) => {
+  let i = 0;
+  for (; i < pathA.length && i < pathB.length; i++) {
+    if (pathA[i] !== pathB[i])
+      break;
+  }
+  return [(pathA.length - i).toString(), ...pathB.slice(i)].join("/");
+};
+var selectParser2 = (def, typeName, refs, forceResolution) => {
+  switch (typeName) {
+    case ZodFirstPartyTypeKind.ZodString:
+      return parseStringDef2(def, refs);
+    case ZodFirstPartyTypeKind.ZodNumber:
+      return parseNumberDef2(def, refs);
+    case ZodFirstPartyTypeKind.ZodObject:
+      return parseObjectDef2(def, refs);
+    case ZodFirstPartyTypeKind.ZodBigInt:
+      return parseBigintDef2(def, refs);
+    case ZodFirstPartyTypeKind.ZodBoolean:
+      return parseBooleanDef2();
+    case ZodFirstPartyTypeKind.ZodDate:
+      return parseDateDef2(def, refs);
+    case ZodFirstPartyTypeKind.ZodUndefined:
+      return parseUndefinedDef2();
+    case ZodFirstPartyTypeKind.ZodNull:
+      return parseNullDef2(refs);
+    case ZodFirstPartyTypeKind.ZodArray:
+      return parseArrayDef2(def, refs);
+    case ZodFirstPartyTypeKind.ZodUnion:
+    case ZodFirstPartyTypeKind.ZodDiscriminatedUnion:
+      return parseUnionDef2(def, refs);
+    case ZodFirstPartyTypeKind.ZodIntersection:
+      return parseIntersectionDef2(def, refs);
+    case ZodFirstPartyTypeKind.ZodTuple:
+      return parseTupleDef2(def, refs);
+    case ZodFirstPartyTypeKind.ZodRecord:
+      return parseRecordDef2(def, refs);
+    case ZodFirstPartyTypeKind.ZodLiteral:
+      return parseLiteralDef2(def, refs);
+    case ZodFirstPartyTypeKind.ZodEnum:
+      return parseEnumDef2(def);
+    case ZodFirstPartyTypeKind.ZodNativeEnum:
+      return parseNativeEnumDef2(def);
+    case ZodFirstPartyTypeKind.ZodNullable:
+      return parseNullableDef2(def, refs);
+    case ZodFirstPartyTypeKind.ZodOptional:
+      return parseOptionalDef2(def, refs);
+    case ZodFirstPartyTypeKind.ZodMap:
+      return parseMapDef2(def, refs);
+    case ZodFirstPartyTypeKind.ZodSet:
+      return parseSetDef2(def, refs);
+    case ZodFirstPartyTypeKind.ZodLazy:
+      return parseDef2(def.getter()._def, refs);
+    case ZodFirstPartyTypeKind.ZodPromise:
+      return parsePromiseDef2(def, refs);
+    case ZodFirstPartyTypeKind.ZodNaN:
+    case ZodFirstPartyTypeKind.ZodNever:
+      return parseNeverDef2();
+    case ZodFirstPartyTypeKind.ZodEffects:
+      return parseEffectsDef2(def, refs, forceResolution);
+    case ZodFirstPartyTypeKind.ZodAny:
+      return parseAnyDef2();
+    case ZodFirstPartyTypeKind.ZodUnknown:
+      return parseUnknownDef2();
+    case ZodFirstPartyTypeKind.ZodDefault:
+      return parseDefaultDef2(def, refs);
+    case ZodFirstPartyTypeKind.ZodBranded:
+      return parseBrandedDef2(def, refs);
+    case ZodFirstPartyTypeKind.ZodReadonly:
+      return parseReadonlyDef2(def, refs);
+    case ZodFirstPartyTypeKind.ZodCatch:
+      return parseCatchDef2(def, refs);
+    case ZodFirstPartyTypeKind.ZodPipeline:
+      return parsePipelineDef2(def, refs);
+    case ZodFirstPartyTypeKind.ZodFunction:
+    case ZodFirstPartyTypeKind.ZodVoid:
+    case ZodFirstPartyTypeKind.ZodSymbol:
+      return void 0;
+    default:
+      return /* @__PURE__ */ ((_) => void 0)(typeName);
+  }
+};
+var addMeta2 = (def, refs, jsonSchema) => {
+  if (def.description) {
+    jsonSchema.description = def.description;
+    if (refs.markdownDescription) {
+      jsonSchema.markdownDescription = def.description;
+    }
+  }
+  return jsonSchema;
+};
+
+// node_modules/openai/_vendor/zod-to-json-schema/zodToJsonSchema.mjs
+var zodToJsonSchema2 = (schema, options) => {
+  var _a2;
+  const refs = getRefs2(options);
+  const name = typeof options === "string" ? options : (options == null ? void 0 : options.nameStrategy) === "title" ? void 0 : options == null ? void 0 : options.name;
+  const main = (_a2 = parseDef2(schema._def, name === void 0 ? refs : {
+    ...refs,
+    currentPath: [...refs.basePath, refs.definitionPath, name]
+  }, false)) != null ? _a2 : {};
+  const title = typeof options === "object" && options.name !== void 0 && options.nameStrategy === "title" ? options.name : void 0;
+  if (title !== void 0) {
+    main.title = title;
+  }
+  const definitions = (() => {
+    var _a3;
+    if (isEmptyObj2(refs.definitions)) {
+      return void 0;
+    }
+    const definitions2 = {};
+    const processedDefinitions = /* @__PURE__ */ new Set();
+    for (let i = 0; i < 500; i++) {
+      const newDefinitions = Object.entries(refs.definitions).filter(([key]) => !processedDefinitions.has(key));
+      if (newDefinitions.length === 0)
+        break;
+      for (const [key, schema2] of newDefinitions) {
+        definitions2[key] = (_a3 = parseDef2(zodDef(schema2), { ...refs, currentPath: [...refs.basePath, refs.definitionPath, key] }, true)) != null ? _a3 : {};
+        processedDefinitions.add(key);
+      }
+    }
+    return definitions2;
+  })();
+  const combined = name === void 0 ? definitions ? {
+    ...main,
+    [refs.definitionPath]: definitions
+  } : main : refs.nameStrategy === "duplicate-ref" ? {
+    ...main,
+    ...definitions || refs.seenRefs.size ? {
+      [refs.definitionPath]: {
+        ...definitions,
+        // only actually duplicate the schema definition if it was ever referenced
+        // otherwise the duplication is completely pointless
+        ...refs.seenRefs.size ? { [name]: main } : void 0
+      }
+    } : void 0
+  } : {
+    $ref: [...refs.$refStrategy === "relative" ? [] : refs.basePath, refs.definitionPath, name].join("/"),
+    [refs.definitionPath]: {
+      ...definitions,
+      [name]: main
+    }
+  };
+  if (refs.target === "jsonSchema7") {
+    combined.$schema = "http://json-schema.org/draft-07/schema#";
+  } else if (refs.target === "jsonSchema2019-09") {
+    combined.$schema = "https://json-schema.org/draft/2019-09/schema#";
+  }
+  return combined;
+};
+
+// node_modules/openai/helpers/zod.mjs
+function zodToJsonSchema3(schema, options) {
+  return zodToJsonSchema2(schema, {
+    openaiStrictMode: true,
+    name: options.name,
+    nameStrategy: "duplicate-ref",
+    $refStrategy: "extract-to-root",
+    nullableStrategy: "property"
+  });
+}
+function zodResponseFormat(zodObject, name, props) {
+  return makeParseableResponseFormat({
+    type: "json_schema",
+    json_schema: {
+      ...props,
+      name,
+      strict: true,
+      schema: zodToJsonSchema3(zodObject, { name })
+    }
+  }, (content) => zodObject.parse(JSON.parse(content)));
+}
+function zodFunction(options) {
+  return makeParseableTool({
+    type: "function",
+    function: {
+      name: options.name,
+      parameters: zodToJsonSchema3(options.parameters, { name: options.name }),
+      strict: true,
+      ...options.description ? { description: options.description } : void 0
+    }
+  }, {
+    callback: options.function,
+    parser: (args) => options.parameters.parse(JSON.parse(args))
+  });
+}
+
+// node_modules/@langchain/openai/dist/utils/azure.js
+function getEndpoint(config) {
+  const { azureOpenAIApiDeploymentName, azureOpenAIApiInstanceName, azureOpenAIApiKey, azureOpenAIBasePath, baseURL, azureADTokenProvider, azureOpenAIEndpoint } = config;
+  if ((azureOpenAIApiKey || azureADTokenProvider) && azureOpenAIBasePath && azureOpenAIApiDeploymentName) {
+    return `${azureOpenAIBasePath}/${azureOpenAIApiDeploymentName}`;
+  }
+  if ((azureOpenAIApiKey || azureADTokenProvider) && azureOpenAIEndpoint && azureOpenAIApiDeploymentName) {
+    return `${azureOpenAIEndpoint}/openai/deployments/${azureOpenAIApiDeploymentName}`;
+  }
+  if (azureOpenAIApiKey || azureADTokenProvider) {
+    if (!azureOpenAIApiInstanceName) {
+      throw new Error("azureOpenAIApiInstanceName is required when using azureOpenAIApiKey");
+    }
+    if (!azureOpenAIApiDeploymentName) {
+      throw new Error("azureOpenAIApiDeploymentName is a required parameter when using azureOpenAIApiKey");
+    }
+    return `https://${azureOpenAIApiInstanceName}.openai.azure.com/openai/deployments/${azureOpenAIApiDeploymentName}`;
+  }
+  return baseURL;
+}
 
 // node_modules/@langchain/openai/dist/utils/openai.js
 init_esm();
@@ -27269,6 +29996,1336 @@ init_esm();
 // node_modules/@langchain/core/dist/utils/function_calling.js
 init_esm();
 init_base4();
+function convertToOpenAIFunction(tool, fields) {
+  const fieldsCopy = typeof fields === "number" ? void 0 : fields;
+  return {
+    name: tool.name,
+    description: tool.description,
+    parameters: zodToJsonSchema(tool.schema),
+    // Do not include the `strict` field if it is `undefined`.
+    ...(fieldsCopy == null ? void 0 : fieldsCopy.strict) !== void 0 ? { strict: fieldsCopy.strict } : {}
+  };
+}
+function convertToOpenAITool(tool, fields) {
+  const fieldsCopy = typeof fields === "number" ? void 0 : fields;
+  let toolDef;
+  if (isLangChainTool(tool)) {
+    toolDef = {
+      type: "function",
+      function: convertToOpenAIFunction(tool)
+    };
+  } else {
+    toolDef = tool;
+  }
+  if ((fieldsCopy == null ? void 0 : fieldsCopy.strict) !== void 0) {
+    toolDef.function.strict = fieldsCopy.strict;
+  }
+  return toolDef;
+}
+function isStructuredTool(tool) {
+  return tool !== void 0 && Array.isArray(tool.lc_namespace);
+}
+function isRunnableToolLike(tool) {
+  return tool !== void 0 && Runnable.isRunnable(tool) && "lc_name" in tool.constructor && typeof tool.constructor.lc_name === "function" && tool.constructor.lc_name() === "RunnableToolLike";
+}
+function isStructuredToolParams(tool) {
+  return !!tool && typeof tool === "object" && "name" in tool && "schema" in tool && // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  isZodSchema(tool.schema);
+}
+function isLangChainTool(tool) {
+  return isStructuredToolParams(tool) || isRunnableToolLike(tool) || // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  isStructuredTool(tool);
+}
+
+// node_modules/@langchain/openai/dist/utils/errors.js
+function addLangChainErrorFields2(error, lc_error_code) {
+  error.lc_error_code = lc_error_code;
+  error.message = `${error.message}
+
+Troubleshooting URL: https://js.langchain.com/docs/troubleshooting/errors/${lc_error_code}/
+`;
+  return error;
+}
+
+// node_modules/@langchain/openai/dist/utils/openai.js
+function wrapOpenAIClientError(e) {
+  let error;
+  if (e.constructor.name === APIConnectionTimeoutError.name) {
+    error = new Error(e.message);
+    error.name = "TimeoutError";
+  } else if (e.constructor.name === APIUserAbortError.name) {
+    error = new Error(e.message);
+    error.name = "AbortError";
+  } else if (e.status === 400 && e.message.includes("tool_calls")) {
+    error = addLangChainErrorFields2(e, "INVALID_TOOL_RESULTS");
+  } else if (e.status === 401) {
+    error = addLangChainErrorFields2(e, "MODEL_AUTHENTICATION");
+  } else if (e.status === 429) {
+    error = addLangChainErrorFields2(e, "MODEL_RATE_LIMIT");
+  } else if (e.status === 404) {
+    error = addLangChainErrorFields2(e, "MODEL_NOT_FOUND");
+  } else {
+    error = e;
+  }
+  return error;
+}
+function formatToOpenAIToolChoice(toolChoice) {
+  if (!toolChoice) {
+    return void 0;
+  } else if (toolChoice === "any" || toolChoice === "required") {
+    return "required";
+  } else if (toolChoice === "auto") {
+    return "auto";
+  } else if (toolChoice === "none") {
+    return "none";
+  } else if (typeof toolChoice === "string") {
+    return {
+      type: "function",
+      function: {
+        name: toolChoice
+      }
+    };
+  } else {
+    return toolChoice;
+  }
+}
+
+// node_modules/@langchain/openai/dist/utils/openai-format-fndef.js
+function isAnyOfProp(prop) {
+  return prop.anyOf !== void 0 && Array.isArray(prop.anyOf);
+}
+function formatFunctionDefinitions(functions) {
+  var _a2;
+  const lines = ["namespace functions {", ""];
+  for (const f of functions) {
+    if (f.description) {
+      lines.push(`// ${f.description}`);
+    }
+    if (Object.keys((_a2 = f.parameters.properties) != null ? _a2 : {}).length > 0) {
+      lines.push(`type ${f.name} = (_: {`);
+      lines.push(formatObjectProperties(f.parameters, 0));
+      lines.push("}) => any;");
+    } else {
+      lines.push(`type ${f.name} = () => any;`);
+    }
+    lines.push("");
+  }
+  lines.push("} // namespace functions");
+  return lines.join("\n");
+}
+function formatObjectProperties(obj, indent) {
+  var _a2, _b;
+  const lines = [];
+  for (const [name, param] of Object.entries((_a2 = obj.properties) != null ? _a2 : {})) {
+    if (param.description && indent < 2) {
+      lines.push(`// ${param.description}`);
+    }
+    if ((_b = obj.required) == null ? void 0 : _b.includes(name)) {
+      lines.push(`${name}: ${formatType(param, indent)},`);
+    } else {
+      lines.push(`${name}?: ${formatType(param, indent)},`);
+    }
+  }
+  return lines.map((line) => " ".repeat(indent) + line).join("\n");
+}
+function formatType(param, indent) {
+  if (isAnyOfProp(param)) {
+    return param.anyOf.map((v) => formatType(v, indent)).join(" | ");
+  }
+  switch (param.type) {
+    case "string":
+      if (param.enum) {
+        return param.enum.map((v) => `"${v}"`).join(" | ");
+      }
+      return "string";
+    case "number":
+      if (param.enum) {
+        return param.enum.map((v) => `${v}`).join(" | ");
+      }
+      return "number";
+    case "integer":
+      if (param.enum) {
+        return param.enum.map((v) => `${v}`).join(" | ");
+      }
+      return "number";
+    case "boolean":
+      return "boolean";
+    case "null":
+      return "null";
+    case "object":
+      return ["{", formatObjectProperties(param, indent + 2), "}"].join("\n");
+    case "array":
+      if (param.items) {
+        return `${formatType(param.items, indent)}[]`;
+      }
+      return "any[]";
+    default:
+      return "";
+  }
+}
+
+// node_modules/@langchain/openai/dist/utils/tools.js
+function _convertToOpenAITool(tool, fields) {
+  let toolDef;
+  if (isLangChainTool(tool)) {
+    const oaiToolDef = zodFunction({
+      name: tool.name,
+      parameters: tool.schema,
+      description: tool.description
+    });
+    if (!oaiToolDef.function.parameters) {
+      toolDef = {
+        type: "function",
+        function: convertToOpenAIFunction(tool, fields)
+      };
+    } else {
+      toolDef = {
+        type: oaiToolDef.type,
+        function: {
+          name: oaiToolDef.function.name,
+          description: oaiToolDef.function.description,
+          parameters: oaiToolDef.function.parameters,
+          ...(fields == null ? void 0 : fields.strict) !== void 0 ? { strict: fields.strict } : {}
+        }
+      };
+    }
+  } else {
+    toolDef = tool;
+  }
+  if ((fields == null ? void 0 : fields.strict) !== void 0) {
+    toolDef.function.strict = fields.strict;
+  }
+  return toolDef;
+}
+
+// node_modules/@langchain/openai/dist/chat_models.js
+function extractGenericMessageCustomRole(message) {
+  if (message.role !== "system" && message.role !== "assistant" && message.role !== "user" && message.role !== "function" && message.role !== "tool") {
+    console.warn(`Unknown message role: ${message.role}`);
+  }
+  return message.role;
+}
+function messageToOpenAIRole(message) {
+  const type = message._getType();
+  switch (type) {
+    case "system":
+      return "system";
+    case "ai":
+      return "assistant";
+    case "human":
+      return "user";
+    case "function":
+      return "function";
+    case "tool":
+      return "tool";
+    case "generic": {
+      if (!ChatMessage.isInstance(message))
+        throw new Error("Invalid generic chat message");
+      return extractGenericMessageCustomRole(message);
+    }
+    default:
+      throw new Error(`Unknown message type: ${type}`);
+  }
+}
+function openAIResponseToChatMessage(message, rawResponse, includeRawResponse) {
+  var _a2;
+  const rawToolCalls = message.tool_calls;
+  switch (message.role) {
+    case "assistant": {
+      const toolCalls = [];
+      const invalidToolCalls = [];
+      for (const rawToolCall of rawToolCalls != null ? rawToolCalls : []) {
+        try {
+          toolCalls.push(parseToolCall2(rawToolCall, { returnId: true }));
+        } catch (e) {
+          invalidToolCalls.push(makeInvalidToolCall(rawToolCall, e.message));
+        }
+      }
+      const additional_kwargs = {
+        function_call: message.function_call,
+        tool_calls: rawToolCalls
+      };
+      if (includeRawResponse !== void 0) {
+        additional_kwargs.__raw_response = rawResponse;
+      }
+      let response_metadata;
+      if (rawResponse.system_fingerprint) {
+        response_metadata = {
+          usage: { ...rawResponse.usage },
+          system_fingerprint: rawResponse.system_fingerprint
+        };
+      }
+      if (message.audio) {
+        additional_kwargs.audio = message.audio;
+      }
+      return new AIMessage({
+        content: message.content || "",
+        tool_calls: toolCalls,
+        invalid_tool_calls: invalidToolCalls,
+        additional_kwargs,
+        response_metadata,
+        id: rawResponse.id
+      });
+    }
+    default:
+      return new ChatMessage(message.content || "", (_a2 = message.role) != null ? _a2 : "unknown");
+  }
+}
+function _convertDeltaToMessageChunk(delta, rawResponse, defaultRole, includeRawResponse) {
+  var _a2, _b, _c, _d;
+  const role = (_a2 = delta.role) != null ? _a2 : defaultRole;
+  const content = (_b = delta.content) != null ? _b : "";
+  let additional_kwargs;
+  if (delta.function_call) {
+    additional_kwargs = {
+      function_call: delta.function_call
+    };
+  } else if (delta.tool_calls) {
+    additional_kwargs = {
+      tool_calls: delta.tool_calls
+    };
+  } else {
+    additional_kwargs = {};
+  }
+  if (includeRawResponse) {
+    additional_kwargs.__raw_response = rawResponse;
+  }
+  if (delta.audio) {
+    additional_kwargs.audio = {
+      ...delta.audio,
+      index: rawResponse.choices[0].index
+    };
+  }
+  const response_metadata = { usage: { ...rawResponse.usage } };
+  if (role === "user") {
+    return new HumanMessageChunk({ content, response_metadata });
+  } else if (role === "assistant") {
+    const toolCallChunks = [];
+    if (Array.isArray(delta.tool_calls)) {
+      for (const rawToolCall of delta.tool_calls) {
+        toolCallChunks.push({
+          name: (_c = rawToolCall.function) == null ? void 0 : _c.name,
+          args: (_d = rawToolCall.function) == null ? void 0 : _d.arguments,
+          id: rawToolCall.id,
+          index: rawToolCall.index,
+          type: "tool_call_chunk"
+        });
+      }
+    }
+    return new AIMessageChunk({
+      content,
+      tool_call_chunks: toolCallChunks,
+      additional_kwargs,
+      id: rawResponse.id,
+      response_metadata
+    });
+  } else if (role === "system") {
+    return new SystemMessageChunk({ content, response_metadata });
+  } else if (role === "function") {
+    return new FunctionMessageChunk({
+      content,
+      additional_kwargs,
+      name: delta.name,
+      response_metadata
+    });
+  } else if (role === "tool") {
+    return new ToolMessageChunk({
+      content,
+      additional_kwargs,
+      tool_call_id: delta.tool_call_id,
+      response_metadata
+    });
+  } else {
+    return new ChatMessageChunk({ content, role, response_metadata });
+  }
+}
+function _convertMessagesToOpenAIParams(messages) {
+  return messages.flatMap((message) => {
+    var _a2;
+    const completionParam = {
+      role: messageToOpenAIRole(message),
+      content: message.content
+    };
+    if (message.name != null) {
+      completionParam.name = message.name;
+    }
+    if (message.additional_kwargs.function_call != null) {
+      completionParam.function_call = message.additional_kwargs.function_call;
+      completionParam.content = null;
+    }
+    if (isAIMessage(message) && !!((_a2 = message.tool_calls) == null ? void 0 : _a2.length)) {
+      completionParam.tool_calls = message.tool_calls.map(convertLangChainToolCallToOpenAI);
+      completionParam.content = null;
+    } else {
+      if (message.additional_kwargs.tool_calls != null) {
+        completionParam.tool_calls = message.additional_kwargs.tool_calls;
+      }
+      if (message.tool_call_id != null) {
+        completionParam.tool_call_id = message.tool_call_id;
+      }
+    }
+    if (message.additional_kwargs.audio && typeof message.additional_kwargs.audio === "object" && "id" in message.additional_kwargs.audio) {
+      const audioMessage = {
+        role: "assistant",
+        audio: {
+          id: message.additional_kwargs.audio.id
+        }
+      };
+      return [completionParam, audioMessage];
+    }
+    return completionParam;
+  });
+}
+function _convertChatOpenAIToolTypeToOpenAITool(tool, fields) {
+  if (isOpenAITool(tool)) {
+    if ((fields == null ? void 0 : fields.strict) !== void 0) {
+      return {
+        ...tool,
+        function: {
+          ...tool.function,
+          strict: fields.strict
+        }
+      };
+    }
+    return tool;
+  }
+  return _convertToOpenAITool(tool, fields);
+}
+var ChatOpenAI = class extends BaseChatModel {
+  static lc_name() {
+    return "ChatOpenAI";
+  }
+  get callKeys() {
+    return [
+      ...super.callKeys,
+      "options",
+      "function_call",
+      "functions",
+      "tools",
+      "tool_choice",
+      "promptIndex",
+      "response_format",
+      "seed"
+    ];
+  }
+  get lc_secrets() {
+    return {
+      openAIApiKey: "OPENAI_API_KEY",
+      apiKey: "OPENAI_API_KEY",
+      azureOpenAIApiKey: "AZURE_OPENAI_API_KEY",
+      organization: "OPENAI_ORGANIZATION"
+    };
+  }
+  get lc_aliases() {
+    return {
+      modelName: "model",
+      openAIApiKey: "openai_api_key",
+      apiKey: "openai_api_key",
+      azureOpenAIApiVersion: "azure_openai_api_version",
+      azureOpenAIApiKey: "azure_openai_api_key",
+      azureOpenAIApiInstanceName: "azure_openai_api_instance_name",
+      azureOpenAIApiDeploymentName: "azure_openai_api_deployment_name"
+    };
+  }
+  constructor(fields, configuration) {
+    var _a2, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I;
+    super(fields != null ? fields : {});
+    Object.defineProperty(this, "lc_serializable", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: true
+    });
+    Object.defineProperty(this, "temperature", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: 1
+    });
+    Object.defineProperty(this, "topP", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: 1
+    });
+    Object.defineProperty(this, "frequencyPenalty", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: 0
+    });
+    Object.defineProperty(this, "presencePenalty", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: 0
+    });
+    Object.defineProperty(this, "n", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: 1
+    });
+    Object.defineProperty(this, "logitBias", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "modelName", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: "gpt-3.5-turbo"
+    });
+    Object.defineProperty(this, "model", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: "gpt-3.5-turbo"
+    });
+    Object.defineProperty(this, "modelKwargs", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "stop", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "stopSequences", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "user", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "timeout", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "streaming", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: false
+    });
+    Object.defineProperty(this, "streamUsage", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: true
+    });
+    Object.defineProperty(this, "maxTokens", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "logprobs", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "topLogprobs", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "openAIApiKey", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "apiKey", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "azureOpenAIApiVersion", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "azureOpenAIApiKey", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "azureADTokenProvider", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "azureOpenAIApiInstanceName", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "azureOpenAIApiDeploymentName", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "azureOpenAIBasePath", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "azureOpenAIEndpoint", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "organization", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "__includeRawResponse", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "client", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "clientConfig", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "supportsStrictToolCalling", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "audio", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "modalities", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    this.openAIApiKey = (_d = (_c = (_a2 = fields == null ? void 0 : fields.apiKey) != null ? _a2 : fields == null ? void 0 : fields.openAIApiKey) != null ? _c : (_b = fields == null ? void 0 : fields.configuration) == null ? void 0 : _b.apiKey) != null ? _d : getEnvironmentVariable2("OPENAI_API_KEY");
+    this.apiKey = this.openAIApiKey;
+    this.azureOpenAIApiKey = (_e = fields == null ? void 0 : fields.azureOpenAIApiKey) != null ? _e : getEnvironmentVariable2("AZURE_OPENAI_API_KEY");
+    this.azureADTokenProvider = (_f = fields == null ? void 0 : fields.azureADTokenProvider) != null ? _f : void 0;
+    if (!this.azureOpenAIApiKey && !this.apiKey && !this.azureADTokenProvider) {
+      throw new Error("OpenAI or Azure OpenAI API key or Token Provider not found");
+    }
+    this.azureOpenAIApiInstanceName = (_g = fields == null ? void 0 : fields.azureOpenAIApiInstanceName) != null ? _g : getEnvironmentVariable2("AZURE_OPENAI_API_INSTANCE_NAME");
+    this.azureOpenAIApiDeploymentName = (_h = fields == null ? void 0 : fields.azureOpenAIApiDeploymentName) != null ? _h : getEnvironmentVariable2("AZURE_OPENAI_API_DEPLOYMENT_NAME");
+    this.azureOpenAIApiVersion = (_i = fields == null ? void 0 : fields.azureOpenAIApiVersion) != null ? _i : getEnvironmentVariable2("AZURE_OPENAI_API_VERSION");
+    this.azureOpenAIBasePath = (_j = fields == null ? void 0 : fields.azureOpenAIBasePath) != null ? _j : getEnvironmentVariable2("AZURE_OPENAI_BASE_PATH");
+    this.organization = (_l = (_k = fields == null ? void 0 : fields.configuration) == null ? void 0 : _k.organization) != null ? _l : getEnvironmentVariable2("OPENAI_ORGANIZATION");
+    this.azureOpenAIEndpoint = (_m = fields == null ? void 0 : fields.azureOpenAIEndpoint) != null ? _m : getEnvironmentVariable2("AZURE_OPENAI_ENDPOINT");
+    this.modelName = (_o = (_n = fields == null ? void 0 : fields.model) != null ? _n : fields == null ? void 0 : fields.modelName) != null ? _o : this.model;
+    this.model = this.modelName;
+    this.modelKwargs = (_p = fields == null ? void 0 : fields.modelKwargs) != null ? _p : {};
+    this.timeout = fields == null ? void 0 : fields.timeout;
+    this.temperature = (_q = fields == null ? void 0 : fields.temperature) != null ? _q : this.temperature;
+    this.topP = (_r = fields == null ? void 0 : fields.topP) != null ? _r : this.topP;
+    this.frequencyPenalty = (_s = fields == null ? void 0 : fields.frequencyPenalty) != null ? _s : this.frequencyPenalty;
+    this.presencePenalty = (_t = fields == null ? void 0 : fields.presencePenalty) != null ? _t : this.presencePenalty;
+    this.maxTokens = fields == null ? void 0 : fields.maxTokens;
+    this.logprobs = fields == null ? void 0 : fields.logprobs;
+    this.topLogprobs = fields == null ? void 0 : fields.topLogprobs;
+    this.n = (_u = fields == null ? void 0 : fields.n) != null ? _u : this.n;
+    this.logitBias = fields == null ? void 0 : fields.logitBias;
+    this.stop = (_v = fields == null ? void 0 : fields.stopSequences) != null ? _v : fields == null ? void 0 : fields.stop;
+    this.stopSequences = this == null ? void 0 : this.stop;
+    this.user = fields == null ? void 0 : fields.user;
+    this.__includeRawResponse = fields == null ? void 0 : fields.__includeRawResponse;
+    this.audio = fields == null ? void 0 : fields.audio;
+    this.modalities = fields == null ? void 0 : fields.modalities;
+    if (this.azureOpenAIApiKey || this.azureADTokenProvider) {
+      if (!this.azureOpenAIApiInstanceName && !this.azureOpenAIBasePath && !this.azureOpenAIEndpoint) {
+        throw new Error("Azure OpenAI API instance name not found");
+      }
+      if (!this.azureOpenAIApiDeploymentName && this.azureOpenAIBasePath) {
+        const parts = this.azureOpenAIBasePath.split("/openai/deployments/");
+        if (parts.length === 2) {
+          const [, deployment] = parts;
+          this.azureOpenAIApiDeploymentName = deployment;
+        }
+      }
+      if (!this.azureOpenAIApiDeploymentName) {
+        throw new Error("Azure OpenAI API deployment name not found");
+      }
+      if (!this.azureOpenAIApiVersion) {
+        throw new Error("Azure OpenAI API version not found");
+      }
+      this.apiKey = (_w = this.apiKey) != null ? _w : "";
+      this.streamUsage = false;
+    }
+    this.streaming = (_x = fields == null ? void 0 : fields.streaming) != null ? _x : false;
+    this.streamUsage = (_y = fields == null ? void 0 : fields.streamUsage) != null ? _y : this.streamUsage;
+    this.clientConfig = {
+      apiKey: this.apiKey,
+      organization: this.organization,
+      baseURL: (_A = configuration == null ? void 0 : configuration.basePath) != null ? _A : (_z = fields == null ? void 0 : fields.configuration) == null ? void 0 : _z.basePath,
+      dangerouslyAllowBrowser: true,
+      defaultHeaders: (_E = (_B = configuration == null ? void 0 : configuration.baseOptions) == null ? void 0 : _B.headers) != null ? _E : (_D = (_C = fields == null ? void 0 : fields.configuration) == null ? void 0 : _C.baseOptions) == null ? void 0 : _D.headers,
+      defaultQuery: (_I = (_F = configuration == null ? void 0 : configuration.baseOptions) == null ? void 0 : _F.params) != null ? _I : (_H = (_G = fields == null ? void 0 : fields.configuration) == null ? void 0 : _G.baseOptions) == null ? void 0 : _H.params,
+      ...configuration,
+      ...fields == null ? void 0 : fields.configuration
+    };
+    if ((fields == null ? void 0 : fields.supportsStrictToolCalling) !== void 0) {
+      this.supportsStrictToolCalling = fields.supportsStrictToolCalling;
+    }
+  }
+  getLsParams(options) {
+    var _a2, _b;
+    const params = this.invocationParams(options);
+    return {
+      ls_provider: "openai",
+      ls_model_name: this.model,
+      ls_model_type: "chat",
+      ls_temperature: (_a2 = params.temperature) != null ? _a2 : void 0,
+      ls_max_tokens: (_b = params.max_tokens) != null ? _b : void 0,
+      ls_stop: options.stop
+    };
+  }
+  bindTools(tools, kwargs) {
+    let strict;
+    if ((kwargs == null ? void 0 : kwargs.strict) !== void 0) {
+      strict = kwargs.strict;
+    } else if (this.supportsStrictToolCalling !== void 0) {
+      strict = this.supportsStrictToolCalling;
+    }
+    return this.bind({
+      tools: tools.map((tool) => _convertChatOpenAIToolTypeToOpenAITool(tool, { strict })),
+      ...kwargs
+    });
+  }
+  createResponseFormat(resFormat) {
+    if (resFormat && resFormat.type === "json_schema" && resFormat.json_schema.schema && isZodSchema2(resFormat.json_schema.schema)) {
+      return zodResponseFormat(resFormat.json_schema.schema, resFormat.json_schema.name, {
+        description: resFormat.json_schema.description
+      });
+    }
+    return resFormat;
+  }
+  /**
+   * Get the parameters used to invoke the model
+   */
+  invocationParams(options, extra) {
+    var _a2, _b;
+    let strict;
+    if ((options == null ? void 0 : options.strict) !== void 0) {
+      strict = options.strict;
+    } else if (this.supportsStrictToolCalling !== void 0) {
+      strict = this.supportsStrictToolCalling;
+    }
+    let streamOptionsConfig = {};
+    if ((options == null ? void 0 : options.stream_options) !== void 0) {
+      streamOptionsConfig = { stream_options: options.stream_options };
+    } else if (this.streamUsage && (this.streaming || (extra == null ? void 0 : extra.streaming))) {
+      streamOptionsConfig = { stream_options: { include_usage: true } };
+    }
+    const params = {
+      model: this.model,
+      temperature: this.temperature,
+      top_p: this.topP,
+      frequency_penalty: this.frequencyPenalty,
+      presence_penalty: this.presencePenalty,
+      max_tokens: this.maxTokens === -1 ? void 0 : this.maxTokens,
+      logprobs: this.logprobs,
+      top_logprobs: this.topLogprobs,
+      n: this.n,
+      logit_bias: this.logitBias,
+      stop: (_a2 = options == null ? void 0 : options.stop) != null ? _a2 : this.stopSequences,
+      user: this.user,
+      // if include_usage is set or streamUsage then stream must be set to true.
+      stream: this.streaming,
+      functions: options == null ? void 0 : options.functions,
+      function_call: options == null ? void 0 : options.function_call,
+      tools: ((_b = options == null ? void 0 : options.tools) == null ? void 0 : _b.length) ? options.tools.map((tool) => _convertChatOpenAIToolTypeToOpenAITool(tool, { strict })) : void 0,
+      tool_choice: formatToOpenAIToolChoice(options == null ? void 0 : options.tool_choice),
+      response_format: this.createResponseFormat(options == null ? void 0 : options.response_format),
+      seed: options == null ? void 0 : options.seed,
+      ...streamOptionsConfig,
+      parallel_tool_calls: options == null ? void 0 : options.parallel_tool_calls,
+      ...this.audio || (options == null ? void 0 : options.audio) ? { audio: this.audio || (options == null ? void 0 : options.audio) } : {},
+      ...this.modalities || (options == null ? void 0 : options.modalities) ? { modalities: this.modalities || (options == null ? void 0 : options.modalities) } : {},
+      ...this.modelKwargs
+    };
+    if ((options == null ? void 0 : options.prediction) !== void 0) {
+      params.prediction = options.prediction;
+    }
+    return params;
+  }
+  /** @ignore */
+  _identifyingParams() {
+    return {
+      model_name: this.model,
+      ...this.invocationParams(),
+      ...this.clientConfig
+    };
+  }
+  async *_streamResponseChunks(messages, options, runManager) {
+    var _a2, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n;
+    const messagesMapped = _convertMessagesToOpenAIParams(messages);
+    const params = {
+      ...this.invocationParams(options, {
+        streaming: true
+      }),
+      messages: messagesMapped,
+      stream: true
+    };
+    let defaultRole;
+    const streamIterable = await this.completionWithRetry(params, options);
+    let usage;
+    for await (const data of streamIterable) {
+      const choice = (_a2 = data == null ? void 0 : data.choices) == null ? void 0 : _a2[0];
+      if (data.usage) {
+        usage = data.usage;
+      }
+      if (!choice) {
+        continue;
+      }
+      const { delta } = choice;
+      if (!delta) {
+        continue;
+      }
+      const chunk = _convertDeltaToMessageChunk(delta, data, defaultRole, this.__includeRawResponse);
+      defaultRole = (_b = delta.role) != null ? _b : defaultRole;
+      const newTokenIndices = {
+        prompt: (_c = options.promptIndex) != null ? _c : 0,
+        completion: (_d = choice.index) != null ? _d : 0
+      };
+      if (typeof chunk.content !== "string") {
+        console.log("[WARNING]: Received non-string content from OpenAI. This is currently not supported.");
+        continue;
+      }
+      const generationInfo = { ...newTokenIndices };
+      if (choice.finish_reason != null) {
+        generationInfo.finish_reason = choice.finish_reason;
+        generationInfo.system_fingerprint = data.system_fingerprint;
+      }
+      if (this.logprobs) {
+        generationInfo.logprobs = choice.logprobs;
+      }
+      const generationChunk = new ChatGenerationChunk({
+        message: chunk,
+        text: chunk.content,
+        generationInfo
+      });
+      yield generationChunk;
+      await (runManager == null ? void 0 : runManager.handleLLMNewToken((_e = generationChunk.text) != null ? _e : "", newTokenIndices, void 0, void 0, void 0, { chunk: generationChunk }));
+    }
+    if (usage) {
+      const inputTokenDetails = {
+        ...((_f = usage.prompt_tokens_details) == null ? void 0 : _f.audio_tokens) !== null && {
+          audio: (_g = usage.prompt_tokens_details) == null ? void 0 : _g.audio_tokens
+        },
+        ...((_h = usage.prompt_tokens_details) == null ? void 0 : _h.cached_tokens) !== null && {
+          cache_read: (_i = usage.prompt_tokens_details) == null ? void 0 : _i.cached_tokens
+        }
+      };
+      const outputTokenDetails = {
+        ...((_j = usage.completion_tokens_details) == null ? void 0 : _j.audio_tokens) !== null && {
+          audio: (_k = usage.completion_tokens_details) == null ? void 0 : _k.audio_tokens
+        },
+        ...((_l = usage.completion_tokens_details) == null ? void 0 : _l.reasoning_tokens) !== null && {
+          reasoning: (_m = usage.completion_tokens_details) == null ? void 0 : _m.reasoning_tokens
+        }
+      };
+      const generationChunk = new ChatGenerationChunk({
+        message: new AIMessageChunk({
+          content: "",
+          response_metadata: {
+            usage: { ...usage }
+          },
+          usage_metadata: {
+            input_tokens: usage.prompt_tokens,
+            output_tokens: usage.completion_tokens,
+            total_tokens: usage.total_tokens,
+            ...Object.keys(inputTokenDetails).length > 0 && {
+              input_token_details: inputTokenDetails
+            },
+            ...Object.keys(outputTokenDetails).length > 0 && {
+              output_token_details: outputTokenDetails
+            }
+          }
+        }),
+        text: ""
+      });
+      yield generationChunk;
+    }
+    if ((_n = options.signal) == null ? void 0 : _n.aborted) {
+      throw new Error("AbortError");
+    }
+  }
+  /**
+   * Get the identifying parameters for the model
+   *
+   */
+  identifyingParams() {
+    return this._identifyingParams();
+  }
+  /** @ignore */
+  async _generate(messages, options, runManager) {
+    var _a2, _b, _c, _d, _e, _f, _g, _h, _i, _j;
+    const usageMetadata = {};
+    const params = this.invocationParams(options);
+    const messagesMapped = _convertMessagesToOpenAIParams(messages);
+    if (params.stream) {
+      const stream = this._streamResponseChunks(messages, options, runManager);
+      const finalChunks = {};
+      for await (const chunk of stream) {
+        chunk.message.response_metadata = {
+          ...chunk.generationInfo,
+          ...chunk.message.response_metadata
+        };
+        const index = (_b = (_a2 = chunk.generationInfo) == null ? void 0 : _a2.completion) != null ? _b : 0;
+        if (finalChunks[index] === void 0) {
+          finalChunks[index] = chunk;
+        } else {
+          finalChunks[index] = finalChunks[index].concat(chunk);
+        }
+      }
+      const generations = Object.entries(finalChunks).sort(([aKey], [bKey]) => parseInt(aKey, 10) - parseInt(bKey, 10)).map(([_, value]) => value);
+      const { functions, function_call } = this.invocationParams(options);
+      const promptTokenUsage = await this.getEstimatedTokenCountFromPrompt(messages, functions, function_call);
+      const completionTokenUsage = await this.getNumTokensFromGenerations(generations);
+      usageMetadata.input_tokens = promptTokenUsage;
+      usageMetadata.output_tokens = completionTokenUsage;
+      usageMetadata.total_tokens = promptTokenUsage + completionTokenUsage;
+      return {
+        generations,
+        llmOutput: {
+          estimatedTokenUsage: {
+            promptTokens: usageMetadata.input_tokens,
+            completionTokens: usageMetadata.output_tokens,
+            totalTokens: usageMetadata.total_tokens
+          }
+        }
+      };
+    } else {
+      let data;
+      if (options.response_format && options.response_format.type === "json_schema") {
+        data = await this.betaParsedCompletionWithRetry({
+          ...params,
+          stream: false,
+          messages: messagesMapped
+        }, {
+          signal: options == null ? void 0 : options.signal,
+          ...options == null ? void 0 : options.options
+        });
+      } else {
+        data = await this.completionWithRetry({
+          ...params,
+          stream: false,
+          messages: messagesMapped
+        }, {
+          signal: options == null ? void 0 : options.signal,
+          ...options == null ? void 0 : options.options
+        });
+      }
+      const { completion_tokens: completionTokens, prompt_tokens: promptTokens, total_tokens: totalTokens, prompt_tokens_details: promptTokensDetails, completion_tokens_details: completionTokensDetails } = (_c = data == null ? void 0 : data.usage) != null ? _c : {};
+      if (completionTokens) {
+        usageMetadata.output_tokens = ((_d = usageMetadata.output_tokens) != null ? _d : 0) + completionTokens;
+      }
+      if (promptTokens) {
+        usageMetadata.input_tokens = ((_e = usageMetadata.input_tokens) != null ? _e : 0) + promptTokens;
+      }
+      if (totalTokens) {
+        usageMetadata.total_tokens = ((_f = usageMetadata.total_tokens) != null ? _f : 0) + totalTokens;
+      }
+      if ((promptTokensDetails == null ? void 0 : promptTokensDetails.audio_tokens) !== null || (promptTokensDetails == null ? void 0 : promptTokensDetails.cached_tokens) !== null) {
+        usageMetadata.input_token_details = {
+          ...(promptTokensDetails == null ? void 0 : promptTokensDetails.audio_tokens) !== null && {
+            audio: promptTokensDetails == null ? void 0 : promptTokensDetails.audio_tokens
+          },
+          ...(promptTokensDetails == null ? void 0 : promptTokensDetails.cached_tokens) !== null && {
+            cache_read: promptTokensDetails == null ? void 0 : promptTokensDetails.cached_tokens
+          }
+        };
+      }
+      if ((completionTokensDetails == null ? void 0 : completionTokensDetails.audio_tokens) !== null || (completionTokensDetails == null ? void 0 : completionTokensDetails.reasoning_tokens) !== null) {
+        usageMetadata.output_token_details = {
+          ...(completionTokensDetails == null ? void 0 : completionTokensDetails.audio_tokens) !== null && {
+            audio: completionTokensDetails == null ? void 0 : completionTokensDetails.audio_tokens
+          },
+          ...(completionTokensDetails == null ? void 0 : completionTokensDetails.reasoning_tokens) !== null && {
+            reasoning: completionTokensDetails == null ? void 0 : completionTokensDetails.reasoning_tokens
+          }
+        };
+      }
+      const generations = [];
+      for (const part of (_g = data == null ? void 0 : data.choices) != null ? _g : []) {
+        const text = (_i = (_h = part.message) == null ? void 0 : _h.content) != null ? _i : "";
+        const generation = {
+          text,
+          message: openAIResponseToChatMessage((_j = part.message) != null ? _j : { role: "assistant" }, data, this.__includeRawResponse)
+        };
+        generation.generationInfo = {
+          ...part.finish_reason ? { finish_reason: part.finish_reason } : {},
+          ...part.logprobs ? { logprobs: part.logprobs } : {}
+        };
+        if (isAIMessage(generation.message)) {
+          generation.message.usage_metadata = usageMetadata;
+        }
+        generation.message = new AIMessage({
+          ...generation.message
+        });
+        generations.push(generation);
+      }
+      return {
+        generations,
+        llmOutput: {
+          tokenUsage: {
+            promptTokens: usageMetadata.input_tokens,
+            completionTokens: usageMetadata.output_tokens,
+            totalTokens: usageMetadata.total_tokens
+          }
+        }
+      };
+    }
+  }
+  /**
+   * Estimate the number of tokens a prompt will use.
+   * Modified from: https://github.com/hmarr/openai-chat-tokens/blob/main/src/index.ts
+   */
+  async getEstimatedTokenCountFromPrompt(messages, functions, function_call) {
+    let tokens = (await this.getNumTokensFromMessages(messages)).totalCount;
+    if (functions && function_call !== "auto") {
+      const promptDefinitions = formatFunctionDefinitions(functions);
+      tokens += await this.getNumTokens(promptDefinitions);
+      tokens += 9;
+    }
+    if (functions && messages.find((m) => m._getType() === "system")) {
+      tokens -= 4;
+    }
+    if (function_call === "none") {
+      tokens += 1;
+    } else if (typeof function_call === "object") {
+      tokens += await this.getNumTokens(function_call.name) + 4;
+    }
+    return tokens;
+  }
+  /**
+   * Estimate the number of tokens an array of generations have used.
+   */
+  async getNumTokensFromGenerations(generations) {
+    const generationUsages = await Promise.all(generations.map(async (generation) => {
+      var _a2;
+      if ((_a2 = generation.message.additional_kwargs) == null ? void 0 : _a2.function_call) {
+        return (await this.getNumTokensFromMessages([generation.message])).countPerMessage[0];
+      } else {
+        return await this.getNumTokens(generation.message.content);
+      }
+    }));
+    return generationUsages.reduce((a, b) => a + b, 0);
+  }
+  async getNumTokensFromMessages(messages) {
+    let totalCount = 0;
+    let tokensPerMessage = 0;
+    let tokensPerName = 0;
+    if (this.model === "gpt-3.5-turbo-0301") {
+      tokensPerMessage = 4;
+      tokensPerName = -1;
+    } else {
+      tokensPerMessage = 3;
+      tokensPerName = 1;
+    }
+    const countPerMessage = await Promise.all(messages.map(async (message) => {
+      var _a2, _b, _c, _d, _e, _f;
+      const textCount = await this.getNumTokens(message.content);
+      const roleCount = await this.getNumTokens(messageToOpenAIRole(message));
+      const nameCount = message.name !== void 0 ? tokensPerName + await this.getNumTokens(message.name) : 0;
+      let count = textCount + tokensPerMessage + roleCount + nameCount;
+      const openAIMessage = message;
+      if (openAIMessage._getType() === "function") {
+        count -= 2;
+      }
+      if ((_a2 = openAIMessage.additional_kwargs) == null ? void 0 : _a2.function_call) {
+        count += 3;
+      }
+      if ((_b = openAIMessage == null ? void 0 : openAIMessage.additional_kwargs.function_call) == null ? void 0 : _b.name) {
+        count += await this.getNumTokens((_c = openAIMessage.additional_kwargs.function_call) == null ? void 0 : _c.name);
+      }
+      if ((_d = openAIMessage.additional_kwargs.function_call) == null ? void 0 : _d.arguments) {
+        try {
+          count += await this.getNumTokens(
+            // Remove newlines and spaces
+            JSON.stringify(JSON.parse((_e = openAIMessage.additional_kwargs.function_call) == null ? void 0 : _e.arguments))
+          );
+        } catch (error) {
+          console.error("Error parsing function arguments", error, JSON.stringify(openAIMessage.additional_kwargs.function_call));
+          count += await this.getNumTokens((_f = openAIMessage.additional_kwargs.function_call) == null ? void 0 : _f.arguments);
+        }
+      }
+      totalCount += count;
+      return count;
+    }));
+    totalCount += 3;
+    return { totalCount, countPerMessage };
+  }
+  async completionWithRetry(request, options) {
+    const requestOptions = this._getClientOptions(options);
+    return this.caller.call(async () => {
+      try {
+        const res = await this.client.chat.completions.create(request, requestOptions);
+        return res;
+      } catch (e) {
+        const error = wrapOpenAIClientError(e);
+        throw error;
+      }
+    });
+  }
+  /**
+   * Call the beta chat completions parse endpoint. This should only be called if
+   * response_format is set to "json_object".
+   * @param {OpenAIClient.Chat.ChatCompletionCreateParamsNonStreaming} request
+   * @param {OpenAICoreRequestOptions | undefined} options
+   */
+  async betaParsedCompletionWithRetry(request, options) {
+    const requestOptions = this._getClientOptions(options);
+    return this.caller.call(async () => {
+      try {
+        const res = await this.client.beta.chat.completions.parse(request, requestOptions);
+        return res;
+      } catch (e) {
+        const error = wrapOpenAIClientError(e);
+        throw error;
+      }
+    });
+  }
+  _getClientOptions(options) {
+    if (!this.client) {
+      const openAIEndpointConfig = {
+        azureOpenAIApiDeploymentName: this.azureOpenAIApiDeploymentName,
+        azureOpenAIApiInstanceName: this.azureOpenAIApiInstanceName,
+        azureOpenAIApiKey: this.azureOpenAIApiKey,
+        azureOpenAIBasePath: this.azureOpenAIBasePath,
+        baseURL: this.clientConfig.baseURL,
+        azureOpenAIEndpoint: this.azureOpenAIEndpoint
+      };
+      const endpoint = getEndpoint(openAIEndpointConfig);
+      const params = {
+        ...this.clientConfig,
+        baseURL: endpoint,
+        timeout: this.timeout,
+        maxRetries: 0
+      };
+      if (!params.baseURL) {
+        delete params.baseURL;
+      }
+      this.client = new OpenAI(params);
+    }
+    const requestOptions = {
+      ...this.clientConfig,
+      ...options
+    };
+    if (this.azureOpenAIApiKey) {
+      requestOptions.headers = {
+        "api-key": this.azureOpenAIApiKey,
+        ...requestOptions.headers
+      };
+      requestOptions.query = {
+        "api-version": this.azureOpenAIApiVersion,
+        ...requestOptions.query
+      };
+    }
+    return requestOptions;
+  }
+  _llmType() {
+    return "openai";
+  }
+  /** @ignore */
+  _combineLLMOutput(...llmOutputs) {
+    return llmOutputs.reduce((acc, llmOutput) => {
+      var _a2, _b, _c;
+      if (llmOutput && llmOutput.tokenUsage) {
+        acc.tokenUsage.completionTokens += (_a2 = llmOutput.tokenUsage.completionTokens) != null ? _a2 : 0;
+        acc.tokenUsage.promptTokens += (_b = llmOutput.tokenUsage.promptTokens) != null ? _b : 0;
+        acc.tokenUsage.totalTokens += (_c = llmOutput.tokenUsage.totalTokens) != null ? _c : 0;
+      }
+      return acc;
+    }, {
+      tokenUsage: {
+        completionTokens: 0,
+        promptTokens: 0,
+        totalTokens: 0
+      }
+    });
+  }
+  withStructuredOutput(outputSchema, config) {
+    var _a2, _b;
+    let schema;
+    let name;
+    let method;
+    let includeRaw;
+    if (isStructuredOutputMethodParams(outputSchema)) {
+      schema = outputSchema.schema;
+      name = outputSchema.name;
+      method = outputSchema.method;
+      includeRaw = outputSchema.includeRaw;
+    } else {
+      schema = outputSchema;
+      name = config == null ? void 0 : config.name;
+      method = config == null ? void 0 : config.method;
+      includeRaw = config == null ? void 0 : config.includeRaw;
+    }
+    let llm;
+    let outputParser;
+    if ((config == null ? void 0 : config.strict) !== void 0 && method === "jsonMode") {
+      throw new Error("Argument `strict` is only supported for `method` = 'function_calling'");
+    }
+    if (method === "jsonMode") {
+      llm = this.bind({
+        response_format: { type: "json_object" }
+      });
+      if (isZodSchema2(schema)) {
+        outputParser = StructuredOutputParser.fromZodSchema(schema);
+      } else {
+        outputParser = new JsonOutputParser();
+      }
+    } else if (method === "jsonSchema") {
+      llm = this.bind({
+        response_format: {
+          type: "json_schema",
+          json_schema: {
+            name: name != null ? name : "extract",
+            description: schema.description,
+            schema,
+            strict: config == null ? void 0 : config.strict
+          }
+        }
+      });
+      if (isZodSchema2(schema)) {
+        outputParser = StructuredOutputParser.fromZodSchema(schema);
+      } else {
+        outputParser = new JsonOutputParser();
+      }
+    } else {
+      let functionName = name != null ? name : "extract";
+      if (isZodSchema2(schema)) {
+        const asJsonSchema = zodToJsonSchema(schema);
+        llm = this.bind({
+          tools: [
+            {
+              type: "function",
+              function: {
+                name: functionName,
+                description: asJsonSchema.description,
+                parameters: asJsonSchema
+              }
+            }
+          ],
+          tool_choice: {
+            type: "function",
+            function: {
+              name: functionName
+            }
+          },
+          // Do not pass `strict` argument to OpenAI if `config.strict` is undefined
+          ...(config == null ? void 0 : config.strict) !== void 0 ? { strict: config.strict } : {}
+        });
+        outputParser = new JsonOutputKeyToolsParser({
+          returnSingle: true,
+          keyName: functionName,
+          zodSchema: schema
+        });
+      } else {
+        let openAIFunctionDefinition;
+        if (typeof schema.name === "string" && typeof schema.parameters === "object" && schema.parameters != null) {
+          openAIFunctionDefinition = schema;
+          functionName = schema.name;
+        } else {
+          functionName = (_a2 = schema.title) != null ? _a2 : functionName;
+          openAIFunctionDefinition = {
+            name: functionName,
+            description: (_b = schema.description) != null ? _b : "",
+            parameters: schema
+          };
+        }
+        llm = this.bind({
+          tools: [
+            {
+              type: "function",
+              function: openAIFunctionDefinition
+            }
+          ],
+          tool_choice: {
+            type: "function",
+            function: {
+              name: functionName
+            }
+          },
+          // Do not pass `strict` argument to OpenAI if `config.strict` is undefined
+          ...(config == null ? void 0 : config.strict) !== void 0 ? { strict: config.strict } : {}
+        });
+        outputParser = new JsonOutputKeyToolsParser({
+          returnSingle: true,
+          keyName: functionName
+        });
+      }
+    }
+    if (!includeRaw) {
+      return llm.pipe(outputParser);
+    }
+    const parserAssign = RunnablePassthrough.assign({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      parsed: (input, config2) => outputParser.invoke(input.raw, config2)
+    });
+    const parserNone = RunnablePassthrough.assign({
+      parsed: () => null
+    });
+    const parsedWithFallback = parserAssign.withFallbacks({
+      fallbacks: [parserNone]
+    });
+    return RunnableSequence.from([
+      {
+        raw: llm
+      },
+      parsedWithFallback
+    ]);
+  }
+};
+function isZodSchema2(input) {
+  return typeof (input == null ? void 0 : input.parse) === "function";
+}
+function isStructuredOutputMethodParams(x) {
+  return x !== void 0 && // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  typeof x.schema === "object";
+}
 
 // node_modules/@langchain/core/dist/language_models/llms.js
 init_messages2();
@@ -27277,311 +31334,6 @@ init_manager();
 init_event_stream();
 init_log_stream();
 init_stream();
-var BaseLLM = class _BaseLLM extends BaseLanguageModel {
-  constructor({ concurrency, ...rest }) {
-    super(concurrency ? { maxConcurrency: concurrency, ...rest } : rest);
-    Object.defineProperty(this, "lc_namespace", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: ["langchain", "llms", this._llmType()]
-    });
-  }
-  /**
-   * This method takes an input and options, and returns a string. It
-   * converts the input to a prompt value and generates a result based on
-   * the prompt.
-   * @param input Input for the LLM.
-   * @param options Options for the LLM call.
-   * @returns A string result based on the prompt.
-   */
-  async invoke(input, options) {
-    const promptValue = _BaseLLM._convertInputToPromptValue(input);
-    const result = await this.generatePrompt([promptValue], options, options == null ? void 0 : options.callbacks);
-    return result.generations[0][0].text;
-  }
-  // eslint-disable-next-line require-yield
-  async *_streamResponseChunks(_input, _options, _runManager) {
-    throw new Error("Not implemented.");
-  }
-  _separateRunnableConfigFromCallOptionsCompat(options) {
-    const [runnableConfig, callOptions] = super._separateRunnableConfigFromCallOptions(options);
-    callOptions.signal = runnableConfig.signal;
-    return [runnableConfig, callOptions];
-  }
-  async *_streamIterator(input, options) {
-    if (this._streamResponseChunks === _BaseLLM.prototype._streamResponseChunks) {
-      yield this.invoke(input, options);
-    } else {
-      const prompt = _BaseLLM._convertInputToPromptValue(input);
-      const [runnableConfig, callOptions] = this._separateRunnableConfigFromCallOptionsCompat(options);
-      const callbackManager_ = await CallbackManager.configure(runnableConfig.callbacks, this.callbacks, runnableConfig.tags, this.tags, runnableConfig.metadata, this.metadata, { verbose: this.verbose });
-      const extra = {
-        options: callOptions,
-        invocation_params: this == null ? void 0 : this.invocationParams(callOptions),
-        batch_size: 1
-      };
-      const runManagers = await (callbackManager_ == null ? void 0 : callbackManager_.handleLLMStart(this.toJSON(), [prompt.toString()], runnableConfig.runId, void 0, extra, void 0, void 0, runnableConfig.runName));
-      let generation = new GenerationChunk({
-        text: ""
-      });
-      try {
-        for await (const chunk of this._streamResponseChunks(prompt.toString(), callOptions, runManagers == null ? void 0 : runManagers[0])) {
-          if (!generation) {
-            generation = chunk;
-          } else {
-            generation = generation.concat(chunk);
-          }
-          if (typeof chunk.text === "string") {
-            yield chunk.text;
-          }
-        }
-      } catch (err) {
-        await Promise.all((runManagers != null ? runManagers : []).map((runManager) => runManager == null ? void 0 : runManager.handleLLMError(err)));
-        throw err;
-      }
-      await Promise.all((runManagers != null ? runManagers : []).map((runManager) => runManager == null ? void 0 : runManager.handleLLMEnd({
-        generations: [[generation]]
-      })));
-    }
-  }
-  /**
-   * This method takes prompt values, options, and callbacks, and generates
-   * a result based on the prompts.
-   * @param promptValues Prompt values for the LLM.
-   * @param options Options for the LLM call.
-   * @param callbacks Callbacks for the LLM call.
-   * @returns An LLMResult based on the prompts.
-   */
-  async generatePrompt(promptValues, options, callbacks) {
-    const prompts = promptValues.map((promptValue) => promptValue.toString());
-    return this.generate(prompts, options, callbacks);
-  }
-  /**
-   * Get the parameters used to invoke the model
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  invocationParams(_options) {
-    return {};
-  }
-  _flattenLLMResult(llmResult) {
-    const llmResults = [];
-    for (let i = 0; i < llmResult.generations.length; i += 1) {
-      const genList = llmResult.generations[i];
-      if (i === 0) {
-        llmResults.push({
-          generations: [genList],
-          llmOutput: llmResult.llmOutput
-        });
-      } else {
-        const llmOutput = llmResult.llmOutput ? { ...llmResult.llmOutput, tokenUsage: {} } : void 0;
-        llmResults.push({
-          generations: [genList],
-          llmOutput
-        });
-      }
-    }
-    return llmResults;
-  }
-  /** @ignore */
-  async _generateUncached(prompts, parsedOptions, handledOptions) {
-    const callbackManager_ = await CallbackManager.configure(handledOptions.callbacks, this.callbacks, handledOptions.tags, this.tags, handledOptions.metadata, this.metadata, { verbose: this.verbose });
-    const extra = {
-      options: parsedOptions,
-      invocation_params: this == null ? void 0 : this.invocationParams(parsedOptions),
-      batch_size: prompts.length
-    };
-    const runManagers = await (callbackManager_ == null ? void 0 : callbackManager_.handleLLMStart(this.toJSON(), prompts, handledOptions.runId, void 0, extra, void 0, void 0, handledOptions == null ? void 0 : handledOptions.runName));
-    const hasStreamingHandler = !!(runManagers == null ? void 0 : runManagers[0].handlers.find((handler) => {
-      return isStreamEventsHandler(handler) || isLogStreamHandler(handler);
-    }));
-    let output;
-    if (hasStreamingHandler && prompts.length === 1 && this._streamResponseChunks !== _BaseLLM.prototype._streamResponseChunks) {
-      try {
-        const stream = await this._streamResponseChunks(prompts[0], parsedOptions, runManagers == null ? void 0 : runManagers[0]);
-        let aggregated;
-        for await (const chunk of stream) {
-          if (aggregated === void 0) {
-            aggregated = chunk;
-          } else {
-            aggregated = concat(aggregated, chunk);
-          }
-        }
-        if (aggregated === void 0) {
-          throw new Error("Received empty response from chat model call.");
-        }
-        output = { generations: [[aggregated]], llmOutput: {} };
-        await (runManagers == null ? void 0 : runManagers[0].handleLLMEnd(output));
-      } catch (e) {
-        await (runManagers == null ? void 0 : runManagers[0].handleLLMError(e));
-        throw e;
-      }
-    } else {
-      try {
-        output = await this._generate(prompts, parsedOptions, runManagers == null ? void 0 : runManagers[0]);
-      } catch (err) {
-        await Promise.all((runManagers != null ? runManagers : []).map((runManager) => runManager == null ? void 0 : runManager.handleLLMError(err)));
-        throw err;
-      }
-      const flattenedOutputs = this._flattenLLMResult(output);
-      await Promise.all((runManagers != null ? runManagers : []).map((runManager, i) => runManager == null ? void 0 : runManager.handleLLMEnd(flattenedOutputs[i])));
-    }
-    const runIds = (runManagers == null ? void 0 : runManagers.map((manager) => manager.runId)) || void 0;
-    Object.defineProperty(output, RUN_KEY, {
-      value: runIds ? { runIds } : void 0,
-      configurable: true
-    });
-    return output;
-  }
-  async _generateCached({ prompts, cache: cache2, llmStringKey, parsedOptions, handledOptions, runId }) {
-    const callbackManager_ = await CallbackManager.configure(handledOptions.callbacks, this.callbacks, handledOptions.tags, this.tags, handledOptions.metadata, this.metadata, { verbose: this.verbose });
-    const extra = {
-      options: parsedOptions,
-      invocation_params: this == null ? void 0 : this.invocationParams(parsedOptions),
-      batch_size: prompts.length,
-      cached: true
-    };
-    const runManagers = await (callbackManager_ == null ? void 0 : callbackManager_.handleLLMStart(this.toJSON(), prompts, runId, void 0, extra, void 0, void 0, handledOptions == null ? void 0 : handledOptions.runName));
-    const missingPromptIndices = [];
-    const results = await Promise.allSettled(prompts.map(async (prompt, index) => {
-      const result = await cache2.lookup(prompt, llmStringKey);
-      if (result == null) {
-        missingPromptIndices.push(index);
-      }
-      return result;
-    }));
-    const cachedResults = results.map((result, index) => ({ result, runManager: runManagers == null ? void 0 : runManagers[index] })).filter(({ result }) => result.status === "fulfilled" && result.value != null || result.status === "rejected");
-    const generations = [];
-    await Promise.all(cachedResults.map(async ({ result: promiseResult, runManager }, i) => {
-      if (promiseResult.status === "fulfilled") {
-        const result = promiseResult.value;
-        generations[i] = result;
-        if (result.length) {
-          await (runManager == null ? void 0 : runManager.handleLLMNewToken(result[0].text));
-        }
-        return runManager == null ? void 0 : runManager.handleLLMEnd({
-          generations: [result]
-        });
-      } else {
-        await (runManager == null ? void 0 : runManager.handleLLMError(promiseResult.reason));
-        return Promise.reject(promiseResult.reason);
-      }
-    }));
-    const output = {
-      generations,
-      missingPromptIndices
-    };
-    Object.defineProperty(output, RUN_KEY, {
-      value: runManagers ? { runIds: runManagers == null ? void 0 : runManagers.map((manager) => manager.runId) } : void 0,
-      configurable: true
-    });
-    return output;
-  }
-  /**
-   * Run the LLM on the given prompts and input, handling caching.
-   */
-  async generate(prompts, options, callbacks) {
-    var _a2, _b;
-    if (!Array.isArray(prompts)) {
-      throw new Error("Argument 'prompts' is expected to be a string[]");
-    }
-    let parsedOptions;
-    if (Array.isArray(options)) {
-      parsedOptions = { stop: options };
-    } else {
-      parsedOptions = options;
-    }
-    const [runnableConfig, callOptions] = this._separateRunnableConfigFromCallOptionsCompat(parsedOptions);
-    runnableConfig.callbacks = (_a2 = runnableConfig.callbacks) != null ? _a2 : callbacks;
-    if (!this.cache) {
-      return this._generateUncached(prompts, callOptions, runnableConfig);
-    }
-    const { cache: cache2 } = this;
-    const llmStringKey = this._getSerializedCacheKeyParametersForCall(callOptions);
-    const { generations, missingPromptIndices } = await this._generateCached({
-      prompts,
-      cache: cache2,
-      llmStringKey,
-      parsedOptions: callOptions,
-      handledOptions: runnableConfig,
-      runId: runnableConfig.runId
-    });
-    let llmOutput = {};
-    if (missingPromptIndices.length > 0) {
-      const results = await this._generateUncached(missingPromptIndices.map((i) => prompts[i]), callOptions, runnableConfig);
-      await Promise.all(results.generations.map(async (generation, index) => {
-        const promptIndex = missingPromptIndices[index];
-        generations[promptIndex] = generation;
-        return cache2.update(prompts[promptIndex], llmStringKey, generation);
-      }));
-      llmOutput = (_b = results.llmOutput) != null ? _b : {};
-    }
-    return { generations, llmOutput };
-  }
-  /**
-   * @deprecated Use .invoke() instead. Will be removed in 0.2.0.
-   * Convenience wrapper for {@link generate} that takes in a single string prompt and returns a single string output.
-   */
-  async call(prompt, options, callbacks) {
-    const { generations } = await this.generate([prompt], options, callbacks);
-    return generations[0][0].text;
-  }
-  /**
-   * @deprecated Use .invoke() instead. Will be removed in 0.2.0.
-   *
-   * This method is similar to `call`, but it's used for making predictions
-   * based on the input text.
-   * @param text Input text for the prediction.
-   * @param options Options for the LLM call.
-   * @param callbacks Callbacks for the LLM call.
-   * @returns A prediction based on the input text.
-   */
-  async predict(text, options, callbacks) {
-    return this.call(text, options, callbacks);
-  }
-  /**
-   * @deprecated Use .invoke() instead. Will be removed in 0.2.0.
-   *
-   * This method takes a list of messages, options, and callbacks, and
-   * returns a predicted message.
-   * @param messages A list of messages for the prediction.
-   * @param options Options for the LLM call.
-   * @param callbacks Callbacks for the LLM call.
-   * @returns A predicted message based on the list of messages.
-   */
-  async predictMessages(messages, options, callbacks) {
-    const text = getBufferString(messages);
-    const prediction = await this.call(text, options, callbacks);
-    return new AIMessage(prediction);
-  }
-  /**
-   * Get the identifying parameters of the LLM.
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  _identifyingParams() {
-    return {};
-  }
-  /**
-   * @deprecated
-   * Return a json-like object representing this LLM.
-   */
-  serialize() {
-    return {
-      ...this._identifyingParams(),
-      _type: this._llmType(),
-      _model: this._modelType()
-    };
-  }
-  _modelType() {
-    return "base_llm";
-  }
-};
-var LLM = class extends BaseLLM {
-  async _generate(prompts, options, runManager) {
-    const generations = await Promise.all(prompts.map((prompt, promptIndex) => this._call(prompt, { ...options, promptIndex }, runManager).then((text) => [{ text }])));
-    return { generations };
-  }
-};
 
 // node_modules/@langchain/core/dist/embeddings.js
 init_async_caller2();
@@ -28881,93 +32633,157 @@ var browser = new Ollama$1();
 // node_modules/@langchain/core/utils/stream.js
 init_stream();
 
-// node_modules/@langchain/ollama/dist/llms.js
-var Ollama2 = class extends LLM {
+// node_modules/@langchain/ollama/dist/utils.js
+init_esm_browser();
+function convertOllamaMessagesToLangChain(messages, extra) {
+  var _a2, _b;
+  return new AIMessageChunk({
+    content: (_a2 = messages.content) != null ? _a2 : "",
+    tool_call_chunks: (_b = messages.tool_calls) == null ? void 0 : _b.map((tc) => ({
+      name: tc.function.name,
+      args: JSON.stringify(tc.function.arguments),
+      type: "tool_call_chunk",
+      index: 0,
+      id: v4_default()
+    })),
+    response_metadata: extra == null ? void 0 : extra.responseMetadata,
+    usage_metadata: extra == null ? void 0 : extra.usageMetadata
+  });
+}
+function extractBase64FromDataUrl(dataUrl) {
+  const match = dataUrl.match(/^data:.*?;base64,(.*)$/);
+  return match ? match[1] : "";
+}
+function convertAMessagesToOllama(messages) {
+  var _a2, _b, _c;
+  if (typeof messages.content === "string") {
+    return [
+      {
+        role: "assistant",
+        content: messages.content
+      }
+    ];
+  }
+  const textFields = messages.content.filter((c) => c.type === "text" && typeof c.text === "string");
+  const textMessages = textFields.map((c) => ({
+    role: "assistant",
+    content: c.text
+  }));
+  let toolCallMsgs;
+  if (messages.content.find((c) => c.type === "tool_use") && ((_a2 = messages.tool_calls) == null ? void 0 : _a2.length)) {
+    const toolCalls = (_b = messages.tool_calls) == null ? void 0 : _b.map((tc) => ({
+      id: tc.id,
+      type: "function",
+      function: {
+        name: tc.name,
+        arguments: tc.args
+      }
+    }));
+    if (toolCalls) {
+      toolCallMsgs = {
+        role: "assistant",
+        tool_calls: toolCalls,
+        content: ""
+      };
+    }
+  } else if (messages.content.find((c) => c.type === "tool_use") && !((_c = messages.tool_calls) == null ? void 0 : _c.length)) {
+    throw new Error("'tool_use' content type is not supported without tool calls.");
+  }
+  return [...textMessages, ...toolCallMsgs ? [toolCallMsgs] : []];
+}
+function convertHumanGenericMessagesToOllama(message) {
+  if (typeof message.content === "string") {
+    return [
+      {
+        role: "user",
+        content: message.content
+      }
+    ];
+  }
+  return message.content.map((c) => {
+    if (c.type === "text") {
+      return {
+        role: "user",
+        content: c.text
+      };
+    } else if (c.type === "image_url") {
+      if (typeof c.image_url === "string") {
+        return {
+          role: "user",
+          content: "",
+          images: [extractBase64FromDataUrl(c.image_url)]
+        };
+      } else if (c.image_url.url && typeof c.image_url.url === "string") {
+        return {
+          role: "user",
+          content: "",
+          images: [extractBase64FromDataUrl(c.image_url.url)]
+        };
+      }
+    }
+    throw new Error(`Unsupported content type: ${c.type}`);
+  });
+}
+function convertSystemMessageToOllama(message) {
+  if (typeof message.content === "string") {
+    return [
+      {
+        role: "system",
+        content: message.content
+      }
+    ];
+  } else if (message.content.every((c) => c.type === "text" && typeof c.text === "string")) {
+    return message.content.map((c) => ({
+      role: "system",
+      content: c.text
+    }));
+  } else {
+    throw new Error(`Unsupported content type(s): ${message.content.map((c) => c.type).join(", ")}`);
+  }
+}
+function convertToolMessageToOllama(message) {
+  if (typeof message.content !== "string") {
+    throw new Error("Non string tool message content is not supported");
+  }
+  return [
+    {
+      role: "tool",
+      content: message.content
+    }
+  ];
+}
+function convertToOllamaMessages(messages) {
+  return messages.flatMap((msg) => {
+    if (["human", "generic"].includes(msg._getType())) {
+      return convertHumanGenericMessagesToOllama(msg);
+    } else if (msg._getType() === "ai") {
+      return convertAMessagesToOllama(msg);
+    } else if (msg._getType() === "system") {
+      return convertSystemMessageToOllama(msg);
+    } else if (msg._getType() === "tool") {
+      return convertToolMessageToOllama(msg);
+    } else {
+      throw new Error(`Unsupported message type: ${msg._getType()}`);
+    }
+  });
+}
+
+// node_modules/@langchain/ollama/dist/chat_models.js
+var ChatOllama = class extends BaseChatModel {
+  // Used for tracing, replace with the same name as your class
   static lc_name() {
-    return "Ollama";
+    return "ChatOllama";
   }
   constructor(fields) {
     var _a2, _b, _c, _d;
     super(fields != null ? fields : {});
-    Object.defineProperty(this, "lc_serializable", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: true
-    });
     Object.defineProperty(this, "model", {
       enumerable: true,
       configurable: true,
       writable: true,
       value: "llama3"
     });
-    Object.defineProperty(this, "baseUrl", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: "http://localhost:11434"
-    });
-    Object.defineProperty(this, "keepAlive", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: "5m"
-    });
-    Object.defineProperty(this, "embeddingOnly", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "f16KV", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "frequencyPenalty", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "logitsAll", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "lowVram", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "mainGpu", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "mirostat", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "mirostatEta", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "mirostatTau", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "numBatch", {
+    Object.defineProperty(this, "numa", {
       enumerable: true,
       configurable: true,
       writable: true,
@@ -28979,19 +32795,61 @@ var Ollama2 = class extends LLM {
       writable: true,
       value: void 0
     });
+    Object.defineProperty(this, "numBatch", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
     Object.defineProperty(this, "numGpu", {
       enumerable: true,
       configurable: true,
       writable: true,
       value: void 0
     });
-    Object.defineProperty(this, "numKeep", {
+    Object.defineProperty(this, "mainGpu", {
       enumerable: true,
       configurable: true,
       writable: true,
       value: void 0
     });
-    Object.defineProperty(this, "numPredict", {
+    Object.defineProperty(this, "lowVram", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "f16Kv", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "logitsAll", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "vocabOnly", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "useMmap", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "useMlock", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "embeddingOnly", {
       enumerable: true,
       configurable: true,
       writable: true,
@@ -29003,43 +32861,19 @@ var Ollama2 = class extends LLM {
       writable: true,
       value: void 0
     });
-    Object.defineProperty(this, "penalizeNewline", {
+    Object.defineProperty(this, "numKeep", {
       enumerable: true,
       configurable: true,
       writable: true,
       value: void 0
     });
-    Object.defineProperty(this, "presencePenalty", {
+    Object.defineProperty(this, "seed", {
       enumerable: true,
       configurable: true,
       writable: true,
       value: void 0
     });
-    Object.defineProperty(this, "repeatLastN", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "repeatPenalty", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "temperature", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "stop", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "tfsZ", {
+    Object.defineProperty(this, "numPredict", {
       enumerable: true,
       configurable: true,
       writable: true,
@@ -29057,25 +32891,73 @@ var Ollama2 = class extends LLM {
       writable: true,
       value: void 0
     });
+    Object.defineProperty(this, "tfsZ", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
     Object.defineProperty(this, "typicalP", {
       enumerable: true,
       configurable: true,
       writable: true,
       value: void 0
     });
-    Object.defineProperty(this, "useMLock", {
+    Object.defineProperty(this, "repeatLastN", {
       enumerable: true,
       configurable: true,
       writable: true,
       value: void 0
     });
-    Object.defineProperty(this, "useMMap", {
+    Object.defineProperty(this, "temperature", {
       enumerable: true,
       configurable: true,
       writable: true,
       value: void 0
     });
-    Object.defineProperty(this, "vocabOnly", {
+    Object.defineProperty(this, "repeatPenalty", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "presencePenalty", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "frequencyPenalty", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "mirostat", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "mirostatTau", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "mirostatEta", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "penalizeNewline", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "streaming", {
       enumerable: true,
       configurable: true,
       writable: true,
@@ -29087,134 +32969,277 @@ var Ollama2 = class extends LLM {
       writable: true,
       value: void 0
     });
+    Object.defineProperty(this, "keepAlive", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: "5m"
+    });
     Object.defineProperty(this, "client", {
       enumerable: true,
       configurable: true,
       writable: true,
       value: void 0
     });
-    this.model = (_a2 = fields == null ? void 0 : fields.model) != null ? _a2 : this.model;
-    this.baseUrl = ((_b = fields == null ? void 0 : fields.baseUrl) == null ? void 0 : _b.endsWith("/")) ? fields == null ? void 0 : fields.baseUrl.slice(0, -1) : (_c = fields == null ? void 0 : fields.baseUrl) != null ? _c : this.baseUrl;
+    Object.defineProperty(this, "checkOrPullModel", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: false
+    });
+    Object.defineProperty(this, "baseUrl", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: "http://127.0.0.1:11434"
+    });
     this.client = new Ollama$1({
-      host: this.baseUrl,
+      host: fields == null ? void 0 : fields.baseUrl,
       headers: fields == null ? void 0 : fields.headers
     });
-    this.keepAlive = (_d = fields == null ? void 0 : fields.keepAlive) != null ? _d : this.keepAlive;
-    this.embeddingOnly = fields == null ? void 0 : fields.embeddingOnly;
-    this.f16KV = fields == null ? void 0 : fields.f16Kv;
-    this.frequencyPenalty = fields == null ? void 0 : fields.frequencyPenalty;
-    this.logitsAll = fields == null ? void 0 : fields.logitsAll;
-    this.lowVram = fields == null ? void 0 : fields.lowVram;
-    this.mainGpu = fields == null ? void 0 : fields.mainGpu;
-    this.mirostat = fields == null ? void 0 : fields.mirostat;
-    this.mirostatEta = fields == null ? void 0 : fields.mirostatEta;
-    this.mirostatTau = fields == null ? void 0 : fields.mirostatTau;
-    this.numBatch = fields == null ? void 0 : fields.numBatch;
+    this.baseUrl = (_a2 = fields == null ? void 0 : fields.baseUrl) != null ? _a2 : this.baseUrl;
+    this.model = (_b = fields == null ? void 0 : fields.model) != null ? _b : this.model;
+    this.numa = fields == null ? void 0 : fields.numa;
     this.numCtx = fields == null ? void 0 : fields.numCtx;
+    this.numBatch = fields == null ? void 0 : fields.numBatch;
     this.numGpu = fields == null ? void 0 : fields.numGpu;
-    this.numKeep = fields == null ? void 0 : fields.numKeep;
-    this.numPredict = fields == null ? void 0 : fields.numPredict;
+    this.mainGpu = fields == null ? void 0 : fields.mainGpu;
+    this.lowVram = fields == null ? void 0 : fields.lowVram;
+    this.f16Kv = fields == null ? void 0 : fields.f16Kv;
+    this.logitsAll = fields == null ? void 0 : fields.logitsAll;
+    this.vocabOnly = fields == null ? void 0 : fields.vocabOnly;
+    this.useMmap = fields == null ? void 0 : fields.useMmap;
+    this.useMlock = fields == null ? void 0 : fields.useMlock;
+    this.embeddingOnly = fields == null ? void 0 : fields.embeddingOnly;
     this.numThread = fields == null ? void 0 : fields.numThread;
-    this.penalizeNewline = fields == null ? void 0 : fields.penalizeNewline;
-    this.presencePenalty = fields == null ? void 0 : fields.presencePenalty;
-    this.repeatLastN = fields == null ? void 0 : fields.repeatLastN;
-    this.repeatPenalty = fields == null ? void 0 : fields.repeatPenalty;
-    this.temperature = fields == null ? void 0 : fields.temperature;
-    this.stop = fields == null ? void 0 : fields.stop;
-    this.tfsZ = fields == null ? void 0 : fields.tfsZ;
+    this.numKeep = fields == null ? void 0 : fields.numKeep;
+    this.seed = fields == null ? void 0 : fields.seed;
+    this.numPredict = fields == null ? void 0 : fields.numPredict;
     this.topK = fields == null ? void 0 : fields.topK;
     this.topP = fields == null ? void 0 : fields.topP;
+    this.tfsZ = fields == null ? void 0 : fields.tfsZ;
     this.typicalP = fields == null ? void 0 : fields.typicalP;
-    this.useMLock = fields == null ? void 0 : fields.useMlock;
-    this.useMMap = fields == null ? void 0 : fields.useMmap;
-    this.vocabOnly = fields == null ? void 0 : fields.vocabOnly;
+    this.repeatLastN = fields == null ? void 0 : fields.repeatLastN;
+    this.temperature = fields == null ? void 0 : fields.temperature;
+    this.repeatPenalty = fields == null ? void 0 : fields.repeatPenalty;
+    this.presencePenalty = fields == null ? void 0 : fields.presencePenalty;
+    this.frequencyPenalty = fields == null ? void 0 : fields.frequencyPenalty;
+    this.mirostat = fields == null ? void 0 : fields.mirostat;
+    this.mirostatTau = fields == null ? void 0 : fields.mirostatTau;
+    this.mirostatEta = fields == null ? void 0 : fields.mirostatEta;
+    this.penalizeNewline = fields == null ? void 0 : fields.penalizeNewline;
+    this.streaming = fields == null ? void 0 : fields.streaming;
     this.format = fields == null ? void 0 : fields.format;
+    this.keepAlive = (_c = fields == null ? void 0 : fields.keepAlive) != null ? _c : this.keepAlive;
+    this.checkOrPullModel = (_d = fields == null ? void 0 : fields.checkOrPullModel) != null ? _d : this.checkOrPullModel;
   }
+  // Replace
   _llmType() {
     return "ollama";
   }
+  /**
+   * Download a model onto the local machine.
+   *
+   * @param {string} model The name of the model to download.
+   * @param {PullModelOptions | undefined} options Options for pulling the model.
+   * @returns {Promise<void>}
+   */
+  async pull(model, options) {
+    const { stream, insecure, logProgress } = {
+      stream: true,
+      ...options
+    };
+    if (stream) {
+      for await (const chunk of await this.client.pull({
+        model,
+        insecure,
+        stream
+      })) {
+        if (logProgress) {
+          console.log(chunk);
+        }
+      }
+    } else {
+      const response = await this.client.pull({ model, insecure });
+      if (logProgress) {
+        console.log(response);
+      }
+    }
+  }
+  bindTools(tools, kwargs) {
+    return this.bind({
+      tools: tools.map((tool) => convertToOpenAITool(tool)),
+      ...kwargs
+    });
+  }
+  getLsParams(options) {
+    var _a2, _b, _c, _d;
+    const params = this.invocationParams(options);
+    return {
+      ls_provider: "ollama",
+      ls_model_name: this.model,
+      ls_model_type: "chat",
+      ls_temperature: (_b = (_a2 = params.options) == null ? void 0 : _a2.temperature) != null ? _b : void 0,
+      ls_max_tokens: (_d = (_c = params.options) == null ? void 0 : _c.num_predict) != null ? _d : void 0,
+      ls_stop: options.stop
+    };
+  }
   invocationParams(options) {
     var _a2;
+    if (options == null ? void 0 : options.tool_choice) {
+      throw new Error("Tool choice is not supported for ChatOllama.");
+    }
     return {
       model: this.model,
       format: this.format,
       keep_alive: this.keepAlive,
-      images: options == null ? void 0 : options.images,
       options: {
-        embedding_only: this.embeddingOnly,
-        f16_kv: this.f16KV,
-        frequency_penalty: this.frequencyPenalty,
-        logits_all: this.logitsAll,
-        low_vram: this.lowVram,
-        main_gpu: this.mainGpu,
-        mirostat: this.mirostat,
-        mirostat_eta: this.mirostatEta,
-        mirostat_tau: this.mirostatTau,
-        num_batch: this.numBatch,
+        numa: this.numa,
         num_ctx: this.numCtx,
+        num_batch: this.numBatch,
         num_gpu: this.numGpu,
-        num_keep: this.numKeep,
-        num_predict: this.numPredict,
+        main_gpu: this.mainGpu,
+        low_vram: this.lowVram,
+        f16_kv: this.f16Kv,
+        logits_all: this.logitsAll,
+        vocab_only: this.vocabOnly,
+        use_mmap: this.useMmap,
+        use_mlock: this.useMlock,
+        embedding_only: this.embeddingOnly,
         num_thread: this.numThread,
-        penalize_newline: this.penalizeNewline,
-        presence_penalty: this.presencePenalty,
-        repeat_last_n: this.repeatLastN,
-        repeat_penalty: this.repeatPenalty,
-        temperature: this.temperature,
-        stop: (_a2 = options == null ? void 0 : options.stop) != null ? _a2 : this.stop,
-        tfs_z: this.tfsZ,
+        num_keep: this.numKeep,
+        seed: this.seed,
+        num_predict: this.numPredict,
         top_k: this.topK,
         top_p: this.topP,
+        tfs_z: this.tfsZ,
         typical_p: this.typicalP,
-        use_mlock: this.useMLock,
-        use_mmap: this.useMMap,
-        vocab_only: this.vocabOnly
-      }
+        repeat_last_n: this.repeatLastN,
+        temperature: this.temperature,
+        repeat_penalty: this.repeatPenalty,
+        presence_penalty: this.presencePenalty,
+        frequency_penalty: this.frequencyPenalty,
+        mirostat: this.mirostat,
+        mirostat_tau: this.mirostatTau,
+        mirostat_eta: this.mirostatEta,
+        penalize_newline: this.penalizeNewline,
+        stop: options == null ? void 0 : options.stop
+      },
+      tools: ((_a2 = options == null ? void 0 : options.tools) == null ? void 0 : _a2.length) ? options.tools.map((tool) => convertToOpenAITool(tool)) : void 0
     };
   }
-  async *_streamResponseChunks(prompt, options, runManager) {
-    var _a2, _b;
-    const stream = await this.caller.call(async () => this.client.generate({
-      ...this.invocationParams(options),
-      prompt,
-      stream: true
-    }));
-    for await (const chunk of stream) {
-      if ((_a2 = options.signal) == null ? void 0 : _a2.aborted) {
-        throw new Error("This operation was aborted");
-      }
-      if (!chunk.done) {
-        yield new GenerationChunk({
-          text: chunk.response,
-          generationInfo: {
-            ...chunk,
-            response: void 0
-          }
-        });
-        await (runManager == null ? void 0 : runManager.handleLLMNewToken((_b = chunk.response) != null ? _b : ""));
-      } else {
-        yield new GenerationChunk({
-          text: "",
-          generationInfo: {
-            model: chunk.model,
-            total_duration: chunk.total_duration,
-            load_duration: chunk.load_duration,
-            prompt_eval_count: chunk.prompt_eval_count,
-            prompt_eval_duration: chunk.prompt_eval_duration,
-            eval_count: chunk.eval_count,
-            eval_duration: chunk.eval_duration
-          }
-        });
-      }
-    }
+  /**
+   * Check if a model exists on the local machine.
+   *
+   * @param {string} model The name of the model to check.
+   * @returns {Promise<boolean>} Whether or not the model exists.
+   */
+  async checkModelExistsOnMachine(model) {
+    const { models } = await this.client.list();
+    return !!models.find((m) => m.name === model || m.name === `${model}:latest`);
   }
-  /** @ignore */
-  async _call(prompt, options, runManager) {
-    const chunks = [];
-    for await (const chunk of this._streamResponseChunks(prompt, options, runManager)) {
-      chunks.push(chunk.text);
+  async _generate(messages, options, runManager) {
+    var _a2;
+    if (this.checkOrPullModel) {
+      if (!await this.checkModelExistsOnMachine(this.model)) {
+        await this.pull(this.model, {
+          logProgress: true
+        });
+      }
     }
-    return chunks.join("");
+    let finalChunk;
+    for await (const chunk of this._streamResponseChunks(messages, options, runManager)) {
+      if (!finalChunk) {
+        finalChunk = chunk.message;
+      } else {
+        finalChunk = concat(finalChunk, chunk.message);
+      }
+    }
+    const nonChunkMessage = new AIMessage({
+      id: finalChunk == null ? void 0 : finalChunk.id,
+      content: (_a2 = finalChunk == null ? void 0 : finalChunk.content) != null ? _a2 : "",
+      tool_calls: finalChunk == null ? void 0 : finalChunk.tool_calls,
+      response_metadata: finalChunk == null ? void 0 : finalChunk.response_metadata,
+      usage_metadata: finalChunk == null ? void 0 : finalChunk.usage_metadata
+    });
+    return {
+      generations: [
+        {
+          text: typeof nonChunkMessage.content === "string" ? nonChunkMessage.content : "",
+          message: nonChunkMessage
+        }
+      ]
+    };
+  }
+  /**
+   * Implement to support streaming.
+   * Should yield chunks iteratively.
+   */
+  async *_streamResponseChunks(messages, options, runManager) {
+    var _a2, _b, _c, _d, _e, _f, _g;
+    if (this.checkOrPullModel) {
+      if (!await this.checkModelExistsOnMachine(this.model)) {
+        await this.pull(this.model, {
+          logProgress: true
+        });
+      }
+    }
+    const params = this.invocationParams(options);
+    const ollamaMessages = convertToOllamaMessages(messages);
+    const usageMetadata = {
+      input_tokens: 0,
+      output_tokens: 0,
+      total_tokens: 0
+    };
+    if (params.tools && params.tools.length > 0) {
+      const toolResult = await this.client.chat({
+        ...params,
+        messages: ollamaMessages,
+        stream: false
+        // Ollama currently does not support streaming with tools
+      });
+      const { message: responseMessage, ...rest } = toolResult;
+      usageMetadata.input_tokens += (_a2 = rest.prompt_eval_count) != null ? _a2 : 0;
+      usageMetadata.output_tokens += (_b = rest.eval_count) != null ? _b : 0;
+      usageMetadata.total_tokens = usageMetadata.input_tokens + usageMetadata.output_tokens;
+      yield new ChatGenerationChunk({
+        text: responseMessage.content,
+        message: convertOllamaMessagesToLangChain(responseMessage, {
+          responseMetadata: rest,
+          usageMetadata
+        })
+      });
+      return runManager == null ? void 0 : runManager.handleLLMNewToken(responseMessage.content);
+    }
+    const stream = await this.client.chat({
+      ...params,
+      messages: ollamaMessages,
+      stream: true
+    });
+    let lastMetadata;
+    for await (const chunk of stream) {
+      if ((_c = options.signal) == null ? void 0 : _c.aborted) {
+        this.client.abort();
+      }
+      const { message: responseMessage, ...rest } = chunk;
+      usageMetadata.input_tokens += (_d = rest.prompt_eval_count) != null ? _d : 0;
+      usageMetadata.output_tokens += (_e = rest.eval_count) != null ? _e : 0;
+      usageMetadata.total_tokens = usageMetadata.input_tokens + usageMetadata.output_tokens;
+      lastMetadata = rest;
+      yield new ChatGenerationChunk({
+        text: (_f = responseMessage.content) != null ? _f : "",
+        message: convertOllamaMessagesToLangChain(responseMessage)
+      });
+      await (runManager == null ? void 0 : runManager.handleLLMNewToken((_g = responseMessage.content) != null ? _g : ""));
+    }
+    yield new ChatGenerationChunk({
+      text: "",
+      message: new AIMessageChunk({
+        content: "",
+        response_metadata: lastMetadata,
+        usage_metadata: usageMetadata
+      })
+    });
   }
 };
 
@@ -29224,6 +33249,24 @@ var LLMProvider = /* @__PURE__ */ ((LLMProvider2) => {
   LLMProvider2["OLLAMA"] = "ollama";
   return LLMProvider2;
 })(LLMProvider || {});
+var LLMFactory = class {
+  static createModel(provider, modelName, options = {}) {
+    switch (provider) {
+      case "openai" /* OPENAI */:
+        return new ChatOpenAI({
+          modelName,
+          ...options
+        });
+      case "ollama" /* OLLAMA */:
+        return new ChatOllama({
+          model: modelName,
+          ...options
+        });
+      default:
+        throw new Error(`Unsupported LLM provider: ${provider}`);
+    }
+  }
+};
 
 // src/models/types.ts
 var DEFAULT_SETTINGS = {
@@ -29251,13 +33294,8 @@ init_chat2();
 
 // src/services/tagGenerator.ts
 var TagGenerator = class {
-  constructor(llmHost, modelName) {
-    this.model = new Ollama2({
-      baseUrl: llmHost || "http://localhost:11434",
-      model: modelName,
-      temperature: 0,
-      maxRetries: 2
-    });
+  constructor(model) {
+    this.model = model;
     this.promptTemplate = new PromptTemplate({
       template: `You are a tag suggestion system. Analyze the following content and suggest relevant tags for organizing it.
             Focus on the main topics, concepts, and categories that would help in finding this content later. Try to follow the rules listed below in the prioritized order.
@@ -29481,7 +33519,16 @@ var TagAgent = class extends import_obsidian4.Plugin {
     });
   }
   initializeTagGenerator() {
-    this.tagGenerator = new TagGenerator(this.settings.llmHost, this.settings.modelName);
+    const model = LLMFactory.createModel(
+      this.settings.llmProvider,
+      this.settings.modelName,
+      {
+        baseUrl: this.settings.llmHost,
+        temperature: 0,
+        maxRetries: 2
+      }
+    );
+    this.tagGenerator = new TagGenerator(model);
   }
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());

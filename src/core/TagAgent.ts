@@ -4,6 +4,7 @@ import { TagGenerator } from '../services/tagGenerator';
 import { TagSuggestionModal } from '../ui/TagSuggestionModal';
 import { TagAgentSettingTab } from '../ui/SettingsTab';
 import { LoadingModal } from '../ui/LoadingModal';
+import { LLMFactory } from '../services/llmFactory';
 
 // Add this type definition near the top of the file, after other imports
 type TagSuggestion = {
@@ -41,7 +42,16 @@ export default class TagAgent extends Plugin {
 	}
 
 	private initializeTagGenerator() {
-		this.tagGenerator = new TagGenerator(this.settings.llmHost, this.settings.modelName);
+		const model = LLMFactory.createModel(
+			this.settings.llmProvider,
+			this.settings.modelName,
+			{
+				baseUrl: this.settings.llmHost,
+				temperature: 0,
+				maxRetries: 2
+			}
+		);
+		this.tagGenerator = new TagGenerator(model);
 	}
 
 	async loadSettings() {

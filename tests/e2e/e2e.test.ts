@@ -1,9 +1,19 @@
 import { describe, it, expect } from 'vitest';
 import { TagGenerator } from '../../src/services/tagGenerator';
+import { LLMFactory, LLMProvider } from '../../src/services/llmFactory';
 
 describe('E2E Tests', () => {
     it('should suggest tags using Ollama', async () => {
-        const tagGenerator = new TagGenerator('http://localhost:11434', 'llama3.1');
+        const model = LLMFactory.createModel(
+            LLMProvider.OLLAMA,
+            'llama3.1',
+            {
+                baseUrl: 'http://localhost:11434',
+                temperature: 0,
+                maxRetries: 2
+            }
+        );
+        const tagGenerator = new TagGenerator(model);
         
         const noteContent = `
 # Sample Note

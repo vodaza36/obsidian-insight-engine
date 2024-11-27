@@ -1,6 +1,6 @@
 {
-  "llmProvider": "ollama",
-  "modelName": "llama2",
+  "llmProvider": "openai",
+  "modelName": "llama3.1",
   "ollamaHost": "http://localhost:11434",
   "ollamaModel": "llama3.1",
   "llmHost": "http://localhost:11434"

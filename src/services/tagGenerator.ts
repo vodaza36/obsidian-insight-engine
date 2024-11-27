@@ -1,4 +1,4 @@
-import { Ollama } from "@langchain/ollama";
+import { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { PromptTemplate } from '@langchain/core/prompts';
 import { StringOutputParser } from '@langchain/core/output_parsers';
 
@@ -6,17 +6,12 @@ import { StringOutputParser } from '@langchain/core/output_parsers';
  * TagGenerator class is responsible for generating tags for notes using the Ollama language model.
  */
 export class TagGenerator {
-    private model: Ollama;
+    private model: BaseChatModel;
     private promptTemplate: PromptTemplate;
     private outputParser: StringOutputParser;
 
-    constructor(llmHost: string | undefined, modelName: string) {
-        this.model = new Ollama({
-            baseUrl: llmHost || 'http://localhost:11434',
-            model: modelName,
-            temperature: 0,
-            maxRetries: 2
-        });
+    constructor(model: BaseChatModel) {
+        this.model = model;
 
         this.promptTemplate = new PromptTemplate({
             template: `You are a tag suggestion system. Analyze the following content and suggest relevant tags for organizing it.
