@@ -12865,9 +12865,9 @@ var init_globals = __esm({
   }
 });
 
-// node_modules/@langchain/core/node_modules/ansi-styles/index.js
+// node_modules/ansi-styles/index.js
 var require_ansi_styles = __commonJS({
-  "node_modules/@langchain/core/node_modules/ansi-styles/index.js"(exports, module2) {
+  "node_modules/ansi-styles/index.js"(exports, module2) {
     "use strict";
     var ANSI_BACKGROUND_OFFSET = 10;
     var wrapAnsi256 = (offset = 0) => (code) => `\x1B[${38 + offset};5;${code}m`;
@@ -23783,7 +23783,13 @@ var TagGenerator = class {
       template: `You are a tag suggestion system. Analyze the following content and suggest relevant tags for organizing it.
             Focus on the main topics, concepts, and categories that would help in finding this content later. Try to follow the rules listed below in the prioritized order.
 
-            Rules for tag suggestions:
+Content to analyze:
+{text}
+
+Existing tags:
+{existingTags}
+
+Rules for tag suggestions:
 1. Prefer the noun form instead of gerund verbs (e.g., 'develop' instead of 'developing')
 2. Provide at least 2 tags and at most 5 relevant tags
 3. Use acronym format (e.g., 'ai' instead of 'Artificial Intelligence', or 'rag' instead of 'retrieval-augmented generation')
@@ -23796,13 +23802,6 @@ var TagGenerator = class {
 10. Tags should be specific enough to be useful but general enough to be reusable
 11. Prioritize using existing tags if they fit the content well then respond with the existing tags
 12. Only suggest new tags if no existing tags adequately describe the content
-
-
-Content to analyze:
-{text}
-
-Existing tags:
-{existingTags}
 
 
 Provide your response as a comma-separated list of tags (without the # symbol). Response only the tags with no additonal information.
