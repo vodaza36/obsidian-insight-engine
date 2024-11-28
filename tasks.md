@@ -37,12 +37,12 @@
 ## Code Preparation
 - [x] Review and clean up code
 - [x] Add code comments and documentation
-- [ ] Remove any sensitive information
-- [ ] Update version numbers
-- [ ] Update manifest.json
-  - [ ] Verify all required fields
-  - [ ] Add fundingUrl if accepting donations
-  - [ ] Update version number
+- [x] Remove any sensitive information
+- [x] Update version numbers
+- [x] Update manifest.json
+  - [x] Verify all required fields
+  - [x] Add fundingUrl if accepting donations
+  - [x] Update version number
 - [ ] Create first release
   - [ ] Build production version
   - [ ] Test built version
