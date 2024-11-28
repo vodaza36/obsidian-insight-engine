@@ -1,10 +1,10 @@
 import { Plugin, TFile, Notice, getAllTags, Modal as ObsidianModal, Setting } from 'obsidian';
-import { TagAgentSettings, DEFAULT_SETTINGS } from '../models/types';
+import { InsightEngineSettings, DEFAULT_SETTINGS } from '../models/types';
 import { TagGenerator } from '../services/tagGenerator';
 import { TagSuggestionModal } from '../ui/TagSuggestionModal';
-import { TagAgentSettingTab } from '../ui/SettingsTab';
 import { LoadingModal } from '../ui/LoadingModal';
 import { LLMFactory } from '../services/llmFactory';
+import { InsightEngineSettingTab } from '@/ui/SettingsTab';
 
 // Add this type definition near the top of the file, after other imports
 type TagSuggestion = {
@@ -13,12 +13,12 @@ type TagSuggestion = {
 };
 
 /**
- * This class is the entrypoint for the TagAgent plugin.
+ * This class is the entrypoint for the InsightEngine plugin.
  * It provides the UI integration points for the plugin such as the settings tab and the command for analyzing the current note.
  * It also provides the core functionality for generating tags for a note.
  */
-export default class TagAgent extends Plugin {
-	settings: TagAgentSettings;
+export default class InsightEngine extends Plugin {
+	settings: InsightEngineSettings;
 	tagGenerator: TagGenerator;
 	existingTags: Set<string> = new Set();
 
@@ -26,7 +26,7 @@ export default class TagAgent extends Plugin {
 		await this.loadSettings();
 
 		// Add settings tab first, before trying to initialize the generator
-		this.addSettingTab(new TagAgentSettingTab(this.app, this));
+		this.addSettingTab(new InsightEngineSettingTab(this.app, this));
 		
 		// Try to initialize the tag generator
 		this.initializeTagGenerator();

@@ -1,2 +1,2 @@
-import TagAgent from './core/TagAgent';
-export default TagAgent;
+import InsightEngine from './core/InsightEngine';
+export default InsightEngine;

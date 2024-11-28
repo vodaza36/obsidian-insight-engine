@@ -1,11 +1,11 @@
 import { App, PluginSettingTab, Setting, DropdownComponent } from 'obsidian';
-import TagAgent from '../core/TagAgent';
+import InsightEngine from '../core/InsightEngine';
 import { LLMProvider } from '../services/llmFactory';
 
-export class TagAgentSettingTab extends PluginSettingTab {
-	plugin: TagAgent;
+export class InsightEngineSettingTab extends PluginSettingTab {
+	plugin: InsightEngine;
 
-	constructor(app: App, plugin: TagAgent) {
+	constructor(app: App, plugin: InsightEngine) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}

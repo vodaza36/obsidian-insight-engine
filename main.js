@@ -21431,7 +21431,7 @@ __export(main_exports, {
 });
 module.exports = __toCommonJS(main_exports);
 
-// src/core/TagAgent.ts
+// src/core/InsightEngine.ts
 var import_obsidian4 = require("obsidian");
 
 // node_modules/openai/internal/qs/formats.mjs
@@ -33490,87 +33490,9 @@ var TagSuggestionModal = class extends import_obsidian.Modal {
   }
 };
 
-// src/ui/SettingsTab.ts
-var import_obsidian2 = require("obsidian");
-var TagAgentSettingTab = class extends import_obsidian2.PluginSettingTab {
-  constructor(app, plugin) {
-    super(app, plugin);
-    this.plugin = plugin;
-  }
-  display() {
-    const { containerEl } = this;
-    containerEl.empty();
-    containerEl.createEl("h2", { text: "Tag Agent Settings" });
-    new import_obsidian2.Setting(containerEl).setName("LLM Provider").setDesc("Choose your LLM provider").addDropdown((dropdown) => {
-      Object.values(LLMProvider).forEach((provider) => {
-        dropdown.addOption(provider, provider);
-      });
-      dropdown.setValue(this.plugin.settings.llmProvider).onChange(async (value) => {
-        this.plugin.settings.llmProvider = value;
-        if (value === "ollama" /* OLLAMA */ && !this.plugin.settings.llmHost) {
-          this.plugin.settings.llmHost = "http://localhost:11434";
-        }
-        if (value === "openai" /* OPENAI */) {
-          this.plugin.settings.modelName = "gpt-4";
-        }
-        await this.plugin.saveSettings();
-        this.display();
-      });
-    });
-    new import_obsidian2.Setting(containerEl).setName("Model Name").setDesc("The name of the LLM model to use").addText(
-      (text) => text.setPlaceholder("gpt-3.5-turbo").setValue(this.plugin.settings.modelName).onChange(async (value) => {
-        this.plugin.settings.modelName = value;
-        await this.plugin.saveSettings();
-      })
-    );
-    if (this.plugin.settings.llmProvider === "ollama" /* OLLAMA */) {
-      new import_obsidian2.Setting(containerEl).setName("LLM Host").setDesc("The host address of your LLM server").addText(
-        (text) => text.setPlaceholder("http://localhost:11434").setValue(this.plugin.settings.llmHost || "").onChange(async (value) => {
-          this.plugin.settings.llmHost = value;
-          await this.plugin.saveSettings();
-        })
-      );
-    }
-    if (this.plugin.settings.llmProvider === "openai" /* OPENAI */) {
-      new import_obsidian2.Setting(containerEl).setName("OpenAI API Key").setDesc("Your OpenAI API key").addText(
-        (text) => text.setPlaceholder("sk-...").setValue(this.plugin.settings.apiKey || "").onChange(async (value) => {
-          this.plugin.settings.apiKey = value;
-          if (value) {
-            process.env.OPENAI_API_KEY = value;
-          } else {
-            delete process.env.OPENAI_API_KEY;
-          }
-          await this.plugin.saveSettings();
-        })
-      );
-    }
-    new import_obsidian2.Setting(containerEl).setName("Tag Style").setDesc("Choose the case style for generated tags").addDropdown((dropdown) => {
-      dropdown.addOption("camelCase", "camelCase (e.g., meetingNotes").addOption("PascalCase", "PascalCase (e.g., MeetingNotes)").addOption("snake_case", "snake_case, (e.g., meeting_notes)").addOption("kebab-case", "kebab-case, (e.g., meeting-notes)").addOption("Train-Case", "Train-Case, (e.g., Meeting-Notes)").addOption("UPPERCASE", "UPPERCASE, (e.g., MEETINGNOTES)").addOption("lowercase", "lowercase, (e.g., meetingnotes)").setValue(this.plugin.settings.tagStyle).onChange(async (value) => {
-        this.plugin.settings.tagStyle = value;
-        await this.plugin.saveSettings();
-      });
-    });
-    new import_obsidian2.Setting(containerEl).setName("Tag Format").setDesc("Choose how tags should be formatted in your notes").addDropdown((dropdown) => {
-      dropdown.addOption("property", "Frontmatter").addOption("line", "Inline Tags").setValue(this.plugin.settings.tagFormat).onChange(async (value) => {
-        this.plugin.settings.tagFormat = value;
-        await this.plugin.saveSettings();
-        this.display();
-      });
-    });
-    if (this.plugin.settings.tagFormat === "line") {
-      new import_obsidian2.Setting(containerEl).setName("Tag Location").setDesc("Choose where to place the generated tags").addDropdown((dropdown) => {
-        dropdown.addOption("top", "Top").addOption("below-title", "Below Page Title").addOption("bottom", "Bottom").setValue(this.plugin.settings.tagLocation || "top").onChange(async (value) => {
-          this.plugin.settings.tagLocation = value;
-          await this.plugin.saveSettings();
-        });
-      });
-    }
-  }
-};
-
 // src/ui/LoadingModal.ts
-var import_obsidian3 = require("obsidian");
-var LoadingModal = class extends import_obsidian3.Modal {
+var import_obsidian2 = require("obsidian");
+var LoadingModal = class extends import_obsidian2.Modal {
   constructor(app, message) {
     super(app);
     this.message = message;
@@ -33603,15 +33525,93 @@ var LoadingModal = class extends import_obsidian3.Modal {
   }
 };
 
-// src/core/TagAgent.ts
-var TagAgent = class extends import_obsidian4.Plugin {
+// src/ui/SettingsTab.ts
+var import_obsidian3 = require("obsidian");
+var InsightEngineSettingTab = class extends import_obsidian3.PluginSettingTab {
+  constructor(app, plugin) {
+    super(app, plugin);
+    this.plugin = plugin;
+  }
+  display() {
+    const { containerEl } = this;
+    containerEl.empty();
+    containerEl.createEl("h2", { text: "Tag Agent Settings" });
+    new import_obsidian3.Setting(containerEl).setName("LLM Provider").setDesc("Choose your LLM provider").addDropdown((dropdown) => {
+      Object.values(LLMProvider).forEach((provider) => {
+        dropdown.addOption(provider, provider);
+      });
+      dropdown.setValue(this.plugin.settings.llmProvider).onChange(async (value) => {
+        this.plugin.settings.llmProvider = value;
+        if (value === "ollama" /* OLLAMA */ && !this.plugin.settings.llmHost) {
+          this.plugin.settings.llmHost = "http://localhost:11434";
+        }
+        if (value === "openai" /* OPENAI */) {
+          this.plugin.settings.modelName = "gpt-4";
+        }
+        await this.plugin.saveSettings();
+        this.display();
+      });
+    });
+    new import_obsidian3.Setting(containerEl).setName("Model Name").setDesc("The name of the LLM model to use").addText(
+      (text) => text.setPlaceholder("gpt-3.5-turbo").setValue(this.plugin.settings.modelName).onChange(async (value) => {
+        this.plugin.settings.modelName = value;
+        await this.plugin.saveSettings();
+      })
+    );
+    if (this.plugin.settings.llmProvider === "ollama" /* OLLAMA */) {
+      new import_obsidian3.Setting(containerEl).setName("LLM Host").setDesc("The host address of your LLM server").addText(
+        (text) => text.setPlaceholder("http://localhost:11434").setValue(this.plugin.settings.llmHost || "").onChange(async (value) => {
+          this.plugin.settings.llmHost = value;
+          await this.plugin.saveSettings();
+        })
+      );
+    }
+    if (this.plugin.settings.llmProvider === "openai" /* OPENAI */) {
+      new import_obsidian3.Setting(containerEl).setName("OpenAI API Key").setDesc("Your OpenAI API key").addText(
+        (text) => text.setPlaceholder("sk-...").setValue(this.plugin.settings.apiKey || "").onChange(async (value) => {
+          this.plugin.settings.apiKey = value;
+          if (value) {
+            process.env.OPENAI_API_KEY = value;
+          } else {
+            delete process.env.OPENAI_API_KEY;
+          }
+          await this.plugin.saveSettings();
+        })
+      );
+    }
+    new import_obsidian3.Setting(containerEl).setName("Tag Style").setDesc("Choose the case style for generated tags").addDropdown((dropdown) => {
+      dropdown.addOption("camelCase", "camelCase (e.g., meetingNotes").addOption("PascalCase", "PascalCase (e.g., MeetingNotes)").addOption("snake_case", "snake_case, (e.g., meeting_notes)").addOption("kebab-case", "kebab-case, (e.g., meeting-notes)").addOption("Train-Case", "Train-Case, (e.g., Meeting-Notes)").addOption("UPPERCASE", "UPPERCASE, (e.g., MEETINGNOTES)").addOption("lowercase", "lowercase, (e.g., meetingnotes)").setValue(this.plugin.settings.tagStyle).onChange(async (value) => {
+        this.plugin.settings.tagStyle = value;
+        await this.plugin.saveSettings();
+      });
+    });
+    new import_obsidian3.Setting(containerEl).setName("Tag Format").setDesc("Choose how tags should be formatted in your notes").addDropdown((dropdown) => {
+      dropdown.addOption("property", "Frontmatter").addOption("line", "Inline Tags").setValue(this.plugin.settings.tagFormat).onChange(async (value) => {
+        this.plugin.settings.tagFormat = value;
+        await this.plugin.saveSettings();
+        this.display();
+      });
+    });
+    if (this.plugin.settings.tagFormat === "line") {
+      new import_obsidian3.Setting(containerEl).setName("Tag Location").setDesc("Choose where to place the generated tags").addDropdown((dropdown) => {
+        dropdown.addOption("top", "Top").addOption("below-title", "Below Page Title").addOption("bottom", "Bottom").setValue(this.plugin.settings.tagLocation || "top").onChange(async (value) => {
+          this.plugin.settings.tagLocation = value;
+          await this.plugin.saveSettings();
+        });
+      });
+    }
+  }
+};
+
+// src/core/InsightEngine.ts
+var InsightEngine = class extends import_obsidian4.Plugin {
   constructor() {
     super(...arguments);
     this.existingTags = /* @__PURE__ */ new Set();
   }
   async onload() {
     await this.loadSettings();
-    this.addSettingTab(new TagAgentSettingTab(this.app, this));
+    this.addSettingTab(new InsightEngineSettingTab(this.app, this));
     this.initializeTagGenerator();
     this.addCommand({
       id: "generate-note-tags",
@@ -33830,7 +33830,7 @@ ${content}`;
 };
 
 // src/main.ts
-var main_default = TagAgent;
+var main_default = InsightEngine;
 /*! Bundled license information:
 
 @langchain/core/dist/utils/fast-json-patch/src/helpers.js:

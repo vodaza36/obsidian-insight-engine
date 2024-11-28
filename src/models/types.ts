@@ -1,6 +1,6 @@
 import { LLMProvider } from '../services/llmFactory';
 
-export interface TagAgentSettings {
+export interface InsightEngineSettings {
 	llmProvider: LLMProvider;
 	modelName: string;
 	llmHost?: string;
@@ -10,7 +10,7 @@ export interface TagAgentSettings {
 	tagStyle: 'camelCase' | 'PascalCase' | 'snake_case' | 'kebab-case' | 'Train-Case' | 'UPPERCASE' | 'lowercase';
 }
 
-export const DEFAULT_SETTINGS: TagAgentSettings = {
+export const DEFAULT_SETTINGS: InsightEngineSettings = {
 	llmProvider: LLMProvider.OLLAMA,
 	modelName: 'llama2',
 	tagFormat: 'property',
