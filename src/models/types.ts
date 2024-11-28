@@ -1,3 +1,9 @@
+/**
+ * Obsidian Insight Engine Plugin
+ * Copyright (c) 2024 Thomas Hochbichler
+ * MIT License
+ */
+
 import { LLMProvider } from '../services/llmFactory';
 
 export interface InsightEngineSettings {

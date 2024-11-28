@@ -1,3 +1,9 @@
+/**
+ * Obsidian Insight Engine Plugin
+ * Copyright (c) 2024 Thomas Hochbichler
+ * MIT License
+ */
+
 import { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { ChatOpenAI } from '@langchain/openai';
 import { ChatOllama } from '@langchain/ollama';

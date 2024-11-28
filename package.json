@@ -17,7 +17,7 @@
     "langchain",
     "ollama"
   ],
-  "author": "",
+  "author": "Thomas Hochbichler",
   "license": "MIT",
   "dependencies": {
     "@langchain/core": "^0.3.18",

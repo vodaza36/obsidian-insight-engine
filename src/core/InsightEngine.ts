@@ -1,3 +1,9 @@
+/**
+ * Obsidian Insight Engine Plugin
+ * Copyright (c) 2024 Thomas Hochbichler
+ * MIT License
+ */
+
 import { Plugin, TFile, Notice, getAllTags, Modal as ObsidianModal, Setting } from 'obsidian';
 import { InsightEngineSettings, DEFAULT_SETTINGS } from '../models/types';
 import { TagGenerator } from '../services/tagGenerator';

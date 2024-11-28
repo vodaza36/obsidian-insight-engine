@@ -1,3 +1,9 @@
+/**
+ * Obsidian Insight Engine Plugin
+ * Copyright (c) 2024 Thomas Hochbichler
+ * MIT License
+ */
+
 import { App, PluginSettingTab, Setting, DropdownComponent } from 'obsidian';
 import InsightEngine from '../core/InsightEngine';
 import { LLMProvider } from '../services/llmFactory';

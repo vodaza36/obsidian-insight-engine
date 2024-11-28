@@ -73,6 +73,16 @@ We welcome contributions! Check out our [CONTRIBUTING.md](CONTRIBUTING.md) for g
 
 MIT License - see [LICENSE](LICENSE) for details.
 
+### Third-Party Licenses
+
+This project uses several open-source packages:
+
+- LangChain packages (@langchain/core, @langchain/ollama, @langchain/openai) - Apache-2.0 License
+- tslib - BSD-3-Clause License
+- Various development tools under MIT and Apache-2.0 licenses
+
+For full license texts, please see the respective packages' repositories.
+
 ## 🆘 Support
 
 - [Report Issues](https://github.com/username/obsidian-insight-engine/issues)
@@ -81,3 +91,7 @@ MIT License - see [LICENSE](LICENSE) for details.
 ## 📜 Changelog
 
 See [CHANGELOG.md](CHANGELOG.md) for version history.
+
+## ⚠️ Disclaimer
+
+Please note that this plugin is provided "as is" without warranty of any kind. For more details about limitations of liability and user responsibilities, see our [DISCLAIMER.md](DISCLAIMER.md).
