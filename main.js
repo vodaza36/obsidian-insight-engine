@@ -33813,9 +33813,9 @@ ${content}`;
             cleanedLines.unshift(formattedTags);
             break;
           case "below-title":
-            const h1Index = cleanedLines.findIndex((line) => line.startsWith("# "));
-            if (h1Index !== -1) {
-              cleanedLines.splice(h1Index + 1, 0, "", formattedTags);
+            const headlineIndex = cleanedLines.findIndex((line) => /^#{1,6}\s+/.test(line));
+            if (headlineIndex !== -1) {
+              cleanedLines.splice(headlineIndex + 1, 0, "", formattedTags);
             } else {
               cleanedLines.unshift(formattedTags);
             }
