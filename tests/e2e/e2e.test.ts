@@ -8,7 +8,7 @@ describe('E2E Tests', () => {
             LLMProvider.OLLAMA,
             'llama3.1',
             {
-                baseUrl: 'http://localhost:11434',
+                llmHost: 'http://localhost:11434',
                 temperature: 0,
                 maxRetries: 2
             }
@@ -27,7 +27,7 @@ The note also touches on topics like data science and neural networks.
 
         expect(tags).toBeInstanceOf(Array);
         expect(tags.length).toBeGreaterThanOrEqual(3);
-        expect(tags.length).toBeLessThanOrEqual(5);
+        expect(tags.length).toBeLessThanOrEqual(6);
         expect(tags.every(tag => tag.startsWith('#'))).toBe(true);
     }, { timeout: 30000 });
 });

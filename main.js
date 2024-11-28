@@ -33342,7 +33342,7 @@ var TagGenerator = class {
     this.tagStyle = tagStyle;
     this.promptTemplate = new PromptTemplate({
       template: `You are a tag suggestion system. Analyze the following content and suggest relevant tags for organizing it.
-            Focus on the main topics, concepts, and categories that would help in finding this content later. Try to follow the rules listed below in the prioritized order.
+            Focus on the main topics, concepts, and categories that would help in finding this content later.
 
 Content to analyze:
 {text}
@@ -33367,7 +33367,10 @@ Rules for tag suggestions:
 7. For multi-word tags, use the specified tag style format
 8. In case of a multi-word tag, think about if you can replace it with a popular acronym (e.g., 'artificial-intelligence' -> 'ai')
 9. Focus on content-specific tags, avoid generic tags (e.g., 'hobby' instead of 'interest')
-10. Tags should be specific enough to be useful but general enough to be reusable`,
+10. Tags should be specific enough to be useful but general enough to be reusable
+
+IMPORTANT: Return ONLY the tags as a comma-separated list without any additional text or explanation.
+Example output format: tag1, tag2, tag3`,
       inputVariables: ["text", "existingTags", "tagStyle"]
     });
     this.outputParser = new StringOutputParser();
