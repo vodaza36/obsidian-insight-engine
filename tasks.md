@@ -35,8 +35,8 @@
 - [x] Check all dependencies for license compatibility
 
 ## Code Preparation
-- [ ] Review and clean up code
-- [ ] Add code comments and documentation
+- [x] Review and clean up code
+- [x] Add code comments and documentation
 - [ ] Remove any sensitive information
 - [ ] Update version numbers
 - [ ] Update manifest.json

@@ -9,7 +9,16 @@ import { PromptTemplate } from '@langchain/core/prompts';
 import { StringOutputParser } from '@langchain/core/output_parsers';
 
 /**
- * TagGenerator class is responsible for generating tags for notes using the Ollama language model.
+ * TagGenerator class is responsible for generating contextually relevant tags for notes
+ * using various LLM providers (OpenAI or Ollama). It analyzes note content and suggests
+ * tags that capture the main topics and concepts while following configurable formatting rules.
+ * 
+ * @example
+ * ```typescript
+ * const model = LLMFactory.createModel(LLMProvider.OLLAMA, 'llama2');
+ * const generator = new TagGenerator(model, 'kebab-case');
+ * const tags = await generator.generateTags('My note content', ['existing-tag']);
+ * ```
  */
 export class TagGenerator {
     private model: BaseChatModel;
@@ -17,10 +26,16 @@ export class TagGenerator {
     private outputParser: StringOutputParser;
     private tagStyle: string;
 
+    /**
+     * Creates a new TagGenerator instance
+     * @param model - The LLM model to use for tag generation (OpenAI or Ollama)
+     * @param tagStyle - The formatting style for generated tags (default: 'kebab-case')
+     */
     constructor(model: BaseChatModel, tagStyle: string = 'kebab-case') {
         this.model = model;
         this.tagStyle = tagStyle;
 
+        // Initialize prompt template with tag generation rules and formatting guidelines
         this.promptTemplate = new PromptTemplate({
             template: `You are a tag suggestion system. Analyze the following content and suggest relevant tags for organizing it.
             Focus on the main topics, concepts, and categories that would help in finding this content later. Try to follow the rules listed below in the prioritized order.
@@ -48,19 +63,20 @@ Rules for tag suggestions:
 7. For multi-word tags, use the specified tag style format
 8. In case of a multi-word tag, think about if you can replace it with a popular acronym (e.g., 'artificial-intelligence' -> 'ai')
 9. Focus on content-specific tags, avoid generic tags (e.g., 'hobby' instead of 'interest')
-10. Tags should be specific enough to be useful but general enough to be reusable
-11. Prioritize using existing tags if they fit the content well then respond with the existing tags
-12. Only suggest new tags if no existing tags adequately describe the content
-
-Provide your response as a comma-separated list of tags (without the # symbol). Response only the tags with no additonal information.
-
-Suggested tags:`,
+10. Tags should be specific enough to be useful but general enough to be reusable`,
             inputVariables: ['text', 'existingTags', 'tagStyle']
         });
 
         this.outputParser = new StringOutputParser();
     }
 
+    /**
+     * Generates tags for the given note content while considering existing tags
+     * @param content - The note content to analyze
+     * @param existingTags - Array of tags that already exist in the note (optional)
+     * @returns Promise<string[]> Array of generated tags in the specified format
+     * @throws Error if the LLM fails to generate tags or returns invalid format
+     */
     async suggestTags(content: string, existingTags: Set<string> = new Set()): Promise<string[]> {
         try {
             const existingTagsString = Array.from(existingTags)
