@@ -1,7 +1,7 @@
 {
-  "name": "obsidian-tag-agent",
+  "name": "obsidian-insight-engine",
   "version": "1.0.0",
-  "description": "An AI-powered Obsidian plugin using LangChain.js with Ollama for local tag management",
+  "description": "AI-powered knowledge assistant using LangChain.js with Ollama for local processing",
   "main": "main.js",
   "scripts": {
     "dev": "node esbuild.config.mjs",
