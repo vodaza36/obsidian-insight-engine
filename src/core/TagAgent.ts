@@ -65,7 +65,7 @@ export default class TagAgent extends Plugin {
 					apiKey: this.settings.apiKey
 				}
 			);
-			this.tagGenerator = new TagGenerator(model);
+			this.tagGenerator = new TagGenerator(model, this.settings.tagStyle);
 		} catch (error) {
 			// If initialization fails, we'll show a notice but not prevent the plugin from loading
 			console.warn('Failed to initialize tag generator:', error);

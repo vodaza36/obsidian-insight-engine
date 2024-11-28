@@ -33318,8 +33318,9 @@ init_chat2();
 
 // src/services/tagGenerator.ts
 var TagGenerator = class {
-  constructor(model) {
+  constructor(model, tagStyle = "kebab-case") {
     this.model = model;
+    this.tagStyle = tagStyle;
     this.promptTemplate = new PromptTemplate({
       template: `You are a tag suggestion system. Analyze the following content and suggest relevant tags for organizing it.
             Focus on the main topics, concepts, and categories that would help in finding this content later. Try to follow the rules listed below in the prioritized order.
@@ -33331,37 +33332,44 @@ Existing tags:
 {existingTags}
 
 Rules for tag suggestions:
-1. Prefer the noun form instead of gerund verbs (e.g., 'develop' instead of 'developing')
-2. Provide at least 2 tags and at most 5 relevant tags
-3. Use acronym format (e.g., 'ai' instead of 'Artificial Intelligence', or 'rag' instead of 'retrieval-augmented generation')
-4. Use lowercase words only (e.g. 'garden' instead of 'Garden')
+1. Format all tags in {tagStyle} style (e.g., if "meeting notes" is a tag: 
+   - camelCase \u2192 "meetingNotes"
+   - PascalCase \u2192 "MeetingNotes"
+   - snake_case \u2192 "meeting_notes"
+   - kebab-case \u2192 "meeting-notes"
+   - Train-Case \u2192 "Meeting-Notes"
+   - UPPERCASE \u2192 "MEETINGNOTES"
+   - lowercase \u2192 "meetingnotes")
+2. Prefer the noun form instead of gerund verbs (e.g., 'develop' instead of 'developing')
+3. Provide at least 2 tags and at most 5 relevant tags
+4. Use acronym format (e.g., 'ai' instead of 'Artificial Intelligence', or 'rag' instead of 'retrieval-augmented generation')
 5. Use singular form instead of plural tags (e.g., 'hobby' instead of 'hobbies')
 6. Prefer single-word tags (e.g., 'ai' instead of 'artificial-intelligence')
-7. For multi-word tags, use dashes (e.g., 'artificial-intelligence')
+7. For multi-word tags, use the specified tag style format
 8. In case of a multi-word tag, think about if you can replace it with a popular acronym (e.g., 'artificial-intelligence' -> 'ai')
 9. Focus on content-specific tags, avoid generic tags (e.g., 'hobby' instead of 'interest')
 10. Tags should be specific enough to be useful but general enough to be reusable
 11. Prioritize using existing tags if they fit the content well then respond with the existing tags
 12. Only suggest new tags if no existing tags adequately describe the content
 
-
 Provide your response as a comma-separated list of tags (without the # symbol). Response only the tags with no additonal information.
 
 Suggested tags:`,
-      inputVariables: ["text", "existingTags"]
+      inputVariables: ["text", "existingTags", "tagStyle"]
     });
     this.outputParser = new StringOutputParser();
   }
   async suggestTags(content, existingTags = /* @__PURE__ */ new Set()) {
     try {
-      const existingTagsString = Array.from(existingTags).join(", ") || "None";
+      const existingTagsString = Array.from(existingTags).map((tag) => tag.replace("#", "")).join(", ") || "None";
       const prompt = await this.promptTemplate.format({
         text: content,
-        existingTags: existingTagsString
+        existingTags: existingTagsString,
+        tagStyle: this.tagStyle
       });
       const chain = this.model.pipe(this.outputParser);
       const response = await chain.invoke(prompt);
-      return response.split(",").map((tag) => "#" + tag.trim().toLowerCase()).filter((tag) => tag.length > 0);
+      return response.split(",").map((tag) => "#" + tag.trim()).filter((tag) => tag.length > 0);
     } catch (error) {
       console.error("Error suggesting tags:", error);
       if (error instanceof Error && (error.message.includes("ECONNREFUSED") || error.message.includes("Failed to fetch"))) {
@@ -33637,7 +33645,7 @@ var TagAgent = class extends import_obsidian4.Plugin {
           apiKey: this.settings.apiKey
         }
       );
-      this.tagGenerator = new TagGenerator(model);
+      this.tagGenerator = new TagGenerator(model, this.settings.tagStyle);
     } catch (error) {
       console.warn("Failed to initialize tag generator:", error);
       new import_obsidian4.Notice("Tag generation is disabled until configuration is complete. Please check settings.");
