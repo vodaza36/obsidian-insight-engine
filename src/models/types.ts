@@ -27,7 +27,7 @@ export interface InsightEngineSettings {
     tagFormat: 'property' | 'line';
 
     /** Position where tags should be added in the note */
-    tagLocation: 'top' | 'below-title' | 'bottom';
+    tagLocation: 'top' | 'bottom';
 
     /** Style format for tag names */
     tagStyle: 'camelCase' | 'PascalCase' | 'snake_case' | 'kebab-case' | 'Train-Case' | 'UPPERCASE' | 'lowercase';

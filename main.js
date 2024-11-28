@@ -33617,7 +33617,7 @@ var InsightEngineSettingTab = class extends import_obsidian3.PluginSettingTab {
     });
     if (this.plugin.settings.tagFormat === "line") {
       new import_obsidian3.Setting(containerEl).setName("Tag Location").setDesc("Choose where to place the generated tags").addDropdown((dropdown) => {
-        dropdown.addOption("top", "Top").addOption("below-title", "Below Page Title").addOption("bottom", "Bottom").setValue(this.plugin.settings.tagLocation || "top").onChange(async (value) => {
+        dropdown.addOption("top", "Top").addOption("bottom", "Bottom").setValue(this.plugin.settings.tagLocation || "top").onChange(async (value) => {
           this.plugin.settings.tagLocation = value;
           await this.plugin.saveSettings();
         });
@@ -33803,25 +33803,21 @@ ${content}`;
     } else {
       const lines = content.split("\n");
       const formattedTags = formattedNewTags.join(" ");
-      const tagLinePattern = /^#[^\n]+$/;
-      const cleanedLines = lines.filter((line) => !tagLinePattern.test(line.trim()));
+      const tagLinePattern = /(^|\s)#[\w-]+/g;
+      const cleanedLines = lines.filter((line) => !tagLinePattern.test(line));
       if (formattedNewTags.length === 0) {
         newContent = cleanedLines.join("\n");
       } else {
+        console.log("Try to add tags to " + this.settings.tagLocation);
         switch (this.settings.tagLocation || "top") {
           case "top":
             cleanedLines.unshift(formattedTags);
-            break;
-          case "below-title":
-            const headlineIndex = cleanedLines.findIndex((line) => /^#{1,6}\s+/.test(line));
-            if (headlineIndex !== -1) {
-              cleanedLines.splice(headlineIndex + 1, 0, "", formattedTags);
-            } else {
-              cleanedLines.unshift(formattedTags);
+            if (cleanedLines.length > 1) {
+              cleanedLines.splice(1, 0, "");
             }
             break;
           case "bottom":
-            if (cleanedLines[cleanedLines.length - 1] !== "") {
+            if (cleanedLines.length > 0 && cleanedLines[cleanedLines.length - 1] !== "") {
               cleanedLines.push("");
             }
             cleanedLines.push(formattedTags);

@@ -135,11 +135,10 @@ export class InsightEngineSettingTab extends PluginSettingTab {
 				.addDropdown((dropdown: DropdownComponent) => {
 					dropdown
 						.addOption('top', 'Top')
-						.addOption('below-title', 'Below Page Title')
 						.addOption('bottom', 'Bottom')
 						.setValue(this.plugin.settings.tagLocation || 'top')
 						.onChange(async (value) => {
-							this.plugin.settings.tagLocation = value as 'top' | 'below-title' | 'bottom';
+							this.plugin.settings.tagLocation = value as 'top' | 'bottom';
 							await this.plugin.saveSettings();
 						});
 				});

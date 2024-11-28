@@ -248,31 +248,27 @@ export default class InsightEngine extends Plugin {
 			const formattedTags = formattedNewTags.join(' ');
 
 			// Remove existing inline tags
-			const tagLinePattern = /^#[^\n]+$/;
-			const cleanedLines = lines.filter(line => !tagLinePattern.test(line.trim()));
+			const tagLinePattern = /(^|\s)#[\w-]+/g;  // Matches hashtags at start or after space
+			const cleanedLines = lines.filter(line => !tagLinePattern.test(line));
 
 			// If no tags to add, just return the cleaned content
 			if (formattedNewTags.length === 0) {
 				newContent = cleanedLines.join('\n');
 			} else {
 				// Add tags based on location setting
+                console.log("Try to add tags to " + this.settings.tagLocation);
 				switch (this.settings.tagLocation || 'top') {
 					case 'top':
+						// Add tags at the top with a blank line after if there's content
 						cleanedLines.unshift(formattedTags);
-						break;
-
-					case 'below-title':
-						const headlineIndex = cleanedLines.findIndex(line => /^#{1,6}\s+/.test(line));
-						if (headlineIndex !== -1) {
-							cleanedLines.splice(headlineIndex + 1, 0, '', formattedTags);
-						} else {
-							// If no title found, add to top
-							cleanedLines.unshift(formattedTags);
+						if (cleanedLines.length > 1) {
+							cleanedLines.splice(1, 0, '');
 						}
 						break;
 
 					case 'bottom':
-						if (cleanedLines[cleanedLines.length - 1] !== '') {
+						// Add a blank line before tags if there's content
+						if (cleanedLines.length > 0 && cleanedLines[cleanedLines.length - 1] !== '') {
 							cleanedLines.push('');
 						}
 						cleanedLines.push(formattedTags);
