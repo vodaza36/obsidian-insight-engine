@@ -113,10 +113,7 @@ export default class TagAgent extends Plugin {
 		// Show loading modal
 		const loadingModal = new LoadingModal(
 			this.app,
-			'Generating tags...',
-			() => {
-				new Notice('Tag generation cancelled');
-			}
+			'Generating tags...'
 		);
 		loadingModal.open();
 

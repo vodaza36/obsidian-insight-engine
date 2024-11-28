@@ -33571,32 +33571,31 @@ var TagAgentSettingTab = class extends import_obsidian2.PluginSettingTab {
 // src/ui/LoadingModal.ts
 var import_obsidian3 = require("obsidian");
 var LoadingModal = class extends import_obsidian3.Modal {
-  constructor(app, message, onCancel) {
+  constructor(app, message) {
     super(app);
     this.message = message;
-    this.onCancel = onCancel;
   }
   onOpen() {
     const { contentEl } = this;
     contentEl.empty();
-    contentEl.createEl("div", {
-      cls: "loading-modal-content",
-      attr: { style: "text-align: center; padding: 20px;" }
+    contentEl.style.padding = "0";
+    contentEl.style.marginTop = "0";
+    contentEl.createEl("h3", {
+      text: "Processing...",
+      attr: { style: "margin: 0 0 10px 0; color: var(--text-normal);" }
     });
     const spinner = contentEl.createEl("div", {
       cls: "loading-spinner",
-      attr: { style: "margin-bottom: 15px;" }
+      attr: { style: "margin: 0 auto 10px auto; display: flex; justify-content: center;" }
     });
     contentEl.createEl("p", {
       text: this.message,
-      attr: { style: "margin-bottom: 15px;" }
+      attr: { style: "margin-bottom: 10px;" }
     });
-    new import_obsidian3.Setting(contentEl).addButton(
-      (btn) => btn.setButtonText("Cancel").onClick(() => {
-        this.close();
-        this.onCancel();
-      })
-    );
+    contentEl.createEl("p", {
+      text: "Tag Agent is analyzing your note to generate relevant tags. This may take a few moments depending on the length of your content.",
+      attr: { style: "margin-bottom: 10px; font-size: 0.8em; color: var(--text-muted);" }
+    });
   }
   onClose() {
     const { contentEl } = this;
@@ -33682,10 +33681,7 @@ var TagAgent = class extends import_obsidian4.Plugin {
     );
     const loadingModal = new LoadingModal(
       this.app,
-      "Generating tags...",
-      () => {
-        new import_obsidian4.Notice("Tag generation cancelled");
-      }
+      "Generating tags..."
     );
     loadingModal.open();
     try {
