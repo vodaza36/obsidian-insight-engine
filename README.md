@@ -1,135 +1,89 @@
-# Obsidian Insight Engine
+# Obsidian Insight Engine Plugin
 
-An AI-powered Obsidian plugin that enhances your note-taking experience using LangChain.js and OpenAI/Ollama.
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/username/obsidian-insight-engine)](https://github.com/username/obsidian-insight-engine/releases)
+[![License](https://img.shields.io/github/license/username/obsidian-insight-engine)](LICENSE)
+[![Downloads](https://img.shields.io/github/downloads/username/obsidian-insight-engine/total)](https://github.com/username/obsidian-insight-engine/releases)
 
-## Resources
-The following list of resources were used to develop this plugin:
-- [Obsidian Plugin Development](https://docs.obsidian.md/Plugins/Getting+started/Build+a+plugin)
+An intelligent search and insight engine plugin for Obsidian that enhances your note-taking experience with AI-powered capabilities using OpenAI or Ollama.
 
 ## Features
+- Automatic tag generation based on associated notes
 
-- Automatically analyzes note content and suggests relevant tags
-- Uses advanced language models through LangChain.js
-- Simple settings interface for API key management
-- More AI-powered features coming soon!
+### Roadmap
+- AI-powered semantic search across your vault
+- Natural language processing for better search results
+- Support for both OpenAI and Ollama as AI backends
 
 ## Installation
 
+1. Open Obsidian and go to Settings
+2. Navigate to Community Plugins and disable Safe Mode
+3. Click on Browse and search for "Insight Engine"
+4. Click Install
+5. Enable the plugin in your Community Plugins list
+
+### Manual Installation
+
 1. Download the latest release from the releases page
-2. Extract the files to your Obsidian plugins folder: `.obsidian/plugins/obsidian-insight-engine/`
-3. Enable the plugin in Obsidian's settings
-4. Add your OpenAI API key in the plugin settings or configure Ollama settings
+2. Extract the zip file into your `.obsidian/plugins` folder
+3. Reload Obsidian
+4. Enable the plugin in your Community Plugins list
+
+## Configuration
+
+### OpenAI Setup
+
+1. Obtain an API key from [OpenAI](https://platform.openai.com/)
+2. In Obsidian, go to Settings → Insight Engine
+3. Enter your OpenAI API key
+4. Configure the model and parameters as needed
+
+### Ollama Setup
+
+1. Install Ollama from [ollama.ai](https://ollama.ai)
+2. Pull your desired model using the Ollama CLI
+3. In Obsidian, go to Settings → Insight Engine
+4. Select Ollama as your AI provider
+5. Configure the model and endpoint settings
 
 ## Usage
 
-1. Open any note you want to analyze
-2. Use the command palette (Cmd/Ctrl + P) and search for "Analyze Current Note"
-3. The plugin will analyze your note content and suggest relevant tags
+### Basic Search
+1. Open the Command Palette (Cmd/Ctrl + P)
+2. Type "Insight Engine"
+3. Execute the command you like, e.g. "Generat Tags"
 
-## Project Structure
+[Screenshots coming soon]
 
-| File/Directory | Purpose |
-|---------------|---------|
-| `.github/workflows/` | Contains GitHub Actions workflows for automated releases and CI/CD. |
-| `.vscode/` | VS Code editor configuration for consistent development settings. |
-| `node_modules/` | Contains project dependencies installed via npm (not tracked in git). |
-| `.editorconfig` | Defines coding style rules for editors (indentation, line endings, etc.). |
-| `.eslintignore` | Specifies which files and directories should be ignored by ESLint. |
-| `.eslintrc.json` | Configuration file for ESLint, defining code style and quality rules. |
-| `.gitignore` | Specifies which files Git should ignore when tracking changes. |
-| `.npmrc` | npm configuration file for package management settings. |
-| `.prettierrc` | Configuration file for Prettier code formatter with project-specific rules. |
-| `.prettierignore` | Specifies which files should be ignored by Prettier formatting. |
-| `esbuild.config.mjs` | Configuration for esbuild, the project's bundler. |
-| `instructions.md` | Project requirements and technical documentation. |
-| `LICENSE` | MIT license file defining how the code can be used by others. |
-| `main.ts` | Main plugin file containing the core functionality. |
-| `manifest.json` | Plugin metadata and configuration for Obsidian. |
-| `package.json` | Project dependencies and scripts configuration. |
-| `package-lock.json` | Locked versions of npm dependencies for consistent installs. |
-| `README.md` | Project documentation and usage instructions. |
-| `styles.css` | Custom CSS styles for the plugin's UI elements. |
-| `tsconfig.json` | TypeScript compiler configuration. |
-| `versions.json` | Tracks minimum Obsidian version requirements for each plugin version. |
+## Dependencies
 
-## Development
+- Obsidian v1.0.0 or higher
+- Node.js v16 or higher (for development)
+- OpenAI API key or Ollama installation
 
-1. Clone this repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Build the plugin:
-   ```bash
-   npm run build
-   ```
-4. For development with hot reload:
-   ```bash
-   npm run dev
-   ```
+## Contributing
 
-## Testing
+We welcome contributions! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-The plugin uses Jest for testing and includes both integration and end-to-end (e2e) tests.
+## Security
 
-### Test Types
+For security concerns, please refer to our [SECURITY.md](SECURITY.md) file.
 
-1. **Integration Tests**
-   - Located in `tests/integration/`
-   - Test individual components and their interactions
-   - Do not require external services
-   - Verify core functionality with mocked LLM responses
+## License
 
-2. **End-to-End Tests**
-   - Located in `tests/e2e/`
-   - Test complete user workflows
-   - Require Ollama to be running (`ollama serve`)
-   - Use real LLM calls for tag generation
-   - Validate the entire tag suggestion pipeline
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-### Running Tests
+## Changelog
 
-```bash
-# Run all tests
-npm test
+See [CHANGELOG.md](CHANGELOG.md) for a list of changes and version history.
 
-# Run only integration tests
-npm run test:integration
+## Support
 
-# Run only e2e tests (requires Ollama running)
-npm run test:e2e
+- [GitHub Issues](https://github.com/username/obsidian-insight-engine/issues)
+- [Project Discussions](https://github.com/username/obsidian-insight-engine/discussions)
 
-# Watch mode
-npm run test:watch              # Watch all tests
-npm run test:integration:watch  # Watch integration tests
-npm run test:e2e:watch         # Watch e2e tests
-```
+## Acknowledgments
 
-### Prerequisites for E2E Testing
-
-1. Make sure Ollama is installed and the desired model is pulled:
-   ```bash
-   ollama pull llama3.1
-   ```
-
-2. Start the Ollama server:
-   ```bash
-   ollama serve
-   ```
-
-The e2e tests will automatically check if Ollama is running before execution. If Ollama is not running, the tests will fail with a clear error message.
-
-### Test Coverage
-
-The test suite aims to provide comprehensive coverage of:
-- Plugin initialization and command registration
-- Tag suggestion functionality
-- LLM integration (both mocked and real)
-- File system operations
-- User interface interactions
-- Error handling and edge cases
-
-## Requirements
-
-- Obsidian v0.15.0 or higher
-- OpenAI API key
+- Obsidian team for their amazing platform
+- OpenAI and Ollama for their AI capabilities
+- All contributors and users of this plugin

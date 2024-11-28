@@ -8,11 +8,11 @@
 ## Repository Setup
 - [ ] Create a public GitHub repository
 - [ ] Initialize with main branch
-- [ ] Add .gitignore file for node_modules and build artifacts
+- [x] Add .gitignore file for node_modules and build artifacts
 - [ ] Set up GitHub repository settings and branch protection
 
 ## Documentation
-- [ ] Update README.md
+- [ ] Create README.md
   - [ ] Add detailed installation instructions
   - [ ] Add configuration steps for OpenAI/Ollama
   - [ ] Add usage instructions with examples
