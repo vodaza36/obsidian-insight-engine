@@ -4,87 +4,80 @@
 [![License](https://img.shields.io/github/license/username/obsidian-insight-engine)](LICENSE)
 [![Downloads](https://img.shields.io/github/downloads/username/obsidian-insight-engine/total)](https://github.com/username/obsidian-insight-engine/releases)
 
-An intelligent search and insight engine plugin for Obsidian that enhances your note-taking experience with AI-powered capabilities using OpenAI or Ollama.
+Transform your Obsidian vault with AI-powered insights while keeping your privacy intact. The Insight Engine plugin enhances your note-taking experience by combining the power of advanced AI with the flexibility to choose between cloud-based (OpenAI) or privacy-focused local (Ollama) processing.
 
-## Features
-- Automatic tag generation based on associated notes
+## ✨ Key Features
 
-### Roadmap
+### 🤖 Intelligent Tag Generation
+- Automatically generates contextually relevant tags based on note content
+- Understands relationships between notes for smarter tagging
+- Suggests tags that reflect both explicit and implicit themes in your content
+
+### 🔒 Privacy-First Architecture
+- Choose between OpenAI (cloud) or Ollama (local) for AI processing
+- Keep sensitive notes private with local processing
+- Full control over your data and AI model selection
+
+### 🎯 Coming Soon
 - AI-powered semantic search across your vault
-- Natural language processing for better search results
-- Support for both OpenAI and Ollama as AI backends
+- Natural language querying for intuitive note discovery
+- Enhanced context understanding for more accurate results
 
-## Installation
+## 🚀 Quick Start
 
-1. Open Obsidian and go to Settings
-2. Navigate to Community Plugins and disable Safe Mode
-3. Click on Browse and search for "Insight Engine"
-4. Click Install
-5. Enable the plugin in your Community Plugins list
+1. Install the plugin from Obsidian's Community Plugins
+2. Choose your preferred AI backend:
+   - OpenAI for cloud processing
+   - Ollama for local, private processing
+3. Start generating intelligent tags with a single command!
 
-### Manual Installation
-
-1. Download the latest release from the releases page
-2. Extract the zip file into your `.obsidian/plugins` folder
-3. Reload Obsidian
-4. Enable the plugin in your Community Plugins list
-
-## Configuration
+## ⚙️ Setup
 
 ### OpenAI Setup
+1. Get your API key from [OpenAI](https://platform.openai.com/)
+2. Open Settings → Insight Engine
+3. Paste your API key
+4. Configure model preferences
 
-1. Obtain an API key from [OpenAI](https://platform.openai.com/)
-2. In Obsidian, go to Settings → Insight Engine
-3. Enter your OpenAI API key
-4. Configure the model and parameters as needed
-
-### Ollama Setup
-
+### Ollama Setup (Privacy-Focused Option)
 1. Install Ollama from [ollama.ai](https://ollama.ai)
-2. Pull your desired model using the Ollama CLI
-3. In Obsidian, go to Settings → Insight Engine
-4. Select Ollama as your AI provider
-5. Configure the model and endpoint settings
+2. Pull your preferred model
+3. Select Ollama in plugin settings
+4. Start using AI features completely offline!
 
-## Usage
+## 📖 Usage
 
-### Basic Search
-1. Open the Command Palette (Cmd/Ctrl + P)
-2. Type "Insight Engine"
-3. Execute the command you like, e.g. "Generat Tags"
+### Basic Commands
+- `Cmd/Ctrl + P` → "Generate Tags" to analyze current note
+- More commands coming soon!
 
-![Insight Engine - Command Palette](docs/screen-2.png)
-![Insight Engine - Tag Generator](docs/screen-1.png)
+### Example Workflow
+1. Write your note
+2. Run tag generation
+3. Review and apply suggested tags
+4. Enjoy enhanced note organization!
 
-## Dependencies
+![Insight Engine in Action](docs/screen-2.png)
 
-- Obsidian v1.0.0 or higher
-- Node.js v16 or higher (for development)
-- OpenAI API key or Ollama installation
+## 🛠️ Technical Requirements
 
-## Contributing
+- Obsidian v1.0.0+
+- For Ollama: Local installation
+- For OpenAI: API key and internet connection
 
-We welcome contributions! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+## 🤝 Contributing
 
-## Security
+We welcome contributions! Check out our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-For security concerns, please refer to our [SECURITY.md](SECURITY.md) file.
+## 📝 License
 
-## License
+MIT License - see [LICENSE](LICENSE) for details.
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## 🆘 Support
 
-## Changelog
+- [Report Issues](https://github.com/username/obsidian-insight-engine/issues)
+- [Join Discussions](https://github.com/username/obsidian-insight-engine/discussions)
 
-See [CHANGELOG.md](CHANGELOG.md) for a list of changes and version history.
+## 📜 Changelog
 
-## Support
-
-- [GitHub Issues](https://github.com/username/obsidian-insight-engine/issues)
-- [Project Discussions](https://github.com/username/obsidian-insight-engine/discussions)
-
-## Acknowledgments
-
-- Obsidian team for their amazing platform
-- OpenAI and Ollama for their AI capabilities
-- All contributors and users of this plugin
+See [CHANGELOG.md](CHANGELOG.md) for version history.
