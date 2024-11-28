@@ -33294,7 +33294,8 @@ var DEFAULT_SETTINGS = {
   modelName: "llama2",
   tagFormat: "property",
   llmHost: "http://localhost:11434",
-  tagLocation: "top"
+  tagLocation: "top",
+  tagStyle: "kebab-case"
 };
 
 // node_modules/@langchain/core/dist/prompts/index.js
@@ -33535,6 +33536,12 @@ var TagAgentSettingTab = class extends import_obsidian2.PluginSettingTab {
         })
       );
     }
+    new import_obsidian2.Setting(containerEl).setName("Tag Style").setDesc("Choose the case style for generated tags").addDropdown((dropdown) => {
+      dropdown.addOption("camelCase", "camelCase (e.g., meetingNotes").addOption("PascalCase", "PascalCase (e.g., MeetingNotes)").addOption("snake_case", "snake_case, (e.g., meeting_notes)").addOption("kebab-case", "kebab-case, (e.g., meeting-notes)").addOption("Train-Case", "Train-Case, (e.g., Meeting-Notes)").addOption("UPPERCASE", "UPPERCASE, (e.g., MEETINGNOTES)").addOption("lowercase", "lowercase, (e.g., meetingnotes)").setValue(this.plugin.settings.tagStyle).onChange(async (value) => {
+        this.plugin.settings.tagStyle = value;
+        await this.plugin.saveSettings();
+      });
+    });
     new import_obsidian2.Setting(containerEl).setName("Tag Format").setDesc("Choose how tags should be formatted in your notes").addDropdown((dropdown) => {
       dropdown.addOption("property", "Frontmatter").addOption("line", "Inline Tags").setValue(this.plugin.settings.tagFormat).onChange(async (value) => {
         this.plugin.settings.tagFormat = value;

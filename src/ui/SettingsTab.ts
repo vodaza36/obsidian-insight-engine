@@ -88,6 +88,25 @@ export class TagAgentSettingTab extends PluginSettingTab {
 		}
 
 		new Setting(containerEl)
+			.setName('Tag Style')
+			.setDesc('Choose the case style for generated tags')
+			.addDropdown((dropdown: DropdownComponent) => {
+				dropdown
+					.addOption('camelCase', 'camelCase (e.g., meetingNotes')
+					.addOption('PascalCase', 'PascalCase (e.g., MeetingNotes)')
+					.addOption('snake_case', 'snake_case, (e.g., meeting_notes)')
+					.addOption('kebab-case', 'kebab-case, (e.g., meeting-notes)')
+					.addOption('Train-Case', 'Train-Case, (e.g., Meeting-Notes)')
+					.addOption('UPPERCASE', 'UPPERCASE, (e.g., MEETINGNOTES)')
+					.addOption('lowercase', 'lowercase, (e.g., meetingnotes)')
+					.setValue(this.plugin.settings.tagStyle)
+					.onChange(async (value) => {
+						this.plugin.settings.tagStyle = value as 'camelCase' | 'PascalCase' | 'snake_case' | 'kebab-case' | 'Train-Case' | 'UPPERCASE' | 'lowercase';
+						await this.plugin.saveSettings();
+					});
+			});
+
+		new Setting(containerEl)
 			.setName('Tag Format')
 			.setDesc('Choose how tags should be formatted in your notes')
 			.addDropdown((dropdown: DropdownComponent) => {
