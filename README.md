@@ -1,6 +1,6 @@
-# Obsidian Tag Agent
+# Obsidian Insight Engine
 
-An AI-powered Obsidian plugin that helps manage and suggest tags for your notes using LangChain.js and OpenAI.
+An AI-powered Obsidian plugin that enhances your note-taking experience using LangChain.js and OpenAI/Ollama.
 
 ## Resources
 The following list of resources were used to develop this plugin:
@@ -9,15 +9,16 @@ The following list of resources were used to develop this plugin:
 ## Features
 
 - Automatically analyzes note content and suggests relevant tags
-- Uses OpenAI's language models through LangChain.js
+- Uses advanced language models through LangChain.js
 - Simple settings interface for API key management
+- More AI-powered features coming soon!
 
 ## Installation
 
 1. Download the latest release from the releases page
-2. Extract the files to your Obsidian plugins folder: `.obsidian/plugins/obsidian-tag-agent/`
+2. Extract the files to your Obsidian plugins folder: `.obsidian/plugins/obsidian-insight-engine/`
 3. Enable the plugin in Obsidian's settings
-4. Add your OpenAI API key in the plugin settings
+4. Add your OpenAI API key in the plugin settings or configure Ollama settings
 
 ## Usage
 

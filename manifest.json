@@ -1,9 +1,9 @@
 {
-	"id": "obsidian-tag-agent",
-	"name": "Tag Agent",
+	"id": "obsidian-insight-engine",
+	"name": "Insight Engine",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "An AI-powered tag management plugin using LangChain.js with Ollama for local processing",
+	"description": "AI-powered knowledge assistant using LangChain.js with Ollama for local processing",
 	"author": "Thomas Hochbichler",
 	"authorUrl": "https://hochbichler.com",
 	"isDesktopOnly": true
