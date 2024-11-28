@@ -23,75 +23,78 @@ Transform your Obsidian vault with AI-powered insights while keeping your privac
 - Natural language querying for intuitive note discovery
 - Enhanced context understanding for more accurate results
 
-## 🚀 Quick Start
+## 🚀 Installation
 
-1. Install the plugin from Obsidian's Community Plugins
-2. Choose your preferred AI backend:
-   - OpenAI for cloud processing
-   - Ollama for local, private processing
-3. Start generating intelligent tags with a single command!
+### Community Plugin Store (Recommended)
+1. Open Obsidian Settings
+2. Go to Community Plugins and disable Safe Mode
+3. Click Browse and search for "Insight Engine"
+4. Install the plugin and enable it
+
+### Manual Installation
+1. Download the latest release from the [releases page](https://github.com/username/obsidian-insight-engine/releases)
+2. Extract the ZIP file into your vault's `.obsidian/plugins` folder
+3. Reload Obsidian
+4. Enable the plugin in Community Plugins settings
 
 ## ⚙️ Setup
 
 ### OpenAI Setup
 1. Get your API key from [OpenAI](https://platform.openai.com/)
 2. Open Settings → Insight Engine
-3. Paste your API key
-4. Configure model preferences
+3. Select OpenAI as the LLM Provider
+4. Paste your API key
+5. Choose your preferred model (default: gpt-3.5-turbo)
 
 ### Ollama Setup (Privacy-Focused Option)
 1. Install Ollama from [ollama.ai](https://ollama.ai)
-2. Pull your preferred model
-3. Select Ollama in plugin settings
-4. Start using AI features completely offline!
+2. Pull your preferred model: `ollama pull llama2`
+3. Start Ollama
+4. In plugin settings:
+   - Select Ollama as LLM Provider
+   - Set Host URL (default: http://localhost:11434)
+   - Choose your model (default: llama2)
 
 ## 📖 Usage
 
 ### Basic Commands
 - `Cmd/Ctrl + P` → "Generate Tags" to analyze current note
-- More commands coming soon!
+- Configure tag style and location in settings
+- Tags can be added as YAML frontmatter or inline
 
-### Example Workflow
-1. Write your note
-2. Run tag generation
-3. Review and apply suggested tags
-4. Enjoy enhanced note organization!
+## 🛠️ Development
 
-![Insight Engine in Action](docs/screen-2.png)
+### Prerequisites
+- Node.js 16+
+- npm or yarn
+- Git
 
-## 🛠️ Technical Requirements
+### Setup Development Environment
+1. Clone the repository
+```bash
+git clone https://github.com/username/obsidian-insight-engine.git
+cd obsidian-insight-engine
+```
 
-- Obsidian v1.0.0+
-- For Ollama: Local installation
-- For OpenAI: API key and internet connection
+2. Install dependencies
+```bash
+npm install
+```
 
-## 🤝 Contributing
+3. Build for development
+```bash
+npm run dev
+```
 
-We welcome contributions! Check out our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+4. For production build
+```bash
+npm run build
+```
 
-## 📝 License
+### Testing
+- Run all tests: `npm test`
+- Watch mode: `npm run test:watch`
+- E2E tests: `npm run test:e2e`
 
-MIT License - see [LICENSE](LICENSE) for details.
-
-### Third-Party Licenses
-
-This project uses several open-source packages:
-
-- LangChain packages (@langchain/core, @langchain/ollama, @langchain/openai) - Apache-2.0 License
-- tslib - BSD-3-Clause License
-- Various development tools under MIT and Apache-2.0 licenses
-
-For full license texts, please see the respective packages' repositories.
-
-## 🆘 Support
-
-- [Report Issues](https://github.com/username/obsidian-insight-engine/issues)
-- [Join Discussions](https://github.com/username/obsidian-insight-engine/discussions)
-
-## 📜 Changelog
-
-See [CHANGELOG.md](CHANGELOG.md) for version history.
-
-## ⚠️ Disclaimer
-
-Please note that this plugin is provided "as is" without warranty of any kind. For more details about limitations of liability and user responsibilities, see our [DISCLAIMER.md](DISCLAIMER.md).
+## 📄 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

@@ -1,6 +1,6 @@
 {
   "name": "obsidian-insight-engine",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "AI-powered knowledge assistant using LangChain.js with Ollama for local processing",
   "main": "main.js",
   "scripts": {
@@ -19,6 +19,15 @@
   ],
   "author": "Thomas Hochbichler",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vodaza36/obsidian-insight-engine"
+  },
+  "bugs": {
+    "url": "https://github.com/vodaza36/obsidian-insight-engine/issues"
+  },
+  "homepage": "https://github.com/vodaza36/obsidian-insight-engine#readme",
+  "minAppVersion": "1.4.0",
   "dependencies": {
     "@langchain/core": "^0.3.18",
     "@langchain/ollama": "^0.1.2",
