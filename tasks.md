@@ -43,10 +43,10 @@
   - [x] Verify all required fields
   - [x] Add fundingUrl if accepting donations
   - [x] Update version number
-- [ ] Create first release
-  - [ ] Build production version
-  - [ ] Test built version
-  - [ ] Create GitHub release with changelog
+- [x] Create first release
+  - [x] Build production version
+  - [x] Test built version
+  - [x] Create GitHub release with changelog
 
 ## Testing
 - [ ] Write/update test cases

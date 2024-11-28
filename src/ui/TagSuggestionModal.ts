@@ -9,6 +9,7 @@ import { App, Modal, Setting, Notice } from 'obsidian';
 interface TagSuggestion {
     name: string;
     isExisting: boolean;
+    suggestedByLLM: boolean;
 }
 
 export class TagSuggestionModal extends Modal {
@@ -49,7 +50,7 @@ export class TagSuggestionModal extends Modal {
         contentEl.createEl('p', { text: 'Select the tags you want to add to your note:' });
 
         // Group tags
-        const existingTags = this.suggestedTags.filter(tag => tag.isExisting);
+        const existingTags = this.suggestedTags.filter(tag => tag.isExisting && tag.suggestedByLLM);
         const newTags = this.suggestedTags.filter(tag => !tag.isExisting);
 
         // Create container for better styling

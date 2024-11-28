@@ -33250,6 +33250,12 @@ var LLMProvider = /* @__PURE__ */ ((LLMProvider2) => {
   return LLMProvider2;
 })(LLMProvider || {});
 var LLMFactory = class {
+  /**
+   * Validates the configuration settings for the specified LLM provider
+   * @param provider - The LLM provider to validate configuration for
+   * @param settings - Configuration settings for the provider
+   * @returns null if valid, error message string if invalid
+   */
   static validateConfig(provider, settings) {
     switch (provider) {
       case "openai" /* OPENAI */:
@@ -33265,6 +33271,14 @@ var LLMFactory = class {
     }
     return null;
   }
+  /**
+   * Creates a new language model instance based on the specified provider and configuration
+   * @param provider - The LLM provider to use (OpenAI or Ollama)
+   * @param modelName - Name of the model to use (e.g., 'gpt-3.5-turbo' for OpenAI or 'llama2' for Ollama)
+   * @param options - Provider-specific configuration options
+   * @returns BaseChatModel A configured language model instance
+   * @throws Error if the configuration is invalid or model creation fails
+   */
   static createModel(provider, modelName, options = {}) {
     const validationError = this.validateConfig(provider, options);
     if (validationError) {
@@ -33318,6 +33332,11 @@ init_chat2();
 
 // src/services/tagGenerator.ts
 var TagGenerator = class {
+  /**
+   * Creates a new TagGenerator instance
+   * @param model - The LLM model to use for tag generation (OpenAI or Ollama)
+   * @param tagStyle - The formatting style for generated tags (default: 'kebab-case')
+   */
   constructor(model, tagStyle = "kebab-case") {
     this.model = model;
     this.tagStyle = tagStyle;
@@ -33348,17 +33367,18 @@ Rules for tag suggestions:
 7. For multi-word tags, use the specified tag style format
 8. In case of a multi-word tag, think about if you can replace it with a popular acronym (e.g., 'artificial-intelligence' -> 'ai')
 9. Focus on content-specific tags, avoid generic tags (e.g., 'hobby' instead of 'interest')
-10. Tags should be specific enough to be useful but general enough to be reusable
-11. Prioritize using existing tags if they fit the content well then respond with the existing tags
-12. Only suggest new tags if no existing tags adequately describe the content
-
-Provide your response as a comma-separated list of tags (without the # symbol). Response only the tags with no additonal information.
-
-Suggested tags:`,
+10. Tags should be specific enough to be useful but general enough to be reusable`,
       inputVariables: ["text", "existingTags", "tagStyle"]
     });
     this.outputParser = new StringOutputParser();
   }
+  /**
+   * Generates tags for the given note content while considering existing tags
+   * @param content - The note content to analyze
+   * @param existingTags - Array of tags that already exist in the note (optional)
+   * @returns Promise<string[]> Array of generated tags in the specified format
+   * @throws Error if the LLM fails to generate tags or returns invalid format
+   */
   async suggestTags(content, existingTags = /* @__PURE__ */ new Set()) {
     try {
       const existingTagsString = Array.from(existingTags).map((tag) => tag.replace("#", "")).join(", ") || "None";
@@ -33403,7 +33423,7 @@ var TagSuggestionModal = class extends import_obsidian.Modal {
     contentEl.empty();
     contentEl.createEl("h2", { text: "Suggested Tags" });
     contentEl.createEl("p", { text: "Select the tags you want to add to your note:" });
-    const existingTags = this.suggestedTags.filter((tag) => tag.isExisting);
+    const existingTags = this.suggestedTags.filter((tag) => tag.isExisting && tag.suggestedByLLM);
     const newTags = this.suggestedTags.filter((tag) => !tag.isExisting);
     const tagsContainer = contentEl.createDiv({
       cls: "tag-suggestions-container"
@@ -33693,7 +33713,8 @@ var InsightEngine = class extends import_obsidian4.Plugin {
       if (suggestedTags && suggestedTags.length > 0) {
         const tagSuggestions = suggestedTags.map((tag) => ({
           name: tag,
-          isExisting: existingTags.has(tag.replace("#", ""))
+          isExisting: existingTags.has(tag.replace("#", "")),
+          suggestedByLLM: true
         }));
         console.log("Existing tags:", existingTags);
         console.log("Tag suggestions:", tagSuggestions);

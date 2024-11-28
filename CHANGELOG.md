@@ -34,8 +34,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Implemented secure API key storage
 - Added privacy-focused local processing option
 
-## [0.1.0] - YYYY-MM-DD
+## [0.1.0] - 2024-01-09
 - Initial release
 
-[Unreleased]: https://github.com/username/obsidian-insight-engine/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/username/obsidian-insight-engine/releases/tag/v0.1.0
+[Unreleased]: https://github.com/vodaza36/obsidian-insight-engine/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/vodaza36/obsidian-insight-engine/releases/tag/v0.1.0

@@ -16,6 +16,7 @@ import { InsightEngineSettingTab } from '@/ui/SettingsTab';
 type TagSuggestion = {
     name: string;
     isExisting: boolean;
+    suggestedByLLM: boolean;
 };
 
 /**
@@ -135,7 +136,8 @@ export default class InsightEngine extends Plugin {
 			if (suggestedTags && suggestedTags.length > 0) {
 				const tagSuggestions: TagSuggestion[] = suggestedTags.map(tag => ({
 					name: tag,
-					isExisting: existingTags.has(tag.replace('#', ''))
+					isExisting: existingTags.has(tag.replace('#', '')),
+					suggestedByLLM: true
 				}));
 
 				console.log('Existing tags:', existingTags);
