@@ -53,7 +53,8 @@ An intelligent search and insight engine plugin for Obsidian that enhances your 
 2. Type "Insight Engine"
 3. Execute the command you like, e.g. "Generat Tags"
 
-[Screenshots coming soon]
+![Insight Engine - Command Palette](docs/screen-2.png)
+![Insight Engine - Tag Generator](docs/screen-1.png)
 
 ## Dependencies
 
