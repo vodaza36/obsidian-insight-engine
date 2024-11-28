@@ -12,13 +12,13 @@
 - [ ] Set up GitHub repository settings and branch protection
 
 ## Documentation
-- [ ] Create README.md
-  - [ ] Add detailed installation instructions
-  - [ ] Add configuration steps for OpenAI/Ollama
-  - [ ] Add usage instructions with examples
-  - [ ] Add screenshots of the plugin in action
-  - [ ] List dependencies and requirements
-  - [ ] Add badges (version, license, etc.)
+- [x] Create README.md
+  - [x] Add detailed installation instructions
+  - [x] Add configuration steps for OpenAI/Ollama
+  - [x] Add usage instructions with examples
+  - [x] Add screenshots of the plugin in action
+  - [x] List dependencies and requirements
+  - [x] Add badges (version, license, etc.)
 - [ ] Create CONTRIBUTING.md
   - [ ] Development setup instructions
   - [ ] Code style guidelines
