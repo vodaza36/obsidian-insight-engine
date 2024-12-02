@@ -5,7 +5,7 @@ on an AI driven approach. Following requirements must be met:
 
 ### Functional Requirements
 - The plugin should be able to scan a single note and generate a list of tags. Thereby he should consider the list of existing tags. If no exiting tag fits then the plugin should suggest new tags.
-- The plugin should be able to summarise a given note. The summary should be short and provide a brief overview of the note. The use can copy the summary to its clipboard.
+- The plugin should be able to summarise a given note. The summary should be short and provide a brief overview of the note. Mardown should be supported to better format the summary. The use can copy the summary to its clipboard.
 ### Non-Functional Requirements
 - The plugin should be available at the Obsidian marketplace.
 - To keep everything private and secure an Ollama local LLM is used to classify the notes.
