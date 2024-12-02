@@ -6,6 +6,7 @@
 
 Transform your Obsidian vault with AI-powered insights while keeping your privacy intact. The Insight Engine plugin enhances your note-taking experience by combining the power of advanced AI with the flexibility to choose between cloud-based (OpenAI) or privacy-focused local (Ollama) processing.
 
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-orange?style=for-the-badge&logo=buy-me-a-coffee&logoColor=white)](https://www.buymeacoffee.com/vodaza36)
 ## ✨ Key Features
 
 ### 🤖 Intelligent Tag Generation
