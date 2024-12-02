@@ -5,14 +5,9 @@ on an AI driven approach. Following requirements must be met:
 
 ### Functional Requirements
 - The plugin should be able to scan a single note and generate a list of tags. Thereby he should consider the list of existing tags. If no exiting tag fits then the plugin should suggest new tags.
-- The plugin should be available at the Obsidian marketplace.
-- Follow this tagging best practiced:
-    - Use the "noun" form instead of "gerund" forms for verbs
-    - Prefer the naming convention of the existing tags
-    - Use known acronyms (e.g. "ai" instead of "Artificial Intelligence" or "dev" instead of "development")
-    - Do not suggest to specific tags that you will only use once
-    - Prefer single words without hyphens for tags
+- The plugin should be able to summarise a given note. The summary should be short and provide a brief overview of the note. The use can copy the summary to its clipboard.
 ### Non-Functional Requirements
+- The plugin should be available at the Obsidian marketplace.
 - To keep everything private and secure an Ollama local LLM is used to classify the notes.
 - The plugin should be easy to use and have a consistent look and feel with the Obsidian app
 - The puglins repository should consider all best practices for plugin development suggested by https://github.com/obsidianmd/obsidian-sample-plugin
