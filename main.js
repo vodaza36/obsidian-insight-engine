@@ -34170,7 +34170,7 @@ var NoteSummaryService = class {
     this.initializeSummarizeChain();
   }
   initializeSummarizeChain() {
-    const systemTemplate = "You are a summarization assistant. Your task is to create concise summaries. IMPORTANT: Respond ONLY with the summary itself - do not add any introductory phrases like 'Here's a summary' or 'Here's what I found'. The summary should be direct and start with the main points.";
+    const systemTemplate = "You are a summarization assistant. Your task is to create concise summaries. It should not be longer than 150 words. Format your response in Markdown when appropriate, using proper headings, lists, and emphasis. IMPORTANT: Respond ONLY with the summary itself - do not add any introductory phrases like 'Here's a summary' or 'Here's what I found'. The summary should be direct and start with the main points.";
     const promptTemplate = ChatPromptTemplate.fromMessages([
       ["system", systemTemplate],
       ["user", "{text}"]
@@ -34452,15 +34452,21 @@ var InsightEngineSettingTab = class extends import_obsidian4.PluginSettingTab {
 // src/ui/SummaryModal.ts
 var import_obsidian5 = require("obsidian");
 var SummaryModal = class extends import_obsidian5.Modal {
-  constructor(app, summary) {
+  constructor(app, summary, component) {
     super(app);
     this.summary = summary;
+    this.component = component;
   }
-  onOpen() {
+  async onOpen() {
     const { contentEl } = this;
     contentEl.createEl("h2", { text: "Note Summary" });
     const summaryContainer = contentEl.createDiv({ cls: "summary-content" });
-    summaryContainer.createEl("p", { text: this.summary });
+    await import_obsidian5.MarkdownRenderer.renderMarkdown(
+      this.summary,
+      summaryContainer,
+      "",
+      this.component
+    );
     new import_obsidian5.Setting(contentEl).addButton((btn) => btn.setButtonText("Copy to Clipboard").setCta().onClick(async () => {
       await navigator.clipboard.writeText(this.summary);
       this.close();
@@ -34755,7 +34761,7 @@ ${content}`;
         return;
       }
       if (result.summary) {
-        const summaryModal = new SummaryModal(this.app, result.summary);
+        const summaryModal = new SummaryModal(this.app, result.summary, this);
         summaryModal.open();
       } else {
         new import_obsidian6.Notice("No summary was generated for this note.");

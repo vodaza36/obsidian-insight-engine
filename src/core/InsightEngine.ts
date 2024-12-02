@@ -373,7 +373,7 @@ export default class InsightEngine extends Plugin {
             }
 
             if (result.summary) {
-                const summaryModal = new SummaryModal(this.app, result.summary);
+                const summaryModal = new SummaryModal(this.app, result.summary, this);
                 summaryModal.open();
             } else {
                 new Notice('No summary was generated for this note.');

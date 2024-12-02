@@ -35,7 +35,7 @@ export class NoteSummaryService {
     }
 
     private initializeSummarizeChain() {
-        const systemTemplate = "You are a summarization assistant. Your task is to create concise summaries. IMPORTANT: Respond ONLY with the summary itself - do not add any introductory phrases like 'Here's a summary' or 'Here's what I found'. The summary should be direct and start with the main points.";
+        const systemTemplate = "You are a summarization assistant. Your task is to create concise summaries. It should not be longer than 150 words. Format your response in Markdown when appropriate, using proper headings, lists, and emphasis. IMPORTANT: Respond ONLY with the summary itself - do not add any introductory phrases like 'Here's a summary' or 'Here's what I found'. The summary should be direct and start with the main points.";
         const promptTemplate = ChatPromptTemplate.fromMessages([
             ["system", systemTemplate],
             ["user", "{text}"],
