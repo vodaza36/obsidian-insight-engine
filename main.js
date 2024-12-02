@@ -20005,7 +20005,7 @@ var init_messages2 = __esm({
 });
 
 // node_modules/@langchain/core/dist/prompt_values.js
-var BasePromptValue, StringPromptValue, ChatPromptValue;
+var BasePromptValue, StringPromptValue, ChatPromptValue, ImagePromptValue;
 var init_prompt_values = __esm({
   "node_modules/@langchain/core/dist/prompt_values.js"() {
     init_serializable();
@@ -20080,6 +20080,60 @@ var init_prompt_values = __esm({
       }
       toChatMessages() {
         return this.messages;
+      }
+    };
+    ImagePromptValue = class extends BasePromptValue {
+      static lc_name() {
+        return "ImagePromptValue";
+      }
+      constructor(fields) {
+        if (!("imageUrl" in fields)) {
+          fields = { imageUrl: fields };
+        }
+        super(fields);
+        Object.defineProperty(this, "lc_namespace", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: ["langchain_core", "prompt_values"]
+        });
+        Object.defineProperty(this, "lc_serializable", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: true
+        });
+        Object.defineProperty(this, "imageUrl", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: void 0
+        });
+        Object.defineProperty(this, "value", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: void 0
+        });
+        this.imageUrl = fields.imageUrl;
+      }
+      toString() {
+        return this.imageUrl.url;
+      }
+      toChatMessages() {
+        return [
+          new HumanMessage({
+            content: [
+              {
+                type: "image_url",
+                image_url: {
+                  detail: this.imageUrl.detail,
+                  url: this.imageUrl.url
+                }
+              }
+            ]
+          })
+        ];
       }
     };
   }
@@ -20949,16 +21003,174 @@ var init_prompt = __esm({
 });
 
 // node_modules/@langchain/core/dist/prompts/image.js
+var ImagePromptTemplate;
 var init_image = __esm({
   "node_modules/@langchain/core/dist/prompts/image.js"() {
     init_prompt_values();
     init_base5();
     init_template();
+    ImagePromptTemplate = class _ImagePromptTemplate extends BasePromptTemplate {
+      static lc_name() {
+        return "ImagePromptTemplate";
+      }
+      constructor(input) {
+        var _a2, _b;
+        super(input);
+        Object.defineProperty(this, "lc_namespace", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: ["langchain_core", "prompts", "image"]
+        });
+        Object.defineProperty(this, "template", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: void 0
+        });
+        Object.defineProperty(this, "templateFormat", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: "f-string"
+        });
+        Object.defineProperty(this, "validateTemplate", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: true
+        });
+        Object.defineProperty(this, "additionalContentFields", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: void 0
+        });
+        this.template = input.template;
+        this.templateFormat = (_a2 = input.templateFormat) != null ? _a2 : this.templateFormat;
+        this.validateTemplate = (_b = input.validateTemplate) != null ? _b : this.validateTemplate;
+        this.additionalContentFields = input.additionalContentFields;
+        if (this.validateTemplate) {
+          let totalInputVariables = this.inputVariables;
+          if (this.partialVariables) {
+            totalInputVariables = totalInputVariables.concat(Object.keys(this.partialVariables));
+          }
+          checkValidTemplate([
+            { type: "image_url", image_url: this.template }
+          ], this.templateFormat, totalInputVariables);
+        }
+      }
+      _getPromptType() {
+        return "prompt";
+      }
+      /**
+       * Partially applies values to the prompt template.
+       * @param values The values to be partially applied to the prompt template.
+       * @returns A new instance of ImagePromptTemplate with the partially applied values.
+       */
+      async partial(values) {
+        var _a2;
+        const newInputVariables = this.inputVariables.filter((iv) => !(iv in values));
+        const newPartialVariables = {
+          ...(_a2 = this.partialVariables) != null ? _a2 : {},
+          ...values
+        };
+        const promptDict = {
+          ...this,
+          inputVariables: newInputVariables,
+          partialVariables: newPartialVariables
+        };
+        return new _ImagePromptTemplate(promptDict);
+      }
+      /**
+       * Formats the prompt template with the provided values.
+       * @param values The values to be used to format the prompt template.
+       * @returns A promise that resolves to a string which is the formatted prompt.
+       */
+      async format(values) {
+        const formatted = {};
+        for (const [key, value] of Object.entries(this.template)) {
+          if (typeof value === "string") {
+            formatted[key] = renderTemplate(value, this.templateFormat, values);
+          } else {
+            formatted[key] = value;
+          }
+        }
+        const url = values.url || formatted.url;
+        const detail = values.detail || formatted.detail;
+        if (!url) {
+          throw new Error("Must provide either an image URL.");
+        }
+        if (typeof url !== "string") {
+          throw new Error("url must be a string.");
+        }
+        const output = { url };
+        if (detail) {
+          output.detail = detail;
+        }
+        return output;
+      }
+      /**
+       * Formats the prompt given the input values and returns a formatted
+       * prompt value.
+       * @param values The input values to format the prompt.
+       * @returns A Promise that resolves to a formatted prompt value.
+       */
+      async formatPromptValue(values) {
+        const formattedPrompt = await this.format(values);
+        return new ImagePromptValue(formattedPrompt);
+      }
+    };
   }
 });
 
 // node_modules/@langchain/core/dist/prompts/chat.js
-var BaseChatPromptTemplate;
+function _isBaseMessagePromptTemplate(baseMessagePromptTemplateLike) {
+  return typeof baseMessagePromptTemplateLike.formatMessages === "function";
+}
+function _coerceMessagePromptTemplateLike(messagePromptTemplateLike, extra) {
+  if (_isBaseMessagePromptTemplate(messagePromptTemplateLike) || isBaseMessage(messagePromptTemplateLike)) {
+    return messagePromptTemplateLike;
+  }
+  if (Array.isArray(messagePromptTemplateLike) && messagePromptTemplateLike[0] === "placeholder") {
+    const messageContent = messagePromptTemplateLike[1];
+    if (typeof messageContent !== "string" || messageContent[0] !== "{" || messageContent[messageContent.length - 1] !== "}") {
+      throw new Error(`Invalid placeholder template: "${messagePromptTemplateLike[1]}". Expected a variable name surrounded by curly braces.`);
+    }
+    const variableName = messageContent.slice(1, -1);
+    return new MessagesPlaceholder({ variableName, optional: true });
+  }
+  const message = coerceMessageLikeToMessage(messagePromptTemplateLike);
+  let templateData;
+  if (typeof message.content === "string") {
+    templateData = message.content;
+  } else {
+    templateData = message.content.map((item) => {
+      if ("text" in item) {
+        return { ...item, text: item.text };
+      } else if ("image_url" in item) {
+        return { ...item, image_url: item.image_url };
+      } else {
+        return item;
+      }
+    });
+  }
+  if (message._getType() === "human") {
+    return HumanMessagePromptTemplate.fromTemplate(templateData, extra);
+  } else if (message._getType() === "ai") {
+    return AIMessagePromptTemplate.fromTemplate(templateData, extra);
+  } else if (message._getType() === "system") {
+    return SystemMessagePromptTemplate.fromTemplate(templateData, extra);
+  } else if (ChatMessage.isInstance(message)) {
+    return ChatMessagePromptTemplate.fromTemplate(message.content, message.role, extra);
+  } else {
+    throw new Error(`Could not coerce message prompt template from input. Received message type: "${message._getType()}".`);
+  }
+}
+function isMessagesPlaceholder(x) {
+  return x.constructor.lc_name() === "MessagesPlaceholder";
+}
+var BaseMessagePromptTemplate, MessagesPlaceholder, BaseMessageStringPromptTemplate, BaseChatPromptTemplate, ChatMessagePromptTemplate, _StringImageMessagePromptTemplate, HumanMessagePromptTemplate, AIMessagePromptTemplate, SystemMessagePromptTemplate, ChatPromptTemplate;
 var init_chat2 = __esm({
   "node_modules/@langchain/core/dist/prompts/chat.js"() {
     init_messages2();
@@ -20970,6 +21182,111 @@ var init_chat2 = __esm({
     init_image();
     init_template();
     init_errors();
+    BaseMessagePromptTemplate = class extends Runnable {
+      constructor() {
+        super(...arguments);
+        Object.defineProperty(this, "lc_namespace", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: ["langchain_core", "prompts", "chat"]
+        });
+        Object.defineProperty(this, "lc_serializable", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: true
+        });
+      }
+      /**
+       * Calls the formatMessages method with the provided input and options.
+       * @param input Input for the formatMessages method
+       * @param options Optional BaseCallbackConfig
+       * @returns Formatted output messages
+       */
+      async invoke(input, options) {
+        return this._callWithConfig((input2) => this.formatMessages(input2), input, { ...options, runType: "prompt" });
+      }
+    };
+    MessagesPlaceholder = class extends BaseMessagePromptTemplate {
+      static lc_name() {
+        return "MessagesPlaceholder";
+      }
+      constructor(fields) {
+        var _a2;
+        if (typeof fields === "string") {
+          fields = { variableName: fields };
+        }
+        super(fields);
+        Object.defineProperty(this, "variableName", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: void 0
+        });
+        Object.defineProperty(this, "optional", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: void 0
+        });
+        this.variableName = fields.variableName;
+        this.optional = (_a2 = fields.optional) != null ? _a2 : false;
+      }
+      get inputVariables() {
+        return [this.variableName];
+      }
+      async formatMessages(values) {
+        const input = values[this.variableName];
+        if (this.optional && !input) {
+          return [];
+        } else if (!input) {
+          const error = new Error(`Field "${this.variableName}" in prompt uses a MessagesPlaceholder, which expects an array of BaseMessages as an input value. Received: undefined`);
+          error.name = "InputFormatError";
+          throw error;
+        }
+        let formattedMessages;
+        try {
+          if (Array.isArray(input)) {
+            formattedMessages = input.map(coerceMessageLikeToMessage);
+          } else {
+            formattedMessages = [coerceMessageLikeToMessage(input)];
+          }
+        } catch (e) {
+          const readableInput = typeof input === "string" ? input : JSON.stringify(input, null, 2);
+          const error = new Error([
+            `Field "${this.variableName}" in prompt uses a MessagesPlaceholder, which expects an array of BaseMessages or coerceable values as input.`,
+            `Received value: ${readableInput}`,
+            `Additional message: ${e.message}`
+          ].join("\n\n"));
+          error.name = "InputFormatError";
+          error.lc_error_code = e.lc_error_code;
+          throw error;
+        }
+        return formattedMessages;
+      }
+    };
+    BaseMessageStringPromptTemplate = class extends BaseMessagePromptTemplate {
+      constructor(fields) {
+        if (!("prompt" in fields)) {
+          fields = { prompt: fields };
+        }
+        super(fields);
+        Object.defineProperty(this, "prompt", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: void 0
+        });
+        this.prompt = fields.prompt;
+      }
+      get inputVariables() {
+        return this.prompt.inputVariables;
+      }
+      async formatMessages(values) {
+        return [await this.format(values)];
+      }
+    };
     BaseChatPromptTemplate = class extends BasePromptTemplate {
       constructor(input) {
         super(input);
@@ -20980,6 +21297,443 @@ var init_chat2 = __esm({
       async formatPromptValue(values) {
         const resultMessages = await this.formatMessages(values);
         return new ChatPromptValue(resultMessages);
+      }
+    };
+    ChatMessagePromptTemplate = class extends BaseMessageStringPromptTemplate {
+      static lc_name() {
+        return "ChatMessagePromptTemplate";
+      }
+      constructor(fields, role) {
+        if (!("prompt" in fields)) {
+          fields = { prompt: fields, role };
+        }
+        super(fields);
+        Object.defineProperty(this, "role", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: void 0
+        });
+        this.role = fields.role;
+      }
+      async format(values) {
+        return new ChatMessage(await this.prompt.format(values), this.role);
+      }
+      static fromTemplate(template, role, options) {
+        return new this(PromptTemplate.fromTemplate(template, {
+          templateFormat: options == null ? void 0 : options.templateFormat
+        }), role);
+      }
+    };
+    _StringImageMessagePromptTemplate = class extends BaseMessagePromptTemplate {
+      static _messageClass() {
+        throw new Error("Can not invoke _messageClass from inside _StringImageMessagePromptTemplate");
+      }
+      constructor(fields, additionalOptions) {
+        if (!("prompt" in fields)) {
+          fields = { prompt: fields };
+        }
+        super(fields);
+        Object.defineProperty(this, "lc_namespace", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: ["langchain_core", "prompts", "chat"]
+        });
+        Object.defineProperty(this, "lc_serializable", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: true
+        });
+        Object.defineProperty(this, "inputVariables", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: []
+        });
+        Object.defineProperty(this, "additionalOptions", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: {}
+        });
+        Object.defineProperty(this, "prompt", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: void 0
+        });
+        Object.defineProperty(this, "messageClass", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: void 0
+        });
+        Object.defineProperty(this, "chatMessageClass", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: void 0
+        });
+        this.prompt = fields.prompt;
+        if (Array.isArray(this.prompt)) {
+          let inputVariables = [];
+          this.prompt.forEach((prompt) => {
+            if ("inputVariables" in prompt) {
+              inputVariables = inputVariables.concat(prompt.inputVariables);
+            }
+          });
+          this.inputVariables = inputVariables;
+        } else {
+          this.inputVariables = this.prompt.inputVariables;
+        }
+        this.additionalOptions = additionalOptions != null ? additionalOptions : this.additionalOptions;
+      }
+      createMessage(content) {
+        const constructor = this.constructor;
+        if (constructor._messageClass()) {
+          const MsgClass = constructor._messageClass();
+          return new MsgClass({ content });
+        } else if (constructor.chatMessageClass) {
+          const MsgClass = constructor.chatMessageClass();
+          return new MsgClass({
+            content,
+            role: this.getRoleFromMessageClass(MsgClass.lc_name())
+          });
+        } else {
+          throw new Error("No message class defined");
+        }
+      }
+      getRoleFromMessageClass(name) {
+        switch (name) {
+          case "HumanMessage":
+            return "human";
+          case "AIMessage":
+            return "ai";
+          case "SystemMessage":
+            return "system";
+          case "ChatMessage":
+            return "chat";
+          default:
+            throw new Error("Invalid message class name");
+        }
+      }
+      static fromTemplate(template, additionalOptions) {
+        var _a2, _b, _c;
+        if (typeof template === "string") {
+          return new this(PromptTemplate.fromTemplate(template, additionalOptions));
+        }
+        const prompt = [];
+        for (const item of template) {
+          if (typeof item === "string" || typeof item === "object" && "text" in item) {
+            let text = "";
+            if (typeof item === "string") {
+              text = item;
+            } else if (typeof item.text === "string") {
+              text = (_a2 = item.text) != null ? _a2 : "";
+            }
+            const options = {
+              ...additionalOptions,
+              ...typeof item !== "string" ? { additionalContentFields: item } : {}
+            };
+            prompt.push(PromptTemplate.fromTemplate(text, options));
+          } else if (typeof item === "object" && "image_url" in item) {
+            let imgTemplate = (_b = item.image_url) != null ? _b : "";
+            let imgTemplateObject;
+            let inputVariables = [];
+            if (typeof imgTemplate === "string") {
+              let parsedTemplate;
+              if ((additionalOptions == null ? void 0 : additionalOptions.templateFormat) === "mustache") {
+                parsedTemplate = parseMustache(imgTemplate);
+              } else {
+                parsedTemplate = parseFString(imgTemplate);
+              }
+              const variables = parsedTemplate.flatMap((item2) => item2.type === "variable" ? [item2.name] : []);
+              if (((_c = variables == null ? void 0 : variables.length) != null ? _c : 0) > 0) {
+                if (variables.length > 1) {
+                  throw new Error(`Only one format variable allowed per image template.
+Got: ${variables}
+From: ${imgTemplate}`);
+                }
+                inputVariables = [variables[0]];
+              } else {
+                inputVariables = [];
+              }
+              imgTemplate = { url: imgTemplate };
+              imgTemplateObject = new ImagePromptTemplate({
+                template: imgTemplate,
+                inputVariables,
+                templateFormat: additionalOptions == null ? void 0 : additionalOptions.templateFormat,
+                additionalContentFields: item
+              });
+            } else if (typeof imgTemplate === "object") {
+              if ("url" in imgTemplate) {
+                let parsedTemplate;
+                if ((additionalOptions == null ? void 0 : additionalOptions.templateFormat) === "mustache") {
+                  parsedTemplate = parseMustache(imgTemplate.url);
+                } else {
+                  parsedTemplate = parseFString(imgTemplate.url);
+                }
+                inputVariables = parsedTemplate.flatMap((item2) => item2.type === "variable" ? [item2.name] : []);
+              } else {
+                inputVariables = [];
+              }
+              imgTemplateObject = new ImagePromptTemplate({
+                template: imgTemplate,
+                inputVariables,
+                templateFormat: additionalOptions == null ? void 0 : additionalOptions.templateFormat,
+                additionalContentFields: item
+              });
+            } else {
+              throw new Error("Invalid image template");
+            }
+            prompt.push(imgTemplateObject);
+          }
+        }
+        return new this({ prompt, additionalOptions });
+      }
+      async format(input) {
+        if (this.prompt instanceof BaseStringPromptTemplate) {
+          const text = await this.prompt.format(input);
+          return this.createMessage(text);
+        } else {
+          const content = [];
+          for (const prompt of this.prompt) {
+            let inputs = {};
+            if (!("inputVariables" in prompt)) {
+              throw new Error(`Prompt ${prompt} does not have inputVariables defined.`);
+            }
+            for (const item of prompt.inputVariables) {
+              if (!inputs) {
+                inputs = { [item]: input[item] };
+              }
+              inputs = { ...inputs, [item]: input[item] };
+            }
+            if (prompt instanceof BaseStringPromptTemplate) {
+              const formatted = await prompt.format(inputs);
+              let additionalContentFields;
+              if ("additionalContentFields" in prompt) {
+                additionalContentFields = prompt.additionalContentFields;
+              }
+              content.push({
+                ...additionalContentFields,
+                type: "text",
+                text: formatted
+              });
+            } else if (prompt instanceof ImagePromptTemplate) {
+              const formatted = await prompt.format(inputs);
+              let additionalContentFields;
+              if ("additionalContentFields" in prompt) {
+                additionalContentFields = prompt.additionalContentFields;
+              }
+              content.push({
+                ...additionalContentFields,
+                type: "image_url",
+                image_url: formatted
+              });
+            }
+          }
+          return this.createMessage(content);
+        }
+      }
+      async formatMessages(values) {
+        return [await this.format(values)];
+      }
+    };
+    HumanMessagePromptTemplate = class extends _StringImageMessagePromptTemplate {
+      static _messageClass() {
+        return HumanMessage;
+      }
+      static lc_name() {
+        return "HumanMessagePromptTemplate";
+      }
+    };
+    AIMessagePromptTemplate = class extends _StringImageMessagePromptTemplate {
+      static _messageClass() {
+        return AIMessage;
+      }
+      static lc_name() {
+        return "AIMessagePromptTemplate";
+      }
+    };
+    SystemMessagePromptTemplate = class extends _StringImageMessagePromptTemplate {
+      static _messageClass() {
+        return SystemMessage;
+      }
+      static lc_name() {
+        return "SystemMessagePromptTemplate";
+      }
+    };
+    ChatPromptTemplate = class _ChatPromptTemplate extends BaseChatPromptTemplate {
+      static lc_name() {
+        return "ChatPromptTemplate";
+      }
+      get lc_aliases() {
+        return {
+          promptMessages: "messages"
+        };
+      }
+      constructor(input) {
+        super(input);
+        Object.defineProperty(this, "promptMessages", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: void 0
+        });
+        Object.defineProperty(this, "validateTemplate", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: true
+        });
+        Object.defineProperty(this, "templateFormat", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: "f-string"
+        });
+        if (input.templateFormat === "mustache" && input.validateTemplate === void 0) {
+          this.validateTemplate = false;
+        }
+        Object.assign(this, input);
+        if (this.validateTemplate) {
+          const inputVariablesMessages = /* @__PURE__ */ new Set();
+          for (const promptMessage of this.promptMessages) {
+            if (promptMessage instanceof BaseMessage)
+              continue;
+            for (const inputVariable of promptMessage.inputVariables) {
+              inputVariablesMessages.add(inputVariable);
+            }
+          }
+          const totalInputVariables = this.inputVariables;
+          const inputVariablesInstance = new Set(this.partialVariables ? totalInputVariables.concat(Object.keys(this.partialVariables)) : totalInputVariables);
+          const difference = new Set([...inputVariablesInstance].filter((x) => !inputVariablesMessages.has(x)));
+          if (difference.size > 0) {
+            throw new Error(`Input variables \`${[
+              ...difference
+            ]}\` are not used in any of the prompt messages.`);
+          }
+          const otherDifference = new Set([...inputVariablesMessages].filter((x) => !inputVariablesInstance.has(x)));
+          if (otherDifference.size > 0) {
+            throw new Error(`Input variables \`${[
+              ...otherDifference
+            ]}\` are used in prompt messages but not in the prompt template.`);
+          }
+        }
+      }
+      _getPromptType() {
+        return "chat";
+      }
+      async _parseImagePrompts(message, inputValues) {
+        if (typeof message.content === "string") {
+          return message;
+        }
+        const formattedMessageContent = await Promise.all(message.content.map(async (item) => {
+          if (item.type !== "image_url") {
+            return item;
+          }
+          let imageUrl = "";
+          if (typeof item.image_url === "string") {
+            imageUrl = item.image_url;
+          } else {
+            imageUrl = item.image_url.url;
+          }
+          const promptTemplatePlaceholder = PromptTemplate.fromTemplate(imageUrl, {
+            templateFormat: this.templateFormat
+          });
+          const formattedUrl = await promptTemplatePlaceholder.format(inputValues);
+          if (typeof item.image_url !== "string" && "url" in item.image_url) {
+            item.image_url.url = formattedUrl;
+          } else {
+            item.image_url = formattedUrl;
+          }
+          return item;
+        }));
+        message.content = formattedMessageContent;
+        return message;
+      }
+      async formatMessages(values) {
+        const allValues = await this.mergePartialAndUserVariables(values);
+        let resultMessages = [];
+        for (const promptMessage of this.promptMessages) {
+          if (promptMessage instanceof BaseMessage) {
+            resultMessages.push(await this._parseImagePrompts(promptMessage, allValues));
+          } else {
+            const inputValues = promptMessage.inputVariables.reduce((acc, inputVariable) => {
+              if (!(inputVariable in allValues) && !(isMessagesPlaceholder(promptMessage) && promptMessage.optional)) {
+                const error = addLangChainErrorFields(new Error(`Missing value for input variable \`${inputVariable.toString()}\``), "INVALID_PROMPT_INPUT");
+                throw error;
+              }
+              acc[inputVariable] = allValues[inputVariable];
+              return acc;
+            }, {});
+            const message = await promptMessage.formatMessages(inputValues);
+            resultMessages = resultMessages.concat(message);
+          }
+        }
+        return resultMessages;
+      }
+      async partial(values) {
+        var _a2;
+        const newInputVariables = this.inputVariables.filter((iv) => !(iv in values));
+        const newPartialVariables = {
+          ...(_a2 = this.partialVariables) != null ? _a2 : {},
+          ...values
+        };
+        const promptDict = {
+          ...this,
+          inputVariables: newInputVariables,
+          partialVariables: newPartialVariables
+        };
+        return new _ChatPromptTemplate(promptDict);
+      }
+      static fromTemplate(template, options) {
+        const prompt = PromptTemplate.fromTemplate(template, options);
+        const humanTemplate = new HumanMessagePromptTemplate({ prompt });
+        return this.fromMessages([humanTemplate]);
+      }
+      /**
+       * Create a chat model-specific prompt from individual chat messages
+       * or message-like tuples.
+       * @param promptMessages Messages to be passed to the chat model
+       * @returns A new ChatPromptTemplate
+       */
+      static fromMessages(promptMessages, extra) {
+        const flattenedMessages = promptMessages.reduce((acc, promptMessage) => acc.concat(
+          // eslint-disable-next-line no-instanceof/no-instanceof
+          promptMessage instanceof _ChatPromptTemplate ? promptMessage.promptMessages : [
+            _coerceMessagePromptTemplateLike(promptMessage, extra)
+          ]
+        ), []);
+        const flattenedPartialVariables = promptMessages.reduce((acc, promptMessage) => (
+          // eslint-disable-next-line no-instanceof/no-instanceof
+          promptMessage instanceof _ChatPromptTemplate ? Object.assign(acc, promptMessage.partialVariables) : acc
+        ), /* @__PURE__ */ Object.create(null));
+        const inputVariables = /* @__PURE__ */ new Set();
+        for (const promptMessage of flattenedMessages) {
+          if (promptMessage instanceof BaseMessage)
+            continue;
+          for (const inputVariable of promptMessage.inputVariables) {
+            if (inputVariable in flattenedPartialVariables) {
+              continue;
+            }
+            inputVariables.add(inputVariable);
+          }
+        }
+        return new this({
+          ...extra,
+          inputVariables: [...inputVariables],
+          promptMessages: flattenedMessages,
+          partialVariables: flattenedPartialVariables,
+          templateFormat: extra == null ? void 0 : extra.templateFormat
+        });
+      }
+      /** @deprecated Renamed to .fromMessages */
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      static fromPromptMessages(promptMessages) {
+        return this.fromMessages(promptMessages);
       }
     };
   }
@@ -21432,7 +22186,7 @@ __export(main_exports, {
 module.exports = __toCommonJS(main_exports);
 
 // src/core/InsightEngine.ts
-var import_obsidian4 = require("obsidian");
+var import_obsidian6 = require("obsidian");
 
 // node_modules/openai/internal/qs/formats.mjs
 var default_format = "RFC3986";
@@ -33403,9 +34157,78 @@ Example output format: tag1, tag2, tag3`,
   }
 };
 
-// src/ui/TagSuggestionModal.ts
+// src/services/noteSummary.ts
 var import_obsidian = require("obsidian");
-var TagSuggestionModal = class extends import_obsidian.Modal {
+var NoteSummaryService = class {
+  /**
+   * Creates a new NoteSummaryService instance
+   * @param model - The LLM model to use for summary generation
+   */
+  constructor(model) {
+    this.isProcessing = false;
+    this.model = model;
+    this.initializeSummarizeChain();
+  }
+  initializeSummarizeChain() {
+    const systemTemplate = "You are a summarization assistant. Your task is to create concise summaries. IMPORTANT: Respond ONLY with the summary itself - do not add any introductory phrases like 'Here's a summary' or 'Here's what I found'. The summary should be direct and start with the main points.";
+    const promptTemplate = ChatPromptTemplate.fromMessages([
+      ["system", systemTemplate],
+      ["user", "{text}"]
+    ]);
+    const parser = new StringOutputParser();
+    this.summarizeChain = promptTemplate.pipe(this.model).pipe(parser);
+  }
+  /**
+   * Generates a summary of the provided note content
+   * @param noteContent The content of the note to summarize
+   * @returns Promise<SummaryResult> containing the summary or error
+   */
+  async generateSummary(noteContent) {
+    if (this.isProcessing) {
+      return {
+        summary: "",
+        error: "Another summary is currently being processed"
+      };
+    }
+    try {
+      this.isProcessing = true;
+      const summary = await this.summarizeChain.invoke({
+        text: noteContent
+      });
+      return {
+        summary
+      };
+    } catch (error) {
+      console.error("Error generating summary:", error);
+      return {
+        summary: "",
+        error: "Failed to generate summary: " + error.message
+      };
+    } finally {
+      this.isProcessing = false;
+    }
+  }
+  /**
+   * Copies the provided text to clipboard
+   * @param text The text to copy
+   * @returns Promise<boolean> indicating success
+   */
+  async copyToClipboard(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      new import_obsidian.Notice("Summary copied to clipboard");
+      return true;
+    } catch (error) {
+      console.error("Failed to copy to clipboard:", error);
+      new import_obsidian.Notice("Failed to copy to clipboard");
+      return false;
+    }
+  }
+};
+
+// src/ui/TagSuggestionModal.ts
+var import_obsidian2 = require("obsidian");
+var TagSuggestionModal = class extends import_obsidian2.Modal {
   constructor(app, suggestedTags, existingNoteTags, callback) {
     super(app);
     this.shouldCallCallback = true;
@@ -33460,19 +34283,19 @@ var TagSuggestionModal = class extends import_obsidian.Modal {
     const buttonContainer = contentEl.createDiv({
       cls: "button-container"
     });
-    new import_obsidian.Setting(buttonContainer).addButton(
+    new import_obsidian2.Setting(buttonContainer).addButton(
       (btn) => btn.setButtonText("Copy to Clipboard").onClick(() => {
         const selectedTagsArray = Array.from(this.selectedTags);
         if (selectedTagsArray.length > 0) {
           navigator.clipboard.writeText(selectedTagsArray.join(" ")).then(() => {
-            new import_obsidian.Notice("Tags copied to clipboard!");
+            new import_obsidian2.Notice("Tags copied to clipboard!");
             this.shouldCallCallback = false;
             this.close();
           }).catch(() => {
-            new import_obsidian.Notice("Failed to copy tags to clipboard");
+            new import_obsidian2.Notice("Failed to copy tags to clipboard");
           });
         } else {
-          new import_obsidian.Notice("No tags selected to copy");
+          new import_obsidian2.Notice("No tags selected to copy");
         }
       })
     ).addButton(
@@ -33484,7 +34307,7 @@ var TagSuggestionModal = class extends import_obsidian.Modal {
   createTagToggle(container, tag) {
     const tagWithoutHash = tag.name.replace("#", "").toLowerCase();
     const isOnNote = this.existingNoteTags.has(tagWithoutHash);
-    new import_obsidian.Setting(container).setName(tag.name).setDesc(isOnNote ? "Already on note" : "").addToggle((toggle) => {
+    new import_obsidian2.Setting(container).setName(tag.name).setDesc(isOnNote ? "Already on note" : "").addToggle((toggle) => {
       toggle.setValue(isOnNote);
       toggle.onChange((value) => {
         if (value) {
@@ -33514,8 +34337,8 @@ var TagSuggestionModal = class extends import_obsidian.Modal {
 };
 
 // src/ui/LoadingModal.ts
-var import_obsidian2 = require("obsidian");
-var LoadingModal = class extends import_obsidian2.Modal {
+var import_obsidian3 = require("obsidian");
+var LoadingModal = class extends import_obsidian3.Modal {
   constructor(app, message) {
     super(app);
     this.message = message;
@@ -33549,8 +34372,8 @@ var LoadingModal = class extends import_obsidian2.Modal {
 };
 
 // src/ui/SettingsTab.ts
-var import_obsidian3 = require("obsidian");
-var InsightEngineSettingTab = class extends import_obsidian3.PluginSettingTab {
+var import_obsidian4 = require("obsidian");
+var InsightEngineSettingTab = class extends import_obsidian4.PluginSettingTab {
   constructor(app, plugin) {
     super(app, plugin);
     this.plugin = plugin;
@@ -33559,7 +34382,7 @@ var InsightEngineSettingTab = class extends import_obsidian3.PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
     containerEl.createEl("h2", { text: "Tag Agent Settings" });
-    new import_obsidian3.Setting(containerEl).setName("LLM Provider").setDesc("Choose your LLM provider").addDropdown((dropdown) => {
+    new import_obsidian4.Setting(containerEl).setName("LLM Provider").setDesc("Choose your LLM provider").addDropdown((dropdown) => {
       Object.values(LLMProvider).forEach((provider) => {
         dropdown.addOption(provider, provider);
       });
@@ -33575,14 +34398,14 @@ var InsightEngineSettingTab = class extends import_obsidian3.PluginSettingTab {
         this.display();
       });
     });
-    new import_obsidian3.Setting(containerEl).setName("Model Name").setDesc("The name of the LLM model to use").addText(
+    new import_obsidian4.Setting(containerEl).setName("Model Name").setDesc("The name of the LLM model to use").addText(
       (text) => text.setPlaceholder("gpt-3.5-turbo").setValue(this.plugin.settings.modelName).onChange(async (value) => {
         this.plugin.settings.modelName = value;
         await this.plugin.saveSettings();
       })
     );
     if (this.plugin.settings.llmProvider === "ollama" /* OLLAMA */) {
-      new import_obsidian3.Setting(containerEl).setName("LLM Host").setDesc("The host address of your LLM server").addText(
+      new import_obsidian4.Setting(containerEl).setName("LLM Host").setDesc("The host address of your LLM server").addText(
         (text) => text.setPlaceholder("http://localhost:11434").setValue(this.plugin.settings.llmHost || "").onChange(async (value) => {
           this.plugin.settings.llmHost = value;
           await this.plugin.saveSettings();
@@ -33590,7 +34413,7 @@ var InsightEngineSettingTab = class extends import_obsidian3.PluginSettingTab {
       );
     }
     if (this.plugin.settings.llmProvider === "openai" /* OPENAI */) {
-      new import_obsidian3.Setting(containerEl).setName("OpenAI API Key").setDesc("Your OpenAI API key").addText(
+      new import_obsidian4.Setting(containerEl).setName("OpenAI API Key").setDesc("Your OpenAI API key").addText(
         (text) => text.setPlaceholder("sk-...").setValue(this.plugin.settings.apiKey || "").onChange(async (value) => {
           this.plugin.settings.apiKey = value;
           if (value) {
@@ -33602,13 +34425,13 @@ var InsightEngineSettingTab = class extends import_obsidian3.PluginSettingTab {
         })
       );
     }
-    new import_obsidian3.Setting(containerEl).setName("Tag Style").setDesc("Choose the case style for generated tags").addDropdown((dropdown) => {
+    new import_obsidian4.Setting(containerEl).setName("Tag Style").setDesc("Choose the case style for generated tags").addDropdown((dropdown) => {
       dropdown.addOption("camelCase", "camelCase (e.g., meetingNotes").addOption("PascalCase", "PascalCase (e.g., MeetingNotes)").addOption("snake_case", "snake_case, (e.g., meeting_notes)").addOption("kebab-case", "kebab-case, (e.g., meeting-notes)").addOption("Train-Case", "Train-Case, (e.g., Meeting-Notes)").addOption("UPPERCASE", "UPPERCASE, (e.g., MEETINGNOTES)").addOption("lowercase", "lowercase, (e.g., meetingnotes)").setValue(this.plugin.settings.tagStyle).onChange(async (value) => {
         this.plugin.settings.tagStyle = value;
         await this.plugin.saveSettings();
       });
     });
-    new import_obsidian3.Setting(containerEl).setName("Tag Format").setDesc("Choose how tags should be formatted in your notes").addDropdown((dropdown) => {
+    new import_obsidian4.Setting(containerEl).setName("Tag Format").setDesc("Choose how tags should be formatted in your notes").addDropdown((dropdown) => {
       dropdown.addOption("property", "Frontmatter").addOption("line", "Inline Tags").setValue(this.plugin.settings.tagFormat).onChange(async (value) => {
         this.plugin.settings.tagFormat = value;
         await this.plugin.saveSettings();
@@ -33616,7 +34439,7 @@ var InsightEngineSettingTab = class extends import_obsidian3.PluginSettingTab {
       });
     });
     if (this.plugin.settings.tagFormat === "line") {
-      new import_obsidian3.Setting(containerEl).setName("Tag Location").setDesc("Choose where to place the generated tags").addDropdown((dropdown) => {
+      new import_obsidian4.Setting(containerEl).setName("Tag Location").setDesc("Choose where to place the generated tags").addDropdown((dropdown) => {
         dropdown.addOption("top", "Top").addOption("bottom", "Bottom").setValue(this.plugin.settings.tagLocation || "top").onChange(async (value) => {
           this.plugin.settings.tagLocation = value;
           await this.plugin.saveSettings();
@@ -33626,37 +34449,107 @@ var InsightEngineSettingTab = class extends import_obsidian3.PluginSettingTab {
   }
 };
 
+// src/ui/SummaryModal.ts
+var import_obsidian5 = require("obsidian");
+var SummaryModal = class extends import_obsidian5.Modal {
+  constructor(app, summary) {
+    super(app);
+    this.summary = summary;
+  }
+  onOpen() {
+    const { contentEl } = this;
+    contentEl.createEl("h2", { text: "Note Summary" });
+    const summaryContainer = contentEl.createDiv({ cls: "summary-content" });
+    summaryContainer.createEl("p", { text: this.summary });
+    new import_obsidian5.Setting(contentEl).addButton((btn) => btn.setButtonText("Copy to Clipboard").setCta().onClick(async () => {
+      await navigator.clipboard.writeText(this.summary);
+      this.close();
+    }));
+  }
+  onClose() {
+    const { contentEl } = this;
+    contentEl.empty();
+  }
+};
+
 // src/core/InsightEngine.ts
-var InsightEngine = class extends import_obsidian4.Plugin {
+var InsightEngine = class extends import_obsidian6.Plugin {
   constructor() {
     super(...arguments);
     this.existingTags = /* @__PURE__ */ new Set();
   }
   async onload() {
+    console.log("InsightEngine: Starting plugin load");
     await this.loadSettings();
+    console.log("InsightEngine: Settings loaded:", this.settings);
     this.addSettingTab(new InsightEngineSettingTab(this.app, this));
-    this.initializeTagGenerator();
-    this.addCommand({
-      id: "generate-note-tags",
-      name: "Generate Tags for Current Note",
-      editorCallback: async (editor, view) => {
-        if (!this.tagGenerator) {
-          new import_obsidian4.Notice("Please configure the Tag Agent settings first.");
-          return;
+    console.log("InsightEngine: Settings tab added");
+    this.initializeServices();
+    try {
+      console.log("InsightEngine: Attempting to register tag generation command");
+      this.addCommand({
+        id: "obsidian-insight-engine-generate-tags",
+        name: "Generate Tags for Current Note",
+        // Add a check if we're in an editor context
+        checkCallback: (checking) => {
+          const activeView = this.app.workspace.getActiveViewOfType(import_obsidian6.MarkdownView);
+          if (activeView == null ? void 0 : activeView.file) {
+            if (!checking) {
+              console.log("InsightEngine: Tag generation command executed");
+              if (!this.tagGenerator) {
+                console.warn("InsightEngine: Tag generator not initialized");
+                new import_obsidian6.Notice("Please configure the LLM settings first.");
+                return;
+              }
+              this.generateTagsForNote(activeView.file);
+            }
+            return true;
+          }
+          return false;
         }
-        if (view.file) {
-          await this.generateTagsForNote(view.file);
+      });
+      console.log("InsightEngine: Tag generation command registered successfully");
+    } catch (error) {
+      console.error("InsightEngine: Failed to register tag generation command:", error);
+    }
+    try {
+      console.log("InsightEngine: Attempting to register summarize command");
+      this.addCommand({
+        id: "obsidian-insight-engine-summarize",
+        name: "Summarize Current Note",
+        // Add a check if we're in an editor context
+        checkCallback: (checking) => {
+          const activeView = this.app.workspace.getActiveViewOfType(import_obsidian6.MarkdownView);
+          if (activeView == null ? void 0 : activeView.file) {
+            if (!checking) {
+              console.log("InsightEngine: Summarize command executed");
+              if (!this.noteSummaryService) {
+                console.warn("InsightEngine: Summary service not initialized");
+                new import_obsidian6.Notice("Please configure the LLM settings first.");
+                return;
+              }
+              this.summarizeNote(activeView.file);
+            }
+            return true;
+          }
+          return false;
         }
-      }
-    });
+      });
+      console.log("InsightEngine: Summarize command registered successfully");
+    } catch (error) {
+      console.error("InsightEngine: Failed to register summarize command:", error);
+    }
   }
-  initializeTagGenerator() {
+  initializeServices() {
+    console.log("InsightEngine: Starting services initialization");
     const configError = LLMFactory.validateConfig(this.settings.llmProvider, this.settings);
     if (configError) {
-      new import_obsidian4.Notice(configError);
+      console.error("InsightEngine: Configuration error:", configError);
+      new import_obsidian6.Notice(configError);
       return;
     }
     try {
+      console.log("InsightEngine: Creating LLM model with provider:", this.settings.llmProvider);
       const model = LLMFactory.createModel(
         this.settings.llmProvider,
         this.settings.modelName,
@@ -33668,9 +34561,11 @@ var InsightEngine = class extends import_obsidian4.Plugin {
         }
       );
       this.tagGenerator = new TagGenerator(model, this.settings.tagStyle);
+      this.noteSummaryService = new NoteSummaryService(model);
+      console.log("InsightEngine: Services initialized successfully");
     } catch (error) {
-      console.warn("Failed to initialize tag generator:", error);
-      new import_obsidian4.Notice("Tag generation is disabled until configuration is complete. Please check settings.");
+      console.error("InsightEngine: Failed to initialize services:", error);
+      new import_obsidian6.Notice("Services are disabled until configuration is complete. Please check settings.");
     }
   }
   async loadSettings() {
@@ -33678,7 +34573,7 @@ var InsightEngine = class extends import_obsidian4.Plugin {
   }
   async saveSettings() {
     await this.saveData(this.settings);
-    this.initializeTagGenerator();
+    this.initializeServices();
   }
   getAllVaultTags() {
     const tags = /* @__PURE__ */ new Set();
@@ -33696,22 +34591,18 @@ var InsightEngine = class extends import_obsidian4.Plugin {
     return tags;
   }
   async generateTagsForNote(file) {
-    const content = await this.app.vault.read(file);
-    const existingTags = this.getAllVaultTags();
-    const fileCache = this.app.metadataCache.getFileCache(file);
-    const existingNoteTags = new Set(
-      (fileCache && (0, import_obsidian4.getAllTags)(fileCache) || []).map((tag) => tag.replace("#", "").toLowerCase())
-    );
-    const loadingModal = new LoadingModal(
-      this.app,
-      "Generating tags..."
-    );
+    var _a2;
+    const loadingModal = new LoadingModal(this.app, "Generating tags...");
     loadingModal.open();
     try {
-      const suggestedTags = await this.tagGenerator.suggestTags(
-        content,
-        existingTags
+      const fileCache = this.app.metadataCache.getFileCache(file);
+      const existingNoteTags = new Set(
+        (fileCache && (0, import_obsidian6.getAllTags)(fileCache) || []).map((tag) => tag.substring(1))
+        // Remove # from tags
       );
+      const content = await this.app.vault.read(file);
+      const existingTags = this.getAllVaultTags();
+      const suggestedTags = await this.tagGenerator.suggestTags(content, existingTags);
       loadingModal.close();
       if (suggestedTags && suggestedTags.length > 0) {
         const tagSuggestions = suggestedTags.map((tag) => ({
@@ -33719,8 +34610,6 @@ var InsightEngine = class extends import_obsidian4.Plugin {
           isExisting: existingTags.has(tag.replace("#", "")),
           suggestedByLLM: true
         }));
-        console.log("Existing tags:", existingTags);
-        console.log("Tag suggestions:", tagSuggestions);
         const modal = new TagSuggestionModal(
           this.app,
           tagSuggestions,
@@ -33733,15 +34622,15 @@ var InsightEngine = class extends import_obsidian4.Plugin {
         );
         modal.open();
       } else {
-        new import_obsidian4.Notice("No tags were suggested for this note.");
+        new import_obsidian6.Notice("No tags were suggested for this note.");
       }
     } catch (error) {
+      console.error("Error generating tags:", error);
       loadingModal.close();
-      if (error.message.includes("Ollama server is not running")) {
-        new import_obsidian4.Notice('Error: Ollama server is not running. Please start it using the command: "ollama serve"', 1e4);
-      } else if (error.name === "AbortError") {
+      if ((_a2 = error.message) == null ? void 0 : _a2.includes("Ollama server is not running")) {
+        new import_obsidian6.Notice('Error: Ollama server is not running. Please start it using the command: "ollama serve"', 1e4);
       } else {
-        new import_obsidian4.Notice(`Error generating tags: ${error.message}`);
+        new import_obsidian6.Notice("Error generating tags. Please check the console for details.");
       }
     }
   }
@@ -33843,7 +34732,41 @@ ${content}`;
         message += `Removed tags: ${removedTags.join(" ")}`;
       }
       if (message) {
-        new import_obsidian4.Notice(message);
+        new import_obsidian6.Notice(message);
+      }
+    }
+  }
+  async summarizeNote(file) {
+    const loadingModal = new LoadingModal(
+      this.app,
+      "Generating summary..."
+    );
+    loadingModal.open();
+    try {
+      const content = await this.app.vault.read(file);
+      const result = await this.noteSummaryService.generateSummary(content);
+      loadingModal.close();
+      if (result.error) {
+        if (result.error.includes("Ollama server is not running")) {
+          new import_obsidian6.Notice('Error: Ollama server is not running. Please start it using the command: "ollama serve"', 1e4);
+        } else {
+          new import_obsidian6.Notice(`Error generating summary: ${result.error}`);
+        }
+        return;
+      }
+      if (result.summary) {
+        const summaryModal = new SummaryModal(this.app, result.summary);
+        summaryModal.open();
+      } else {
+        new import_obsidian6.Notice("No summary was generated for this note.");
+      }
+    } catch (error) {
+      loadingModal.close();
+      if (error.message.includes("Ollama server is not running")) {
+        new import_obsidian6.Notice('Error: Ollama server is not running. Please start it using the command: "ollama serve"', 1e4);
+      } else if (error.name === "AbortError") {
+      } else {
+        new import_obsidian6.Notice(`Error generating summary: ${error.message}`);
       }
     }
   }
