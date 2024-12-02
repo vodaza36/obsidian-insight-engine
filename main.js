@@ -22186,7 +22186,7 @@ __export(main_exports, {
 module.exports = __toCommonJS(main_exports);
 
 // src/core/InsightEngine.ts
-var import_obsidian6 = require("obsidian");
+var import_obsidian8 = require("obsidian");
 
 // node_modules/openai/internal/qs/formats.mjs
 var default_format = "RFC3986";
@@ -34478,8 +34478,105 @@ var SummaryModal = class extends import_obsidian5.Modal {
   }
 };
 
+// src/services/questionGenerator.ts
+var QuestionGenerator = class {
+  /**
+   * Creates a new QuestionGenerator instance
+   * @param model - The LLM model to use for question generation (OpenAI or Ollama)
+   */
+  constructor(model) {
+    this.model = model;
+    this.promptTemplate = new PromptTemplate({
+      template: `You are a question generation system. Analyze the following content and generate relevant questions that can be derived from it.
+
+Content to analyze:
+{text}
+
+Rules for question generation:
+1. Generate between 0 and 10 questions, depending on the content's information density
+2. Questions should be directly answerable from the content provided
+3. Focus on key concepts, relationships, and important details
+4. Prioritize questions that promote understanding and recall
+5. If the content doesn't contain enough information, return an empty list
+6. Format questions as a Markdown list, with each question on a new line starting with "-"
+
+IMPORTANT: Return ONLY the questions in Markdown list format. Do not include any additional text, explanations, or other content.
+Example output format:
+- What is the main concept discussed in this note?
+- How does X relate to Y in the given context?`,
+      inputVariables: ["text"]
+    });
+    this.outputParser = new StringOutputParser();
+  }
+  /**
+   * Generates questions based on the given note content
+   * @param content - The note content to analyze
+   * @returns Promise<string[]> Array of generated questions
+   * @throws Error if the LLM fails to generate questions or returns invalid format
+   */
+  async generateQuestions(content) {
+    try {
+      const prompt = await this.promptTemplate.format({
+        text: content
+      });
+      const chain = this.model.pipe(this.outputParser);
+      const response = await chain.invoke(prompt);
+      return response.split("\n").map((line) => line.trim()).filter((line) => line.startsWith("-")).map((line) => line.substring(1).trim());
+    } catch (error) {
+      console.error("Error generating questions:", error);
+      if (error instanceof Error && (error.message.includes("ECONNREFUSED") || error.message.includes("Failed to fetch"))) {
+        throw new Error("Unable to connect to Ollama server. Please make sure it is running and accessible.");
+      }
+      throw error;
+    }
+  }
+};
+
+// src/ui/QuestionModal.ts
+var import_obsidian6 = require("obsidian");
+var import_obsidian7 = require("obsidian");
+var QuestionModal = class extends import_obsidian6.Modal {
+  constructor(app, questions, component) {
+    super(app);
+    this.questions = questions;
+    this.component = component;
+  }
+  async onOpen() {
+    const { contentEl } = this;
+    contentEl.createEl("h2", { text: "Generated Questions" });
+    const questionsContainer = contentEl.createDiv({ cls: "questions-content" });
+    const markdownQuestions = this.questions.map((q) => `- ${q}`).join("\n");
+    await import_obsidian7.MarkdownRenderer.renderMarkdown(
+      markdownQuestions,
+      questionsContainer,
+      "",
+      this.component
+    );
+    if (this.questions.length === 0) {
+      questionsContainer.createEl("p", {
+        text: "No relevant questions could be generated from this note.",
+        cls: "no-questions-message"
+      });
+    } else {
+      contentEl.createEl("p", {
+        text: `${this.questions.length} questions generated`,
+        cls: "questions-count"
+      });
+    }
+    new import_obsidian6.Setting(contentEl).addButton((btn) => btn.setButtonText("Copy to Clipboard").setCta().onClick(async () => {
+      await navigator.clipboard.writeText(markdownQuestions);
+      new import_obsidian6.Notice("Questions copied to clipboard!");
+      this.close();
+    }));
+  }
+  onClose() {
+    const { contentEl } = this;
+    contentEl.empty();
+  }
+};
+
 // src/core/InsightEngine.ts
-var InsightEngine = class extends import_obsidian6.Plugin {
+var InsightEngine = class extends import_obsidian8.Plugin {
   constructor() {
     super(...arguments);
     this.existingTags = /* @__PURE__ */ new Set();
@@ -34498,13 +34595,13 @@ var InsightEngine = class extends import_obsidian6.Plugin {
         name: "Generate Tags for Current Note",
         // Add a check if we're in an editor context
         checkCallback: (checking) => {
-          const activeView = this.app.workspace.getActiveViewOfType(import_obsidian6.MarkdownView);
+          const activeView = this.app.workspace.getActiveViewOfType(import_obsidian8.MarkdownView);
           if (activeView == null ? void 0 : activeView.file) {
             if (!checking) {
               console.log("InsightEngine: Tag generation command executed");
               if (!this.tagGenerator) {
                 console.warn("InsightEngine: Tag generator not initialized");
-                new import_obsidian6.Notice("Please configure the LLM settings first.");
+                new import_obsidian8.Notice("Please configure the LLM settings first.");
                 return;
               }
               this.generateTagsForNote(activeView.file);
@@ -34525,13 +34622,13 @@ var InsightEngine = class extends import_obsidian6.Plugin {
         name: "Summarize Current Note",
         // Add a check if we're in an editor context
         checkCallback: (checking) => {
-          const activeView = this.app.workspace.getActiveViewOfType(import_obsidian6.MarkdownView);
+          const activeView = this.app.workspace.getActiveViewOfType(import_obsidian8.MarkdownView);
           if (activeView == null ? void 0 : activeView.file) {
             if (!checking) {
               console.log("InsightEngine: Summarize command executed");
               if (!this.noteSummaryService) {
                 console.warn("InsightEngine: Summary service not initialized");
-                new import_obsidian6.Notice("Please configure the LLM settings first.");
+                new import_obsidian8.Notice("Please configure the LLM settings first.");
                 return;
               }
               this.summarizeNote(activeView.file);
@@ -34545,13 +34642,39 @@ var InsightEngine = class extends import_obsidian6.Plugin {
     } catch (error) {
       console.error("InsightEngine: Failed to register summarize command:", error);
     }
+    try {
+      console.log("InsightEngine: Attempting to register question generation command");
+      this.addCommand({
+        id: "obsidian-insight-engine-generate-questions",
+        name: "Generate Questions from Current Note",
+        checkCallback: (checking) => {
+          const activeView = this.app.workspace.getActiveViewOfType(import_obsidian8.MarkdownView);
+          if (activeView == null ? void 0 : activeView.file) {
+            if (!checking) {
+              console.log("InsightEngine: Question generation command executed");
+              if (!this.questionGenerator) {
+                console.warn("InsightEngine: Question generator not initialized");
+                new import_obsidian8.Notice("Please configure the LLM settings first.");
+                return;
+              }
+              this.generateQuestionsForNote(activeView.file);
+            }
+            return true;
+          }
+          return false;
+        }
+      });
+      console.log("InsightEngine: Question generation command registered successfully");
+    } catch (error) {
+      console.error("InsightEngine: Failed to register question generation command:", error);
+    }
   }
   initializeServices() {
     console.log("InsightEngine: Starting services initialization");
     const configError = LLMFactory.validateConfig(this.settings.llmProvider, this.settings);
     if (configError) {
       console.error("InsightEngine: Configuration error:", configError);
-      new import_obsidian6.Notice(configError);
+      new import_obsidian8.Notice(configError);
       return;
     }
     try {
@@ -34568,10 +34691,11 @@ var InsightEngine = class extends import_obsidian6.Plugin {
       );
       this.tagGenerator = new TagGenerator(model, this.settings.tagStyle);
       this.noteSummaryService = new NoteSummaryService(model);
+      this.questionGenerator = new QuestionGenerator(model);
       console.log("InsightEngine: Services initialized successfully");
     } catch (error) {
       console.error("InsightEngine: Failed to initialize services:", error);
-      new import_obsidian6.Notice("Services are disabled until configuration is complete. Please check settings.");
+      new import_obsidian8.Notice("Services are disabled until configuration is complete. Please check settings.");
     }
   }
   async loadSettings() {
@@ -34603,7 +34727,7 @@ var InsightEngine = class extends import_obsidian6.Plugin {
     try {
       const fileCache = this.app.metadataCache.getFileCache(file);
       const existingNoteTags = new Set(
-        (fileCache && (0, import_obsidian6.getAllTags)(fileCache) || []).map((tag) => tag.substring(1))
+        (fileCache && (0, import_obsidian8.getAllTags)(fileCache) || []).map((tag) => tag.substring(1))
         // Remove # from tags
       );
       const content = await this.app.vault.read(file);
@@ -34628,15 +34752,15 @@ var InsightEngine = class extends import_obsidian6.Plugin {
         );
         modal.open();
       } else {
-        new import_obsidian6.Notice("No tags were suggested for this note.");
+        new import_obsidian8.Notice("No tags were suggested for this note.");
       }
     } catch (error) {
       console.error("Error generating tags:", error);
       loadingModal.close();
       if ((_a2 = error.message) == null ? void 0 : _a2.includes("Ollama server is not running")) {
-        new import_obsidian6.Notice('Error: Ollama server is not running. Please start it using the command: "ollama serve"', 1e4);
+        new import_obsidian8.Notice('Error: Ollama server is not running. Please start it using the command: "ollama serve"', 1e4);
       } else {
-        new import_obsidian6.Notice("Error generating tags. Please check the console for details.");
+        new import_obsidian8.Notice("Error generating tags. Please check the console for details.");
       }
     }
   }
@@ -34738,7 +34862,7 @@ ${content}`;
         message += `Removed tags: ${removedTags.join(" ")}`;
       }
       if (message) {
-        new import_obsidian6.Notice(message);
+        new import_obsidian8.Notice(message);
       }
     }
   }
@@ -34754,9 +34878,9 @@ ${content}`;
       loadingModal.close();
       if (result.error) {
         if (result.error.includes("Ollama server is not running")) {
-          new import_obsidian6.Notice('Error: Ollama server is not running. Please start it using the command: "ollama serve"', 1e4);
+          new import_obsidian8.Notice('Error: Ollama server is not running. Please start it using the command: "ollama serve"', 1e4);
         } else {
-          new import_obsidian6.Notice(`Error generating summary: ${result.error}`);
+          new import_obsidian8.Notice(`Error generating summary: ${result.error}`);
         }
         return;
       }
@@ -34764,16 +34888,37 @@ ${content}`;
         const summaryModal = new SummaryModal(this.app, result.summary, this);
         summaryModal.open();
       } else {
-        new import_obsidian6.Notice("No summary was generated for this note.");
+        new import_obsidian8.Notice("No summary was generated for this note.");
       }
     } catch (error) {
       loadingModal.close();
       if (error.message.includes("Ollama server is not running")) {
-        new import_obsidian6.Notice('Error: Ollama server is not running. Please start it using the command: "ollama serve"', 1e4);
+        new import_obsidian8.Notice('Error: Ollama server is not running. Please start it using the command: "ollama serve"', 1e4);
       } else if (error.name === "AbortError") {
       } else {
-        new import_obsidian6.Notice(`Error generating summary: ${error.message}`);
+        new import_obsidian8.Notice(`Error generating summary: ${error.message}`);
       }
+    }
+  }
+  /**
+   * Generates questions from the current note content
+   * @param file - The TFile object representing the current note
+   */
+  async generateQuestionsForNote(file) {
+    const loadingModal = new LoadingModal(
+      this.app,
+      "Generating questions from your note..."
+    );
+    loadingModal.open();
+    try {
+      const content = await this.app.vault.read(file);
+      const questions = await this.questionGenerator.generateQuestions(content);
+      loadingModal.close();
+      new QuestionModal(this.app, questions, this).open();
+    } catch (error) {
+      loadingModal.close();
+      console.error("InsightEngine: Error generating questions:", error);
+      new import_obsidian8.Notice("Failed to generate questions. Please check your LLM settings and try again.");
     }
   }
 };

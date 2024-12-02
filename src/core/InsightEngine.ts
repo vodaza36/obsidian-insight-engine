@@ -13,6 +13,8 @@ import { LoadingModal } from '../ui/LoadingModal';
 import { LLMFactory } from '../services/llmFactory';
 import { InsightEngineSettingTab } from '@/ui/SettingsTab';
 import { SummaryModal } from '../ui/SummaryModal';
+import { QuestionGenerator } from '../services/questionGenerator';
+import { QuestionModal } from '../ui/QuestionModal';
 
 // Add this type definition near the top of the file, after other imports
 type TagSuggestion = {
@@ -30,6 +32,7 @@ export default class InsightEngine extends Plugin {
     settings: InsightEngineSettings;
     tagGenerator: TagGenerator;
     noteSummaryService: NoteSummaryService;
+    questionGenerator: QuestionGenerator;
     existingTags: Set<string> = new Set();
 
     async onload() {
@@ -101,6 +104,34 @@ export default class InsightEngine extends Plugin {
         } catch (error) {
             console.error('InsightEngine: Failed to register summarize command:', error);
         }
+
+        // Add command to generate questions for current note
+        try {
+            console.log('InsightEngine: Attempting to register question generation command');
+            this.addCommand({
+                id: 'obsidian-insight-engine-generate-questions',
+                name: 'Generate Questions from Current Note',
+                checkCallback: (checking: boolean) => {
+                    const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
+                    if (activeView?.file) {
+                        if (!checking) {
+                            console.log('InsightEngine: Question generation command executed');
+                            if (!this.questionGenerator) {
+                                console.warn('InsightEngine: Question generator not initialized');
+                                new Notice('Please configure the LLM settings first.');
+                                return;
+                            }
+                            this.generateQuestionsForNote(activeView.file);
+                        }
+                        return true;
+                    }
+                    return false;
+                }
+            });
+            console.log('InsightEngine: Question generation command registered successfully');
+        } catch (error) {
+            console.error('InsightEngine: Failed to register question generation command:', error);
+        }
     }
 
     private initializeServices() {
@@ -126,6 +157,7 @@ export default class InsightEngine extends Plugin {
             );
             this.tagGenerator = new TagGenerator(model, this.settings.tagStyle);
             this.noteSummaryService = new NoteSummaryService(model);
+            this.questionGenerator = new QuestionGenerator(model);
             console.log('InsightEngine: Services initialized successfully');
         } catch (error) {
             // If initialization fails, we'll show a notice but not prevent the plugin from loading
@@ -388,6 +420,37 @@ export default class InsightEngine extends Plugin {
             } else {
                 new Notice(`Error generating summary: ${error.message}`);
             }
+        }
+    }
+
+    /**
+     * Generates questions from the current note content
+     * @param file - The TFile object representing the current note
+     */
+    private async generateQuestionsForNote(file: TFile) {
+        // Show loading modal
+        const loadingModal = new LoadingModal(
+            this.app,
+            'Generating questions from your note...'
+        );
+        loadingModal.open();
+
+        try {
+            const content = await this.app.vault.read(file);
+            const questions = await this.questionGenerator.generateQuestions(content);
+            
+            // Close loading modal
+            loadingModal.close();
+            
+            // Show questions in modal
+            new QuestionModal(this.app, questions, this).open();
+            
+        } catch (error) {
+            // Close loading modal in case of error
+            loadingModal.close();
+            
+            console.error('InsightEngine: Error generating questions:', error);
+            new Notice('Failed to generate questions. Please check your LLM settings and try again.');
         }
     }
 }
