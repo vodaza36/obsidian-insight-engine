@@ -1,20 +1,21 @@
 # Project Requirements Document
-## Prupose
-The pupose of this project is to develop an Obsidian plugin that handles the Tag management based
+## Purpose
+The purpose of this project is to develop an Obsidian plugin that handles the Tag management based
 on an AI driven approach. Following requirements must be met: 
 
 ### Functional Requirements
-- The plugin should be able to scan a single note and generate a list of tags. Thereby he should consider the list of existing tags. If no exiting tag fits then the plugin should suggest new tags.
-- The plugin should be able to summarise a given note. The summary should be short and provide a brief overview of the note. Mardown should be supported to better format the summary. The use can copy the summary to its clipboard.
+- The plugin should be able to scan a single note and generate a list of tags. Thereby it should consider the list of existing tags. If no existing tag fits then the plugin should suggest new tags.
+- The plugin should be able to summarise a given note. The summary should be short and provide a brief overview of the note. Markdown should be supported to better format the summary. The user can copy the summary to its clipboard.
+- The plugin should generate questions derived from a given note. The questions should be short and provide a brief overview of the note. Markdown should be supported to better format the questions. The user can copy the questions to its clipboard.
 ### Non-Functional Requirements
 - The plugin should be available at the Obsidian marketplace.
 - To keep everything private and secure an Ollama local LLM is used to classify the notes.
 - The plugin should be easy to use and have a consistent look and feel with the Obsidian app
-- The puglins repository should consider all best practices for plugin development suggested by https://github.com/obsidianmd/obsidian-sample-plugin
+- The plugin's repository should consider all best practices for plugin development suggested by https://github.com/obsidianmd/obsidian-sample-plugin
 - Organize the code by features
 
 ## Features
-- Scan the current note and generate a list of tags the will be suggested to the user
+- Scan the current note and generate a list of tags that will be suggested to the user
 
 ## UI
 - On the plugin settings page the user must confirm to scan the vault for tags
