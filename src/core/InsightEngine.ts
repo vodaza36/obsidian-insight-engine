@@ -144,7 +144,7 @@ export default class InsightEngine extends Plugin {
 		}
 	}
 
-	private initializeServices() {
+	public async initializeServices() {
 		console.log('InsightEngine: Starting services initialization');
 		// check if the required settings are configured
 		const configError = LLMFactory.validateConfig(this.settings.llmProvider, this.settings);
@@ -199,26 +199,24 @@ export default class InsightEngine extends Plugin {
 		this.initializeServices();
 	}
 
-	private getAllVaultTags(): Set<string> {
+	public async getAllVaultTags(): Promise<Set<string>> {
 		const tags = new Set<string>();
 		const files = this.app.vault.getMarkdownFiles();
 
 		files.forEach((file) => {
-			const cachedMetadata = this.app.metadataCache.getFileCache(file);
-			if (cachedMetadata?.tags) {
-				cachedMetadata.tags.forEach((tag) => {
-					const tagText = tag.tag;
-					// Only remove the '#' if it exists at the start
-					const cleanedTag = tagText.startsWith('#') ? tagText.substring(1) : tagText;
-					tags.add(cleanedTag.toLowerCase());
+			const fileCache = this.app.metadataCache.getFileCache(file);
+			if (fileCache && fileCache.tags) {
+				fileCache.tags.forEach((tag) => {
+					tags.add(tag.tag.substring(1)); // Remove the '#' prefix
 				});
 			}
 		});
 
+		console.log('InsightEngine: Found vault tags:', Array.from(tags));
 		return tags;
 	}
 
-	private handleLLMError(error: Error, loadingModal?: LoadingModal) {
+	public async handleLLMError(error: Error, loadingModal?: LoadingModal) {
 		console.error('InsightEngine: Operation failed:', error);
 		loadingModal?.close();
 
@@ -232,7 +230,7 @@ export default class InsightEngine extends Plugin {
 		}
 	}
 
-	private async withLoadingModal<T>(
+	public async withLoadingModal<T>(
 		message: string,
 		operation: () => Promise<T>
 	): Promise<T | undefined> {
@@ -257,10 +255,10 @@ export default class InsightEngine extends Plugin {
 		return this.generateTagsForNote(file);
 	}
 
-	private async generateTagsForNote(file: TFile) {
+	public async generateTagsForNote(file: TFile) {
 		const result = await this.withLoadingModal('Generating tags...', async () => {
 			const content = await this.app.vault.read(file);
-			const vaultTags = this.getAllVaultTags();
+			const vaultTags = await this.getAllVaultTags();
 			return await this.tagGenerator.suggestTags(content, vaultTags);
 		});
 
@@ -274,7 +272,7 @@ export default class InsightEngine extends Plugin {
 			((fileCache && getAllTags(fileCache)) || []).map((tag) => tag.substring(1))
 		);
 
-		const vaultTags = this.getAllVaultTags();
+		const vaultTags = await this.getAllVaultTags();
 		const tagSuggestions = result.map((tag) => ({
 			name: tag,
 			isExisting: vaultTags.has(tag.replace('#', '')),
@@ -293,7 +291,7 @@ export default class InsightEngine extends Plugin {
 		).open();
 	}
 
-	private async summarizeNote(file: TFile) {
+	public async summarizeNote(file: TFile) {
 		const result = await this.withLoadingModal('Generating summary...', async () => {
 			const content = await this.app.vault.read(file);
 			return await this.noteSummaryService.generateSummary(content);
@@ -313,7 +311,7 @@ export default class InsightEngine extends Plugin {
 		}
 	}
 
-	private async generateQuestionsForNote(file: TFile) {
+	public async generateQuestionsForNote(file: TFile) {
 		const questions = await this.withLoadingModal(
 			'Generating questions from your note...',
 			async () => {
@@ -327,7 +325,7 @@ export default class InsightEngine extends Plugin {
 		}
 	}
 
-	private async appendTagsToNote(file: TFile, tags: string[], tagsToRemove: string[] = []) {
+	public async appendTagsToNote(file: TFile, tags: string[], tagsToRemove: string[] = []) {
 		console.log(`[InsightEngine] Appending tags to note "${file.path}":
             Adding tags: ${tags.join(', ')}
             Removing tags: ${tagsToRemove.join(', ')}`);

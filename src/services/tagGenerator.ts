@@ -87,13 +87,16 @@ Do not include descriptions, explanations, or any other text in your response. R
 			const response = await this.processWithLLM(
 				userPrompt,
 				systemPromptWithStyle,
-				async (content) => {
+				(content: string): string[] => {
 					console.log('TagGenerator: Raw LLM response:', content);
 					let tags: string[];
 
 					try {
 						// Try parsing as JSON first
-						const parsed = await this.outputParser.parse(content);
+						const parsed = JSON.parse(content);
+						if (!parsed.tags || !Array.isArray(parsed.tags)) {
+							throw new Error('Invalid JSON format');
+						}
 						tags = parsed.tags;
 					} catch (error) {
 						console.log('TagGenerator: JSON parsing failed, using fallback parser');

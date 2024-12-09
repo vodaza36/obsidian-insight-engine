@@ -241,13 +241,13 @@ describe('InsightEngine', () => {
 			engine.tagGenerator = mockTagGenerator;
 		});
 
-		it('should get all vault tags', () => {
+		it('should get all vault tags', async () => {
 			mockVault.getMarkdownFiles.mockReturnValue([mockFile]);
 			mockMetadataCache.getFileCache.mockReturnValue({
 				tags: [{ tag: '#test' }, { tag: '#example' }],
 			});
 
-			const tags = (engine as any).getAllVaultTags();
+			const tags = await (engine as any).getAllVaultTags();
 			expect(tags.size).toBe(2);
 			expect(tags.has('test')).toBe(true);
 			expect(tags.has('example')).toBe(true);
@@ -256,6 +256,12 @@ describe('InsightEngine', () => {
 		it('should generate tags for a note', async () => {
 			const mockActiveView = { file: mockFile } as MarkdownView;
 			mockWorkspace.getActiveViewOfType.mockReturnValue(mockActiveView);
+
+			// Mock getAllVaultTags
+			mockVault.getMarkdownFiles.mockReturnValue([mockFile]);
+			mockMetadataCache.getFileCache.mockReturnValue({
+				tags: [{ tag: '#test' }, { tag: '#example' }],
+			});
 
 			await engine.generateTagsForNote(mockFile);
 
