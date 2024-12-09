@@ -1,5 +1,5 @@
 {
-	"name": "obsidian-insight-engine",
+	"name": "insight-engine",
 	"version": "1.0.0",
 	"description": "Transform your notes with AI-powered insights. Features intelligent tag generation, note summarization, and question generation with privacy-focused local processing via Ollama.",
 	"main": "main.js",
