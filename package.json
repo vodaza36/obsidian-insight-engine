@@ -1,27 +1,73 @@
 {
-  "name": "obsidian-tag-agent",
-  "version": "1.0.0",
-  "description": "An AI-powered Obsidian plugin using LangChain.js with Ollama for local tag management",
-  "main": "main.js",
-  "scripts": {
-    "dev": "node esbuild.config.mjs",
-    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
-    "version": "node version-bump.mjs && git add manifest.json versions.json"
-  },
-  "keywords": ["obsidian", "plugin", "ai", "langchain", "ollama"],
-  "author": "",
-  "license": "MIT",
-  "devDependencies": {
-    "@types/node": "^16.11.6",
-    "@typescript-eslint/eslint-plugin": "^5.2.0",
-    "@typescript-eslint/parser": "^5.2.0",
-    "builtin-modules": "^3.2.0",
-    "esbuild": "0.14.47",
-    "obsidian": "latest",
-    "tslib": "2.4.0",
-    "typescript": "4.7.4"
-  },
-  "dependencies": {
-    "langchain": "^0.0.200"
-  }
+	"name": "obsidian-insight-engine",
+	"version": "1.0.0",
+	"description": "Transform your notes with AI-powered insights. Features intelligent tag generation, note summarization, and question generation with privacy-focused local processing via Ollama.",
+	"main": "main.js",
+	"scripts": {
+		"dev": "node esbuild.config.mjs",
+		"build": "tsc -noEmit -skipLibCheck && npm run test:coverage && node esbuild.config.mjs production",
+		"watch": "tsc -watch -noEmit -skipLibCheck",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"test:coverage": "vitest run --coverage && node scripts/generate-coverage-badge.mjs",
+		"test:ui": "vitest --ui",
+		"test:e2e": "vitest run tests/e2e/e2e.test.ts",
+		"test:unit": "vitest run tests/unit/**/*.test.ts",
+		"sync-metadata": "node scripts/sync-metadata.mjs",
+		"version": "npm run sync-metadata && git add manifest.json",
+		"prepare": "husky install",
+		"format": "prettier --write \"**/*.{js,jsx,ts,tsx,css,md,json}\""
+	},
+	"keywords": [
+		"ai",
+		"llm",
+		"tags",
+		"summarization",
+		"questions",
+		"semantic-search",
+		"ollama",
+		"openai",
+		"privacy",
+		"note-analysis"
+	],
+	"author": "Thomas Hochbichler",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/vodaza36/obsidian-insight-engine"
+	},
+	"bugs": {
+		"url": "https://github.com/vodaza36/obsidian-insight-engine/issues"
+	},
+	"homepage": "https://github.com/vodaza36/obsidian-insight-engine#readme",
+	"minAppVersion": "1.4.0",
+	"funding": {
+		"type": "github",
+		"url": "https://github.com/sponsors/vodaza36"
+	},
+	"dependencies": {
+		"@langchain/core": "^0.3.18",
+		"@langchain/ollama": "^0.1.2",
+		"@langchain/openai": "^0.3.14",
+		"@types/js-yaml": "^4.0.9",
+		"js-yaml": "^4.1.0",
+		"tslib": "^2.6.2"
+	},
+	"devDependencies": {
+		"@types/node": "^22.9.3",
+		"@vitest/coverage-v8": "^1.6.0",
+		"@vitest/ui": "^1.3.1",
+		"builtin-modules": "^4.0.0",
+		"esbuild": "0.24.0",
+		"happy-dom": "^13.3.8",
+		"husky": "^9.1.7",
+		"lint-staged": "^15.2.10",
+		"obsidian": "latest",
+		"prettier": "^3.4.2",
+		"typescript": "5.7.2",
+		"vitest": "^1.3.1"
+	},
+	"lint-staged": {
+		"*.{js,jsx,ts,tsx,css,md,json}": "prettier --write"
+	}
 }

@@ -1,0 +1,8 @@
+{
+	"vitest.enable": true,
+	"vitest.commandLine": "npm run test:watch",
+	"vitest.disableWorkspaceTrust": true,
+	"vitest.include": ["**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+	"testing.automaticallyOpenPeekView": "never",
+	"javascript.test.runner": "vitest"
+}
