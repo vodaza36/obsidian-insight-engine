@@ -1,7 +1,7 @@
 {
 	"id": "insight-engine",
 	"name": "Insight Engine",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"minAppVersion": "1.4.0",
 	"description": "Transform your notes with AI-powered insights. Features intelligent tag generation, note summarization, and question generation with privacy-focused local processing via Ollama.",
 	"author": "Thomas Hochbichler",
