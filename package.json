@@ -1,6 +1,6 @@
 {
 	"name": "insight-engine",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Transform your notes with AI-powered insights. Features intelligent tag generation, note summarization, and question generation with privacy-focused local processing via Ollama.",
 	"main": "main.js",
 	"scripts": {
