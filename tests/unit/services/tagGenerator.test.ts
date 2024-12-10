@@ -43,9 +43,10 @@ describe('TagGenerator', () => {
 			expect(calls.length).toBe(2);
 			expect(calls[0]).toBeInstanceOf(SystemMessage);
 			expect(calls[0].content).toContain('kebab-case');
+			expect(calls[0].content).toContain('Content to analyze:\n' + noteContent);
+			expect(calls[0].content).toContain('Existing tags:\njavascript');
 			expect(calls[1]).toBeInstanceOf(HumanMessage);
-			expect(calls[1].content).toContain('Content to analyze:\n' + noteContent);
-			expect(calls[1].content).toContain('Existing tags:\njavascript');
+			expect(calls[1].content).toBe('');
 		});
 
 		it('should handle empty content gracefully', async () => {
@@ -79,7 +80,7 @@ describe('TagGenerator', () => {
 
 			// Then: existing tags should be included in the prompt and result should be formatted
 			const calls = (mockModel.invoke as any).mock.calls[0][0];
-			expect(calls[1].content).toContain('Existing tags:\ntag1, tag2');
+			expect(calls[0].content).toContain('Existing tags:\ntag1, tag2');
 			expect(result).toEqual(['programming', 'development']);
 		});
 

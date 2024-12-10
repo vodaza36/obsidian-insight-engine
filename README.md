@@ -120,6 +120,28 @@ npm run build
 - Watch mode: `npm run test:watch`
 - E2E tests: `npm run test:e2e`
 
+### Creating a Release
+
+1. Update version numbers in:
+
+    - `manifest.json`
+    - `package.json`
+
+2. Create the release:
+
+```bash
+npm run create-release
+```
+
+This will:
+
+- Build the project
+- Create release assets (`main.js`, `manifest.json`, `styles.css`)
+- Create a GitHub release with the version tag
+- Upload all assets to the release
+
+The release will be available at: `https://github.com/username/obsidian-insight-engine/releases`
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
