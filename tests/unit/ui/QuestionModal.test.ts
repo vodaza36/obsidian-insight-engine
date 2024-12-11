@@ -65,13 +65,26 @@ vi.mock('obsidian', () => {
 });
 
 // Mock clipboard API
-const mockClipboard = {
-	writeText: vi.fn().mockResolvedValue(undefined),
+const mockClipboard: Clipboard = {
+	writeText: vi.fn().mockResolvedValue(undefined) as unknown as Clipboard['writeText'],
+	readText: vi.fn().mockResolvedValue("") as unknown as Clipboard['readText'],
+	read: vi.fn().mockResolvedValue(undefined) as unknown as Clipboard['read'],
+	write: vi.fn().mockResolvedValue(undefined) as unknown as Clipboard['write'],
+	addEventListener: vi.fn() as unknown as Clipboard['addEventListener'],
+	removeEventListener: vi.fn() as unknown as Clipboard['removeEventListener'],
+	dispatchEvent: vi.fn().mockReturnValue(true) as unknown as Clipboard['dispatchEvent']
 };
 
-vi.stubGlobal('navigator', {
-	clipboard: mockClipboard,
-});
+// Store mock functions for test access
+const writeTextMock = mockClipboard.writeText as ReturnType<typeof vi.fn>;
+
+// Create mock window if it doesn't exist
+global.window = global.window || {};
+
+// Mock navigator.clipboard
+global.navigator = {
+	clipboard: mockClipboard
+} as Navigator;
 
 describe('QuestionModal', () => {
 	let app: App;
@@ -84,11 +97,9 @@ describe('QuestionModal', () => {
 		// Given: an app instance and questions
 		app = new App();
 		component = new Component();
-		questions = ['Question 1', 'Question 2', 'Question 3'];
+		questions = ['Test question 1', 'Test question 2'];
 		modal = new QuestionModal(app, questions, component);
-
-		// Reset clipboard mock
-		mockClipboard.writeText.mockClear();
+		writeTextMock.mockClear();
 	});
 
 	describe('when opening the modal with questions', () => {
@@ -121,7 +132,7 @@ describe('QuestionModal', () => {
 
 			// Check questions count
 			expect(modal.contentEl.createEl).toHaveBeenCalledWith('p', {
-				text: '3 questions generated',
+				text: '2 questions generated',
 				cls: 'questions-count',
 			});
 
