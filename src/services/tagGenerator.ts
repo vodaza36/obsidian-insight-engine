@@ -68,13 +68,8 @@ Do not include descriptions, explanations, or any other text in your response. R
 	 * @throws Error if the LLM fails to generate tags or returns invalid format
 	 */
 	async suggestTags(content: string, existingTags: Set<string> = new Set()): Promise<string[]> {
-		console.log('TagGenerator: Starting tag generation');
-		console.log('TagGenerator: Content length:', content.length);
-		console.log('TagGenerator: Existing tags:', Array.from(existingTags));
-
 		// Check if content is empty or blank after trimming
 		if (!content.trim()) {
-			console.log('TagGenerator: Content is empty or blank, skipping tag generation');
 			return [];
 		}
 
@@ -83,22 +78,16 @@ Do not include descriptions, explanations, or any other text in your response. R
 				.map((tag) => tag.replace('#', ''))
 				.join(', ') || 'None';
 
-		console.log('TagGenerator: Formatted existing tags:', existingTagsString);
-
 		const systemPromptWithContent = this.systemPrompt
 			.replace('{tagStyle}', this.tagFormatter.getStyle())
 			.replace('{content}', content)
 			.replace('{existingTags}', existingTagsString);
 
-		console.log('TagGenerator: Using tag style:', this.tagFormatter.getStyle());
-
 		try {
-			console.log('TagGenerator: Calling LLM for tag suggestions');
 			const response = await this.processWithLLM(
 				'', // Empty user prompt since content is now in system message
 				systemPromptWithContent,
 				(content: string): string[] => {
-					console.log('TagGenerator: Raw LLM response:', content);
 					let tags: string[];
 
 					try {
@@ -109,7 +98,6 @@ Do not include descriptions, explanations, or any other text in your response. R
 						}
 						tags = parsed.tags;
 					} catch (error) {
-						console.log('TagGenerator: JSON parsing failed, using fallback parser');
 						// Try to extract tags from various text formats
 
 						// Try numbered list format (e.g., "1. Tag\n2. Another tag")
@@ -149,20 +137,16 @@ Do not include descriptions, explanations, or any other text in your response. R
 							return this.tagFormatter.formatTag(tag);
 						});
 
-					console.log('TagGenerator: Formatted tags:', formattedTags);
 					return formattedTags;
 				}
 			);
 
 			if (response.error) {
-				console.error('TagGenerator: Error in LLM response:', response.error);
 				throw new Error(response.error);
 			}
 
-			console.log('TagGenerator: Final suggested tags:', response.result);
 			return response.result;
 		} catch (error) {
-			console.error('TagGenerator: Error during tag generation:', error);
 			throw error;
 		}
 	}

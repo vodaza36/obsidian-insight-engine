@@ -46,20 +46,14 @@ export default class InsightEngine extends Plugin {
 	existingTags: Set<string> = new Set();
 
 	async onload() {
-		console.log('InsightEngine: Starting plugin load');
 		await this.loadSettings();
-		console.log('InsightEngine: Settings loaded:', this.settings);
-
-		// Add settings tab first, before trying to initialize the generator
 		this.addSettingTab(new InsightEngineSettingTab(this.app, this));
-		console.log('InsightEngine: Settings tab added');
 
 		// Try to initialize the services
 		this.initializeServices();
 
 		// Add command to generate tags for current note
 		try {
-			console.log('InsightEngine: Attempting to register tag generation command');
 			this.addCommand({
 				id: 'obsidian-insight-engine-generate-tags',
 				name: 'Generate Tags for Current Note',
@@ -68,9 +62,7 @@ export default class InsightEngine extends Plugin {
 					const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
 					if (activeView?.file) {
 						if (!checking) {
-							console.log('InsightEngine: Tag generation command executed');
 							if (!this.tagGenerator) {
-								console.warn('InsightEngine: Tag generator not initialized');
 								new Notice('Please configure the LLM settings first.');
 								return;
 							}
@@ -81,14 +73,12 @@ export default class InsightEngine extends Plugin {
 					return false;
 				},
 			});
-			console.log('InsightEngine: Tag generation command registered successfully');
 		} catch (error) {
-			console.error('InsightEngine: Failed to register tag generation command:', error);
+			new Notice('Failed to register tag generation command: ' + error.message);
 		}
 
 		// Add command to summarize current note
 		try {
-			console.log('InsightEngine: Attempting to register summarize command');
 			this.addCommand({
 				id: 'obsidian-insight-engine-summarize',
 				name: 'Summarize Current Note',
@@ -97,9 +87,7 @@ export default class InsightEngine extends Plugin {
 					const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
 					if (activeView?.file) {
 						if (!checking) {
-							console.log('InsightEngine: Summarize command executed');
 							if (!this.noteSummaryService) {
-								console.warn('InsightEngine: Summary service not initialized');
 								new Notice('Please configure the LLM settings first.');
 								return;
 							}
@@ -110,14 +98,12 @@ export default class InsightEngine extends Plugin {
 					return false;
 				},
 			});
-			console.log('InsightEngine: Summarize command registered successfully');
 		} catch (error) {
-			console.error('InsightEngine: Failed to register summarize command:', error);
+			new Notice('Failed to register summarize command: ' + error.message);
 		}
 
 		// Add command to generate questions for current note
 		try {
-			console.log('InsightEngine: Attempting to register question generation command');
 			this.addCommand({
 				id: 'obsidian-insight-engine-generate-questions',
 				name: 'Generate Questions from Current Note',
@@ -125,9 +111,7 @@ export default class InsightEngine extends Plugin {
 					const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
 					if (activeView?.file) {
 						if (!checking) {
-							console.log('InsightEngine: Question generation command executed');
 							if (!this.questionGenerator) {
-								console.warn('InsightEngine: Question generator not initialized');
 								new Notice('Please configure the LLM settings first.');
 								return;
 							}
@@ -138,26 +122,19 @@ export default class InsightEngine extends Plugin {
 					return false;
 				},
 			});
-			console.log('InsightEngine: Question generation command registered successfully');
 		} catch (error) {
-			console.error('InsightEngine: Failed to register question generation command:', error);
+			new Notice('Failed to register question generation command: ' + error.message);
 		}
 	}
 
 	public async initializeServices() {
-		console.log('InsightEngine: Starting services initialization');
 		// check if the required settings are configured
 		const configError = LLMFactory.validateConfig(this.settings.llmProvider, this.settings);
 		if (configError) {
-			console.error('InsightEngine: Configuration error:', configError);
 			new Notice(configError);
 			return;
 		}
 		try {
-			console.log(
-				'InsightEngine: Creating LLM model with provider:',
-				this.settings.llmProvider
-			);
 			const model = LLMFactory.createModel(
 				this.settings.llmProvider,
 				this.settings.modelName,
@@ -170,7 +147,6 @@ export default class InsightEngine extends Plugin {
 			);
 
 			if (!model) {
-				console.error('InsightEngine: Failed to create LLM model');
 				new Notice(
 					'Services are disabled until configuration is complete. Please check settings.'
 				);
@@ -180,10 +156,8 @@ export default class InsightEngine extends Plugin {
 			this.tagGenerator = new TagGenerator(model, this.settings.tagStyle);
 			this.noteSummaryService = new NoteSummaryService(model);
 			this.questionGenerator = new QuestionGenerator(model);
-			console.log('InsightEngine: Services initialized successfully');
 		} catch (error) {
 			// If initialization fails, we'll show a notice but not prevent the plugin from loading
-			console.error('InsightEngine: Failed to initialize services:', error);
 			new Notice(
 				'Services are disabled until configuration is complete. Please check settings.'
 			);
@@ -212,12 +186,10 @@ export default class InsightEngine extends Plugin {
 			}
 		});
 
-		console.log('InsightEngine: Found vault tags:', Array.from(tags));
 		return tags;
 	}
 
 	public async handleLLMError(error: Error, loadingModal?: LoadingModal) {
-		console.error('InsightEngine: Operation failed:', error);
 		loadingModal?.close();
 
 		if (error.message?.includes('Ollama server is not running')) {
@@ -326,9 +298,6 @@ export default class InsightEngine extends Plugin {
 	}
 
 	public async appendTagsToNote(file: TFile, tags: string[], tagsToRemove: string[] = []) {
-		console.log(`[InsightEngine] Appending tags to note "${file.path}":
-            Adding tags: ${tags.join(', ')}
-            Removing tags: ${tagsToRemove.join(', ')}`);
 		const content = await this.app.vault.read(file);
 		const tagManager = TagManagerFactory.create(
 			this.settings.tagFormat,
@@ -351,10 +320,6 @@ export default class InsightEngine extends Plugin {
 		const shouldModify = uniqueNewTags.length > 0 || tagsToRemove.length > 0;
 
 		if (shouldModify) {
-			console.log(`[InsightEngine] Modifying tags for note "${file.path}":
-                Adding tags: ${uniqueNewTags.join(', ')}
-                Removing tags: ${tagsToRemove.join(', ')}`);
-
 			this.notifyTagChanges(existingTags, tags, tagsToRemove);
 
 			const modifiedContent = tagManager.updateTags(content, uniqueNewTags, tagsToRemove);
