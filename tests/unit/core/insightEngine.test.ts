@@ -175,11 +175,7 @@ describe('InsightEngine', () => {
 		};
 
 		// Create mock file
-		mockFile = {
-			path: 'test.md',
-			basename: 'test',
-			extension: 'md',
-		} as TFile;
+		mockFile = new TFile('test.md', 'test', 'md');
 
 		// Create mock services
 		mockTagGenerator = {

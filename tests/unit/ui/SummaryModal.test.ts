@@ -110,13 +110,6 @@ describe('SummaryModal', () => {
 			);
 		});
 
-		it('should add styles to the modal', async () => {
-			await modal.onOpen();
-			expect(modal.contentEl.createEl).toHaveBeenCalledWith('style', {
-				text: expect.stringContaining('summary-modal-title'),
-			});
-		});
-
 		it('should create a copy to clipboard button that copies the summary', async () => {
 			await modal.onOpen();
 			const onClick = mockModule.__getLastOnClick();

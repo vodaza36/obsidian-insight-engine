@@ -10,6 +10,7 @@ vi.mock('obsidian', () => {
 		textContent: options.text || '',
 		empty: vi.fn(),
 		createEl: vi.fn().mockImplementation((tag, opts) => createMockElement(tag, opts)),
+		addClass: vi.fn(),
 		attr: {},
 		text: '',
 	});
@@ -53,33 +54,25 @@ describe('LoadingModal', () => {
 
 			// Then: it should create all necessary elements
 			expect(modal.contentEl.empty).toHaveBeenCalled();
+			expect(modal.contentEl.addClass).toHaveBeenCalledWith('insight-engine-loading-modal');
 
 			expect(modal.contentEl.createEl).toHaveBeenCalledWith('h3', {
 				text: 'Processing...',
-				attr: expect.objectContaining({
-					style: expect.stringContaining('margin: 0 0 10px 0'),
-				}),
+				cls: 'insight-engine-loading-title',
 			});
 
 			expect(modal.contentEl.createEl).toHaveBeenCalledWith('div', {
-				cls: 'loading-spinner',
-				attr: expect.objectContaining({
-					style: expect.stringContaining('margin: 0 auto 10px auto'),
-				}),
+				cls: 'insight-engine-loading-spinner loading-spinner',
 			});
 
 			expect(modal.contentEl.createEl).toHaveBeenCalledWith('p', {
 				text: testMessage,
-				attr: expect.objectContaining({
-					style: expect.stringContaining('margin-bottom: 10px'),
-				}),
+				cls: 'insight-engine-loading-message',
 			});
 
 			expect(modal.contentEl.createEl).toHaveBeenCalledWith('p', {
 				text: 'Insight Engine is analyzing your content. This may take a few moments based on content length.',
-				attr: expect.objectContaining({
-					style: expect.stringContaining('margin-bottom: 10px'),
-				}),
+				cls: 'insight-engine-loading-info',
 			});
 		});
 	});
