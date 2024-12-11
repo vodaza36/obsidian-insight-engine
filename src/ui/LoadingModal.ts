@@ -23,32 +23,30 @@ export class LoadingModal extends Modal {
 		const { contentEl } = this;
 		contentEl.empty();
 
-		// Reset any default modal padding
-		contentEl.style.padding = '0';
-		contentEl.style.marginTop = '0';
+		// Add the main class to the modal
+		contentEl.addClass('insight-engine-loading-modal');
 
 		// Title
 		contentEl.createEl('h3', {
 			text: 'Processing...',
-			attr: { style: 'margin: 0 0 10px 0; color: var(--text-normal);' },
+			cls: 'insight-engine-loading-title',
 		});
 
 		// Loading spinner
 		const spinner = contentEl.createEl('div', {
-			cls: 'loading-spinner',
-			attr: { style: 'margin: 0 auto 10px auto; display: flex; justify-content: center;' },
+			cls: 'insight-engine-loading-spinner loading-spinner',
 		});
 
 		// Loading message
 		contentEl.createEl('p', {
 			text: this.message,
-			attr: { style: 'margin-bottom: 10px;' },
+			cls: 'insight-engine-loading-message',
 		});
 
 		// Additional info text
 		contentEl.createEl('p', {
 			text: 'Insight Engine is analyzing your content. This may take a few moments based on content length.',
-			attr: { style: 'margin-bottom: 10px; font-size: 0.8em; color: var(--text-muted);' },
+			cls: 'insight-engine-loading-info',
 		});
 	}
 
