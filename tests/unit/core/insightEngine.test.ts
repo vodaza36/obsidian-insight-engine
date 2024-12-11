@@ -175,7 +175,10 @@ describe('InsightEngine', () => {
 		};
 
 		// Create mock file
-		mockFile = new TFile('test.md', 'test', 'md');
+		mockFile = new TFile();
+		mockFile.path = 'test.md';
+		mockFile.basename = 'test';
+		mockFile.extension = 'md';
 
 		// Create mock services
 		mockTagGenerator = {
@@ -521,7 +524,10 @@ describe('InsightEngine', () => {
 		it('should handle empty tag lists', async () => {
 			const content = '---\ntags: []\n---\nContent';
 			mockVault.read.mockResolvedValueOnce(content);
-			const file = new TFile('test.md', 'test', 'md');
+			const file = new TFile();
+			file.path = 'test.md';
+			file.basename = 'test';
+			file.extension = 'md';
 			await engine.generateTagsForNote(file);
 			expect(mockTagGenerator.suggestTags).toHaveBeenCalled();
 		});
@@ -539,7 +545,10 @@ describe('InsightEngine', () => {
 			engine.settings.tagFormat = 'property';
 			const content = '---\ntags: \n  - test\n  - example\n---\nContent';
 			mockVault.read.mockResolvedValueOnce(content);
-			const file = new TFile('test.md', 'test', 'md');
+			const file = new TFile();
+			file.path = 'test.md';
+			file.basename = 'test';
+			file.extension = 'md';
 			await engine.generateTagsForNote(file);
 			expect(mockTagGenerator.suggestTags).toHaveBeenCalled();
 		});
@@ -548,7 +557,10 @@ describe('InsightEngine', () => {
 			engine.settings.tagFormat = 'line';
 			const content = '# Title\n#test #example\nContent';
 			mockVault.read.mockResolvedValueOnce(content);
-			const file = new TFile('test.md', 'test', 'md');
+			const file = new TFile();
+			file.path = 'test.md';
+			file.basename = 'test';
+			file.extension = 'md';
 			await engine.generateTagsForNote(file);
 			expect(mockTagGenerator.suggestTags).toHaveBeenCalled();
 		});

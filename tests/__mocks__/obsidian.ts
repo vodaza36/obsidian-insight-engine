@@ -39,14 +39,12 @@ export class DropdownComponent {
 }
 
 export class TFile {
-	path: string;
-	basename: string;
-	extension: string;
+	path: string = '';
+	basename: string = '';
+	extension: string = '';
 
-	constructor(path: string, basename: string, extension: string) {
-		this.path = path;
-		this.basename = basename;
-		this.extension = extension;
+	constructor() {
+		// Default empty constructor to match Obsidian API
 	}
 }
 
