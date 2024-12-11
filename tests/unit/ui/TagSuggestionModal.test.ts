@@ -167,12 +167,8 @@ describe('TagSuggestionModal', () => {
 		modal = new TagSuggestionModal(mockApp, testTags, existingNoteTags, callback);
 		mockModule.modal = modal;
 
-		// Create spy for clipboard API
-		Object.assign(navigator, {
-			clipboard: {
-				writeText: vi.fn().mockResolvedValue(undefined),
-			},
-		});
+		// Reset clipboard mock
+		vi.mocked(navigator.clipboard.writeText).mockReset();
 	});
 
 	describe('when initializing the modal', () => {
@@ -258,11 +254,9 @@ describe('TagSuggestionModal', () => {
 		});
 
 		it('should handle clipboard errors gracefully', async () => {
-			Object.assign(navigator, {
-				clipboard: {
-					writeText: vi.fn().mockRejectedValue(new Error('Clipboard error')),
-				},
-			});
+			vi.mocked(navigator.clipboard.writeText).mockRejectedValueOnce(
+				new Error('Clipboard error')
+			);
 
 			modal.onOpen();
 			modal['selectedTags'].clear();

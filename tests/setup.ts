@@ -1,3 +1,11 @@
 import { vi } from 'vitest';
 
-// Mock any global objects or setup test environment here if needed
+// Mock browser globals
+Object.defineProperty(global, 'navigator', {
+	value: {
+		clipboard: {
+			writeText: vi.fn(),
+		},
+	},
+	writable: true,
+});

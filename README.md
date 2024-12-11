@@ -1,7 +1,7 @@
 # Obsidian Insight Engine Plugin
 
 [![License](https://img.shields.io/github/license/vodaza36/obsidian-insight-engine)](LICENSE)
-[![Downloads](https://img.shields.io/github/downloads/vodaza36/obsidian-insight-engine/total)](https://github.com/username/obsidian-insight-engine/releases)
+[![Downloads](https://img.shields.io/github/downloads/vodaza36/obsidian-insight-engine/total)](https://github.com/vodaza36/obsidian-insight-engine/releases)
 [![Test Coverage](https://img.shields.io/badge/coverage-95%25-brightgreen)]()
 
 Transform your Obsidian vault into an AI-powered knowledge base while keeping your privacy intact. The Insight Engine plugin enhances your note-taking experience by leveraging privacy-focused local processing with Ollama.
@@ -55,7 +55,7 @@ If you find this plugin helpful in organizing and enhancing your knowledge base,
 
 ### Manual Installation
 
-1. Download the latest release from the [releases page](https://github.com/username/obsidian-insight-engine/releases)
+1. Download the latest release from the [releases page](https://github.com/vodaza36/obsidian-insight-engine/releases)
 2. Extract the ZIP file into your vault's `.obsidian/plugins` folder
 3. Reload Obsidian
 4. Enable the plugin in Community Plugins settings
@@ -92,7 +92,7 @@ If you find this plugin helpful in organizing and enhancing your knowledge base,
 1. Clone the repository
 
 ```bash
-git clone https://github.com/username/obsidian-insight-engine.git
+git clone https://github.com/vodaza36/obsidian-insight-engine.git
 cd obsidian-insight-engine
 ```
 
@@ -127,20 +127,24 @@ npm run build
     - `manifest.json`
     - `package.json`
 
-2. Create the release:
+2. Commit your changes to the main branch
 
-```bash
-npm run create-release
-```
+3. Create and push a new tag:
 
-This will:
+    ```bash
+    git tag -a v1.0.0 -m "Release v1.0.0"
+    git push origin v1.0.0
+    ```
 
-- Build the project
-- Create release assets (`main.js`, `manifest.json`, `styles.css`)
-- Create a GitHub release with the version tag
-- Upload all assets to the release
+4. The GitHub Action will automatically:
 
-The release will be available at: `https://github.com/username/obsidian-insight-engine/releases`
+    - Build the plugin
+    - Create a draft release with the tag name
+    - Attach the required files (main.js, manifest.json, styles.css)
+
+5. Review the draft release on GitHub and publish when ready
+
+The release will be available at: `https://github.com/vodaza36/obsidian-insight-engine/releases`
 
 ## 📄 License
 

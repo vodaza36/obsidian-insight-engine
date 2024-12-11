@@ -17,8 +17,7 @@
 		"version": "npm run sync-metadata && git add manifest.json",
 		"prepare": "husky install",
 		"format": "prettier --write \"**/*.{js,jsx,ts,tsx,css,md,json}\"",
-		"prepare-release": "node scripts/prepare-release.mjs",
-		"create-release": "node scripts/create-github-release.mjs"
+		"prepare-release": "node scripts/prepare-release.mjs"
 	},
 	"keywords": [
 		"ai",
