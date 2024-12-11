@@ -31,10 +31,7 @@ export abstract class BaseLLMService<T> {
 		systemPrompt: string,
 		parseResponse: (response: string) => T
 	): Promise<LLMResponse<T>> {
-		console.log('BaseLLMService: Starting LLM processing');
-
 		if (this.isProcessing) {
-			console.warn('BaseLLMService: Another request is already being processed');
 			return {
 				result: null as T,
 				error: 'Another request is currently being processed',
@@ -43,32 +40,22 @@ export abstract class BaseLLMService<T> {
 
 		try {
 			this.isProcessing = true;
-			console.log('BaseLLMService: Sending request to LLM');
-			console.log('BaseLLMService: System prompt:', systemPrompt);
-			console.log('BaseLLMService: User content length:', content.length);
 
 			const response = await this.model.invoke([
 				new SystemMessage(systemPrompt),
 				new HumanMessage(content),
 			]);
 
-			console.log('BaseLLMService: Received response from LLM');
 			const responseContent = response.content.toString();
-			console.log('BaseLLMService: Raw response:', responseContent);
-
-			console.log('BaseLLMService: Parsing response');
 			const result = parseResponse(responseContent);
-			console.log('BaseLLMService: Parsed result:', result);
 
 			return { result };
 		} catch (error) {
-			console.error('BaseLLMService: Error processing content:', error);
 			if (
 				error instanceof Error &&
 				(error.message.includes('ECONNREFUSED') ||
 					error.message.includes('Failed to fetch'))
 			) {
-				console.error('BaseLLMService: Connection error - Ollama server not accessible');
 				return {
 					result: null as T,
 					error: 'Unable to connect to Ollama server. Please make sure it is running and accessible.',
@@ -79,20 +66,17 @@ export abstract class BaseLLMService<T> {
 				(error.message.toLowerCase().includes('rate limit') ||
 					error.message.toLowerCase().includes('resource_exhausted'))
 			) {
-				console.error('BaseLLMService: Rate limit exceeded');
 				return {
 					result: null as T,
 					error: 'Rate limit exceeded. Please wait a few minutes before trying again.',
 				};
 			}
-			console.error('BaseLLMService: Generic error:', error.message);
 			return {
 				result: null as T,
 				error: 'Failed to process content: ' + error.message,
 			};
 		} finally {
 			this.isProcessing = false;
-			console.log('BaseLLMService: Processing completed');
 		}
 	}
 
@@ -125,7 +109,6 @@ export abstract class BaseLLMService<T> {
 			const result = parseResponse(responseContent);
 			return { result };
 		} catch (error) {
-			console.error('Error processing content:', error);
 			if (
 				error instanceof Error &&
 				(error.message.includes('ECONNREFUSED') ||

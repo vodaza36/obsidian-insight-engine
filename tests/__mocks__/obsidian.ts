@@ -38,4 +38,16 @@ export class DropdownComponent {
 	constructor() {}
 }
 
+export class TFile {
+	path: string;
+	basename: string;
+	extension: string;
+
+	constructor(path: string, basename: string, extension: string) {
+		this.path = path;
+		this.basename = basename;
+		this.extension = extension;
+	}
+}
+
 // Add any other Obsidian components you need to mock

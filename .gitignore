@@ -13,6 +13,7 @@ yarn-error.log
 dist/
 build/
 out/
+main.js
 
 # IDE and editor files
 .idea/

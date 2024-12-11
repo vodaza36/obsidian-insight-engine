@@ -211,7 +211,6 @@ describe('TagSuggestionModal', () => {
 		beforeEach(() => {
 			modal.onOpen();
 			mockModule.modal = modal;
-			console.log('Toggle Callbacks:', Array.from(mockModule.toggleCallbacks.entries()));
 		});
 
 		it('should add tag to selectedTags when toggled on', () => {
