@@ -19,6 +19,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [1.0.2] - 2024-12-11
+
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+- Fixed issues reported by the Obsidian code review bot
+
+### Security
+
+## [1.0.1] - 2024-12-10
+
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
 ## [1.0.0] - 2024-12-09
 
 ### Added
