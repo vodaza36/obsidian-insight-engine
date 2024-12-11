@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/github/license/vodaza36/obsidian-insight-engine)](LICENSE)
 [![Downloads](https://img.shields.io/github/downloads/vodaza36/obsidian-insight-engine/total)](https://github.com/vodaza36/obsidian-insight-engine/releases)
-[![Test Coverage](https://img.shields.io/badge/coverage-95%25-brightgreen)]()
+[![Test Coverage](https://img.shields.io/badge/coverage-89.54%25-yellow)](./coverage/index.html)
 
 Transform your Obsidian vault into an AI-powered knowledge base while keeping your privacy intact. The Insight Engine plugin enhances your note-taking experience by leveraging privacy-focused local processing with Ollama.
 
